@@ -1,0 +1,24 @@
+{
+  "originHash" : "2f222b66b7291b8d7193df078dd2561382a38dd4564f39a7d397432e1f462ea9",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "kakao-ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kakao/kakao-ios-sdk.git",
+      "state" : {
+        "revision" : "d329d3ab45819b731f0336499a31f41524d8e222",
+        "version" : "2.24.4"
+      }
+    }
+  ],
+  "version" : 3
+}

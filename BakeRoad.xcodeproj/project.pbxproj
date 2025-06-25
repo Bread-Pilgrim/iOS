@@ -6,13 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = BEF449D62E02D47B009BC50A /* KakaoSDK */; };
+		BEF449F52E02DE67009BC50A /* KakaoSDKFriendResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEF449F42E02DE67009BC50A /* KakaoSDKFriendResources.bundle */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BE6217892DF141E400812A08 /* BakeRoad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BakeRoad.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEF449F42E02DE67009BC50A /* KakaoSDKFriendResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = KakaoSDKFriendResources.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BEF449F32E02DD1A009BC50A /* Exceptions for "BakeRoad" folder in "BakeRoad" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BE6217882DF141E400812A08 /* BakeRoad */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BE62178B2DF141E400812A08 /* BakeRoad */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BEF449F32E02DD1A009BC50A /* Exceptions for "BakeRoad" folder in "BakeRoad" target */,
+			);
 			path = BakeRoad;
 			sourceTree = "<group>";
 		};
@@ -23,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +52,7 @@
 		BE6217802DF141E400812A08 = {
 			isa = PBXGroup;
 			children = (
+				BEF449F42E02DE67009BC50A /* KakaoSDKFriendResources.bundle */,
 				BE62178B2DF141E400812A08 /* BakeRoad */,
 				BE62178A2DF141E400812A08 /* Products */,
 			);
@@ -65,6 +86,7 @@
 			);
 			name = BakeRoad;
 			packageProductDependencies = (
+				BEF449D62E02D47B009BC50A /* KakaoSDK */,
 			);
 			productName = BakeRoad;
 			productReference = BE6217892DF141E400812A08 /* BakeRoad.app */;
@@ -94,6 +116,9 @@
 			);
 			mainGroup = BE6217802DF141E400812A08;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE62178A2DF141E400812A08 /* Products */;
 			projectDirPath = "";
@@ -109,6 +134,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEF449F52E02DE67009BC50A /* KakaoSDKFriendResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +281,7 @@
 				DEVELOPMENT_TEAM = 54R3763M9G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BakeRoad/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +311,7 @@
 				DEVELOPMENT_TEAM = 54R3763M9G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BakeRoad/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -324,6 +352,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao/kakao-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.24.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BEF449D62E02D47B009BC50A /* KakaoSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
+			productName = KakaoSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE6217812DF141E400812A08 /* Project object */;
 }
