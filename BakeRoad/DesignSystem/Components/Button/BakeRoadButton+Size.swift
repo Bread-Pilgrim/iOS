@@ -24,18 +24,18 @@ enum BakeRoadButtonSize {
         switch self {
         case .xsmall: return 5
         case .small: return 7
-        case .medium: return 9
+        case .medium: return 9.5
         case .large: return 13
-        case .xlarge: return 16
+        case .xlarge: return 15.5
         }
     }
     
     var horizontalPadding: CGFloat {
         switch self {
-        case .xsmall: return 12
-        case .small: return 14
-        case .medium: return 20
-        case .large: return 28
+        case .xsmall: return 10
+        case .small: return 12
+        case .medium: return 16
+        case .large: return 24
         case .xlarge: return 36
         }
     }
