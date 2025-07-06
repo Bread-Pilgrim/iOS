@@ -1,0 +1,13 @@
+//
+//  TokenStore.swift
+//  BakeRoad
+//
+//  Created by 이현호 on 7/6/25.
+//
+
+import Foundation
+
+protocol TokenStore {
+    var accessToken: String? { get set }
+    var refreshToken: String? { get set }
+}

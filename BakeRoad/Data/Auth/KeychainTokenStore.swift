@@ -1,16 +1,14 @@
 //
-//  TokenManager.swift
+//  KeychainTokenStore.swift
 //  BakeRoad
 //
 //  Created by 이현호 on 7/6/25.
 //
 
 import Foundation
-import Security
 
-final class TokenManager {
-    static let shared = TokenManager()
-    private init() {}
+final class KeychainTokenStore: TokenStore {
+    public init() {}
 
     private let accessTokenKey = "access-token"
     private let refreshTokenKey = "refresh-token"
