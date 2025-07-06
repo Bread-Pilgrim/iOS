@@ -8,41 +8,42 @@
 import Foundation
 import Security
 
-final class KeychainHelper {
-    static let shared = KeychainHelper()
-
-    func save(_ value: String, forKey key: String) {
-        guard let data = value.data(using: .utf8) else { return }
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data
-        ]
-        SecItemDelete(query as CFDictionary)
-        SecItemAdd(query as CFDictionary, nil)
+enum KeychainHelper {
+    static func save(_ value: String, key: String) {
+        if let data = value.data(using: .utf8) {
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: key,
+                kSecValueData as String: data
+            ]
+            SecItemDelete(query as CFDictionary) // 중복 방지
+            SecItemAdd(query as CFDictionary, nil)
+        }
     }
 
-    func load(forKey key: String) -> String? {
+    static func load(key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
-        var dataRef: AnyObject?
-        guard SecItemCopyMatching(query as CFDictionary, &dataRef) == errSecSuccess,
-              let data = dataRef as? Data,
-              let result = String(data: data, encoding: .utf8) else {
-            return nil
+        var dataTypeRef: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+
+        if status == errSecSuccess,
+           let data = dataTypeRef as? Data,
+           let result = String(data: data, encoding: .utf8) {
+            return result
         }
-        return result
+        return nil
     }
 
-    func delete(forKey key: String) {
-        let query = [
+    static func delete(key: String) {
+        let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key
-        ] as [String: Any]
+        ]
         SecItemDelete(query as CFDictionary)
     }
 }
