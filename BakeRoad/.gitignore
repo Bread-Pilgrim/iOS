@@ -9,6 +9,7 @@ App/AppConstant.swift
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 *.xcodeproj/xcuserdata/
+**/UserInterfaceState.xcuserstate
 
 # Xcode user data
 **/xcuserdata/
