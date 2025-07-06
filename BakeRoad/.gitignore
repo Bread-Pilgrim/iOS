@@ -1,3 +1,78 @@
 App/AppConstant.swift
-**/xcuserdata/
+
+# Xcode
 *.xcuserstate
+*.xcworkspace
+*.xccheckout
+*.xcscmblueprint
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcodeproj/xcuserdata/
+
+# Xcode user data
+**/xcuserdata/
+**/xcuserdatad/
+
+# Swift Package Manager
+.build/
+Packages/
+DerivedData/
+.swiftpm/
+*.xcodeproj/project.xcworkspace/
+
+# Cocoapods
+Pods/
+Podfile.lock
+*.xcworkspace
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Other
+*.DS_Store
+.idea/
+*.swp
+*.swo
+*.orig
+
+# Logs
+*.log
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.old
+
+# SwiftPM generated Xcode project
+Package.resolved
+
+# Firebase
+GoogleService-Info.plist
+
+# SPM .swiftpm/config
+.swiftpm/config/
+
+# Previews
+*.preview-thumbnails
+
+# Build artifacts
+*.dSYM
+*.ipa
+*.app
+
+# SwiftUI Previews
+*.canvas

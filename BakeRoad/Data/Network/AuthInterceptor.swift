@@ -8,17 +8,16 @@
 import Foundation
 import Alamofire
 
-struct APIInterceptor: RequestInterceptor, Sendable {
-    let accessToken: String?
-    let refreshToken: String?
+final class AuthInterceptor: RequestInterceptor {
+    private let tokenStore: TokenStore = KeychainTokenStore() // 주입 가능
 
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var request = urlRequest
-        if let accessToken = accessToken {
-            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "access-token")
+        if let accessToken = tokenStore.accessToken {
+            request.setValue(accessToken, forHTTPHeaderField: "access-token")
         }
-        if let refreshToken = refreshToken {
-            request.setValue("Bearer \(refreshToken)", forHTTPHeaderField: "refresh-token")
+        if let refreshToken = tokenStore.refreshToken {
+            request.setValue(refreshToken, forHTTPHeaderField: "refresh-token")
         }
         completion(.success(request))
     }
