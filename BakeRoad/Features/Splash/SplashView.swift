@@ -22,11 +22,11 @@ struct SplashView: View {
             case .login:
                 LoginView(appViewModel: _appViewModel)
                 
-            case .main:
-                Image(systemName: "house")
-                
-            case .onboarding:
-                Text("Onboarding")
+//            case .main:
+//                Image(systemName: "house")
+//                
+//            case .onboarding:
+//                Text("Onboarding")
                 
             }
         }
