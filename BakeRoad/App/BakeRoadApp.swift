@@ -12,7 +12,7 @@ import KakaoSDKAuth
 @main
 struct BakeRoadApp: App {
     init() {
-        KakaoSDK.initSDK(appKey: APIKey.kakaoAppKey)
+        KakaoSDK.initSDK(appKey: AppConstant.kakaoAppKey)
     }
     
     @StateObject var appViewModel = AppViewModel()
