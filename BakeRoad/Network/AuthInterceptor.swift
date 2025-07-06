@@ -8,16 +8,18 @@
 import Foundation
 import Alamofire
 
-public final class AuthInterceptor: RequestInterceptor {
-    public init() {}
+struct APIInterceptor: RequestInterceptor, Sendable {
+    let accessToken: String?
+    let refreshToken: String?
 
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var request = urlRequest
-
-        if let token = KeychainHelper.shared.load(forKey: "accessToken") {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "access-token")
+        if let accessToken = accessToken {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "access-token")
         }
-
+        if let refreshToken = refreshToken {
+            request.setValue("Bearer \(refreshToken)", forHTTPHeaderField: "refresh-token")
+        }
         completion(.success(request))
     }
 }
