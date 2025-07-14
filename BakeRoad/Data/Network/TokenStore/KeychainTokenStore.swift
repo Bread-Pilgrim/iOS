@@ -8,8 +8,6 @@
 import Foundation
 
 final class KeychainTokenStore: TokenStore, @unchecked Sendable {
-    public init() {}
-
     private let accessTokenKey = "access-token"
     private let refreshTokenKey = "refresh-token"
 

@@ -8,14 +8,18 @@
 import SwiftUI
 
 struct LoginView: View {
-    @EnvironmentObject var appViewModel: AppViewModel
-
+    @StateObject private var viewModel: LoginViewModel
+    
+    init(viewModel: LoginViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
     var body: some View {
         VStack(spacing: 68) {
             Image("login")
-
+            
             Button {
-                appViewModel.login()
+                viewModel.login()
             } label: {
                 Image("kakaoLogin")
             }

@@ -15,7 +15,25 @@ struct BakeRoadSolidButton: View {
     let leadingIcon: Image?
     let trailingIcon: Image?
     let action: () -> Void
-
+    
+    init(
+        title: String,
+        style: BakeRoadSolidStyle,
+        size: BakeRoadButtonSize,
+        isDisabled: Bool = false,
+        leadingIcon: Image? = nil,
+        trailingIcon: Image? = nil,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.style = style
+        self.size = size
+        self.isDisabled = isDisabled
+        self.leadingIcon = leadingIcon
+        self.trailingIcon = trailingIcon
+        self.action = action
+    }
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: size.spacing) {

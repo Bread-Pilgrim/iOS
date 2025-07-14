@@ -12,16 +12,22 @@ enum HTTPMethodType: String {
     case post = "POST"
     case put = "PUT"
     case delete = "DELETE"
+    case patch = "PATCH"
 }
 
 struct APIRequest {
     let path: String
     let method: HTTPMethodType
     let parameters: Encodable?
+    let customHeaders: [String: String]?
     
-    init(path: String, method: HTTPMethodType, parameters: Encodable? = nil) {
+    init(path: String,
+         method: HTTPMethodType,
+         parameters: Encodable? = nil,
+         customHeaders: [String: String]? = nil) {
         self.path = path
         self.method = method
         self.parameters = parameters
+        self.customHeaders = customHeaders
     }
 }

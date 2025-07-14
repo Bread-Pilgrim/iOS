@@ -1,0 +1,27 @@
+//
+//  PreferResponseDTO.swift
+//  BakeRoad
+//
+//  Created by 이현호 on 7/13/25.
+//
+
+import Foundation
+
+struct PreferResponseDTO: Decodable {
+    let breadType: [PreferenceTypeDTO]
+    let flavor: [PreferenceTypeDTO]
+    let atmosphere: [PreferenceTypeDTO]
+    let cArea: [PreferenceTypeDTO]
+
+    enum CodingKeys: String, CodingKey {
+        case breadType = "bread_type"
+        case flavor
+        case atmosphere
+        case cArea = "c_area"
+    }
+}
+
+struct PreferenceTypeDTO: Decodable {
+    let id: Int
+    let name: String
+}

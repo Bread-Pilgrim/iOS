@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TokenStore: Sendable {
+protocol TokenStore: AnyObject, Sendable {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
 }

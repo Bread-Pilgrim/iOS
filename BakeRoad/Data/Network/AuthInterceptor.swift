@@ -25,6 +25,7 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
         if let accessToken = tokenStore.accessToken {
             request.setValue(accessToken, forHTTPHeaderField: "access-token")
         }
+
         if let refreshToken = tokenStore.refreshToken {
             request.setValue(refreshToken, forHTTPHeaderField: "refresh-token")
         }

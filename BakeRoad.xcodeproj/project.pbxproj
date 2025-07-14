@@ -17,7 +17,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BEF449F32E02DD1A009BC50A /* Exceptions for "BakeRoad" folder in "BakeRoad" target */ = {
+		C1ECD56C2E1C077D0059BB19 /* Exceptions for "BakeRoad" folder in "BakeRoad" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -30,7 +30,7 @@
 		BE62178B2DF141E400812A08 /* BakeRoad */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BEF449F32E02DD1A009BC50A /* Exceptions for "BakeRoad" folder in "BakeRoad" target */,
+				C1ECD56C2E1C077D0059BB19 /* Exceptions for "BakeRoad" folder in "BakeRoad" target */,
 			);
 			path = BakeRoad;
 			sourceTree = "<group>";
@@ -277,7 +277,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"BakeRoad/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"BakeRoad/Preview Content.xcassets\"";
 				DEVELOPMENT_TEAM = 54R3763M9G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -307,7 +307,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"BakeRoad/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"BakeRoad/Preview Content.xcassets\"";
 				DEVELOPMENT_TEAM = 54R3763M9G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

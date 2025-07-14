@@ -11,16 +11,16 @@ import KakaoSDKAuth
 
 @main
 struct BakeRoadApp: App {
+    @StateObject private var coordinator = AppCoordinator()
+    
     init() {
         KakaoSDK.initSDK(appKey: AppConstant.kakaoAppKey)
     }
     
-    @StateObject var appViewModel = AppViewModel()
-    
     var body: some Scene {
         WindowGroup {
-            SplashView()
-                .environmentObject(appViewModel)
+            RootView()
+                .environmentObject(coordinator)
         }
     }
 }

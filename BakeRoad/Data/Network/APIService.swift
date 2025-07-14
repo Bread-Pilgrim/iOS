@@ -8,7 +8,7 @@
 import Alamofire
 
 final class APIService {
-    static let shared = APIService() // 또는 DI로 관리
+    static let shared = APIService()
 
     private let baseURL = "https://fastapi-1015297428835.asia-northeast3.run.app"
     private let session: Session
@@ -24,15 +24,22 @@ final class APIService {
     ) async throws -> T {
         let url = baseURL + request.path
         let method = HTTPMethod(rawValue: request.method.rawValue)
-
         let parameters = try request.parameters?.asDictionary()
+
+        var headers: HTTPHeaders = ["Content-Type": "application/json"]
+
+        if let customHeaders = request.customHeaders {
+            customHeaders.forEach { key, value in
+                headers.add(name: key, value: value)
+            }
+        }
 
         let dataTask = session.request(
             url,
             method: method,
             parameters: parameters,
             encoding: request.method == .get ? URLEncoding.default : JSONEncoding.default,
-            headers: ["Content-Type": "application/json"]
+            headers: headers
         )
         .validate()
 

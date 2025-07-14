@@ -29,6 +29,7 @@ enum FontStyle {
     case bodySmallMedium       // 15
     case bodyXsmallMedium      // 14
     case body2xsmallMedium     // 13
+    case body3xsmallMedium     // 12
 
     // Body - Regular
     case bodyXlargeRegular     // 20
@@ -37,6 +38,7 @@ enum FontStyle {
     case bodySmallRegular      // 15
     case bodyXsmallRegular     // 14
     case body2xsmallRegular    // 13
+    case body3xsmallRegular    // 12
 
     var size: CGFloat {
         switch self {
@@ -49,6 +51,7 @@ enum FontStyle {
         case .bodySmallSemibold, .bodySmallMedium, .bodySmallRegular: return 15
         case .bodyXsmallSemibold, .bodyXsmallMedium, .bodyXsmallRegular: return 14
         case .body2xsmallSemibold, .body2xsmallMedium, .body2xsmallRegular: return 13
+        case .body3xsmallMedium, .body3xsmallRegular: return 12
         }
     }
 
@@ -60,10 +63,12 @@ enum FontStyle {
              .bodySmallSemibold, .bodyXsmallSemibold, .body2xsmallSemibold:
             return "Pretendard-SemiBold"
         case .bodyXlargeMedium, .bodyLargeMedium, .bodyMediumMedium,
-             .bodySmallMedium, .bodyXsmallMedium, .body2xsmallMedium:
+             .bodySmallMedium, .bodyXsmallMedium, .body2xsmallMedium,
+             .body3xsmallMedium:
             return "Pretendard-Medium"
         case .bodyXlargeRegular, .bodyLargeRegular, .bodyMediumRegular,
-             .bodySmallRegular, .bodyXsmallRegular, .body2xsmallRegular:
+             .bodySmallRegular, .bodyXsmallRegular, .body2xsmallRegular,
+             .body3xsmallRegular:
             return "Pretendard-Regular"
         }
     }
@@ -98,6 +103,7 @@ extension Font {
     static let bodySmallMedium = Font.custom("Pretendard-Medium", size: 15)
     static let bodyXsmallMedium = Font.custom("Pretendard-Medium", size: 14)
     static let body2xsmallMedium = Font.custom("Pretendard-Medium", size: 13)
+    static let body3xsmallMedium = Font.custom("Pretendard-Medium", size: 12)
 
     // Body - Regular
     static let bodyXlargeRegular = Font.custom("Pretendard-Regular", size: 20)
@@ -106,4 +112,5 @@ extension Font {
     static let bodySmallRegular = Font.custom("Pretendard-Regular", size: 15)
     static let bodyXsmallRegular = Font.custom("Pretendard-Regular", size: 14)
     static let body2xsmallRegular = Font.custom("Pretendard-Regular", size: 13)
+    static let body3xsmallRegular = Font.custom("Pretendard-Regular", size: 12)
 }
