@@ -81,7 +81,7 @@ struct StepIndicatorView: View {
                     
                     ZStack {
                         if step < currentStep.rawValue {
-                            Image("Round Checkbox")
+                            Image("roundCheckbox")
                                 .resizable()
                                 .frame(width: 24, height: 24)
                         } else if step == currentStep.rawValue {
