@@ -18,12 +18,12 @@ final class AppDependency {
     // MARK: - Repositories
     let loginRepository: LoginRepository
     let verifyTokenRepository: VerifyTokenRepository
-    let preferRepository: PreferRepository
+    let preferenceRepository: PreferenceRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
     let verifyTokenUseCase: VerifyTokenUseCase
-    let getPreferOptionsUseCase: GetPreferOptionsUseCase
+    let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -36,20 +36,18 @@ final class AppDependency {
         // Repository
         self.loginRepository = LoginRepositoryImpl(
             apiClient: authenticatedClient,
-            tokenStore: tokenStore,
             kakaoLoginService: kakaoLoginService
         )
         
         self.verifyTokenRepository = VerifyTokenRepositoryImpl(
-            apiClient: authenticatedClient,
-            tokenStore: tokenStore
+            apiClient: authenticatedClient
         )
         
-        self.preferRepository = PreferRepositoryImpl(apiClient: authenticatedClient)
+        self.preferenceRepository = PreferenceRepositoryImpl(apiClient: authenticatedClient)
         
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
         self.verifyTokenUseCase = VerifyTokenUseCaseImpl(repository: verifyTokenRepository)
-        self.getPreferOptionsUseCase = GetPreferOptionsUseCaseImpl(repository: preferRepository)
+        self.getPreferenceOptionsUseCase = GetPreferenceOptionsUseCaseImpl(repository: preferenceRepository)
     }
 }
