@@ -23,12 +23,13 @@ struct HeaderView<Left: View, Center: View, Right: View>: View {
     }
     
     var body: some View {
-        HStack {
-            leftItem
-            Spacer()
+        ZStack {
+            HStack {
+                leftItem
+                Spacer()
+                rightItem
+            }
             centerItem
-            Spacer()
-            rightItem
         }
         .background(Color.white)
     }
