@@ -11,7 +11,7 @@ struct BakeryCard: View {
     let bakery: Bakery
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(alignment: .top, spacing: 12) {
             ZStack() {
                 BakeryImageView(
                     imageUrl: bakery.imgUrl,
@@ -70,10 +70,13 @@ struct BakeryCard: View {
                         .font(.body2xsmallMedium)
                         .foregroundColor(.gray950)
                 }
+                .padding(.bottom, 8)
                 
                 SignatureMenuChipsView(signatureMenus: bakery.signatureMenus)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
