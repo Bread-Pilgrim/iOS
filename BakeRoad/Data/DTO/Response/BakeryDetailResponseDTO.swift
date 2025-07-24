@@ -21,10 +21,10 @@ struct BakeryDetailResponseDTO: Decodable {
     let menus: [BakeryMenu]?
     
     struct OperatingHour: Decodable {
-        let dayOfWeek: String?
-        let openTime: String?
-        let closeTime: String?
-        let isOpened: Bool?
+        let dayOfWeek: Int
+        let openTime: String
+        let closeTime: String
+        let isOpened: Bool
     }
 
     struct BakeryMenu: Decodable {
