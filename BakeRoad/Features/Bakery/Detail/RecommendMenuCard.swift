@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecommendMenuCard: View {
-    var menu: BakeryDetail.BakeryMenu
+    let menu: BakeryDetail.BakeryMenu
     
     var body: some View {
         HStack {

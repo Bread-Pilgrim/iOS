@@ -18,7 +18,9 @@ struct BakeRoadCircleButton: View {
                     .fill(Color.white.opacity(0.6))
                     .frame(width: 32, height: 32)
                 
-                Image(icon)
+                let image: Image = icon == "heart" ? Image(systemName: icon) : Image(icon)
+
+                image
                     .resizable()
                     .frame(width: 24, height: 24)
             }
