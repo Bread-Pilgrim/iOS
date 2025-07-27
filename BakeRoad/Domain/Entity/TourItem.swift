@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct TourItem {
+struct TourItem: Identifiable, Equatable {
+    let id = UUID()
     let title: String
     let address: String
     let imageUrl: String

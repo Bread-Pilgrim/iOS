@@ -62,7 +62,6 @@ struct BakeryDetailReviewCard: View {
                             BakeryImageView(imageUrl: url, placeholder: .ratio3_2)
                                 .cornerRadius(8)
                                 .frame(width: .infinity, height: 104)
-                            
                         }
                     }
                 }

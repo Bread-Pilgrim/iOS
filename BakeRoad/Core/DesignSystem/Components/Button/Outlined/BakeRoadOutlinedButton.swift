@@ -48,6 +48,7 @@ struct BakeRoadOutlinedButton: View {
                         .frame(width: size.iconSize, height: size.iconSize)
                 }
             }
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, size.horizontalPadding)
             .padding(.vertical, size.verticalPadding)
             .foregroundColor(style.textColor(isDisabled: isDisabled))

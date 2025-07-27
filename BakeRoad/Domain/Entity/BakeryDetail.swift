@@ -40,7 +40,8 @@ struct BakeryDetail: Equatable {
         }
     }
     
-    struct BakeryMenu: Equatable {
+    struct BakeryMenu: Equatable, Identifiable {
+        let id = UUID()
         let name: String
         let price: Int
         let isSignature: Bool

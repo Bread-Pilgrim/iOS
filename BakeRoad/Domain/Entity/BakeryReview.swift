@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BakeryReview {
+struct BakeryReview: Identifiable, Equatable {
     let id: Int
     let userName: String
     let profileImageURL: String?
