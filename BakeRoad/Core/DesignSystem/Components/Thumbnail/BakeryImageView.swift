@@ -12,17 +12,18 @@ enum ThumbnailRatio: String {
 }
 
 struct BakeryImageView: View {
-    let imageUrl: String
+    let imageUrl: String?
     let placeholder: String
-
-    init(imageUrl: String,
+    
+    init(imageUrl: String?,
          placeholder: ThumbnailRatio) {
         self.imageUrl = imageUrl
         self.placeholder = placeholder.rawValue
     }
-
+    
     var body: some View {
-        if let url = URL(string: imageUrl) {
+        if let img = imageUrl,
+           let url = URL(string: img) {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
