@@ -13,7 +13,7 @@ struct DetailMenuSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("추천 메뉴")
+            Text(selectedTab == .home ? "추천 메뉴" : "전체 메뉴")
                 .font(.bodyLargeSemibold)
                 .foregroundColor(.gray990)
                 .padding(.horizontal, 16)

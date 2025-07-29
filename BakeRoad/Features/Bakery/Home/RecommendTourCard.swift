@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TourItemView: View {
+struct RecommendTourCard: View {
     let title: String
     let address: String
     let imageUrl: String
@@ -52,7 +52,7 @@ struct TourItemView: View {
     ScrollView {
         VStack(spacing: 20) {
             ForEach(items, id: \.title) { item in
-                TourItemView(
+                RecommendTourCard(
                     title: item.title,
                     address: item.address,
                     imageUrl: item.imageUrl,

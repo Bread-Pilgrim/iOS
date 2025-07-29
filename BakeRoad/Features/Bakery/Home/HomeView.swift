@@ -101,7 +101,7 @@ struct HomeView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 20) {
                         ForEach(TourItem.mockData, id: \.title) { item in
-                            TourItemView(
+                            RecommendTourCard(
                                 title: item.title,
                                 address: item.address,
                                 imageUrl: item.imageUrl,
