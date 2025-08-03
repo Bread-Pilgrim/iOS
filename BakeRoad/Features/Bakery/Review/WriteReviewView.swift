@@ -13,6 +13,9 @@ struct WriteReviewView: View {
     @State private var onlyMe = true
     @State private var rating: Double = 2.5
     @State private var reviewContent: String = ""
+    @StateObject private var authManager = PhotoAuthorizationManager()
+    @State private var showPicker = false
+    @State private var selectedImages: [UIImage] = []
     
     var body: some View {
         VStack(spacing: 0) {
@@ -75,7 +78,35 @@ struct WriteReviewView: View {
                         .frame(width: 20, height: 20)
                 )
             } action: {
-                print("사진 추가하기")
+                showPicker = true
+            }
+            .fullScreenCover(isPresented: $showPicker) {
+                MultiPhotoPicker(selectedImages: $selectedImages)
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(selectedImages.indices, id: \.self) { index in
+                        ZStack(alignment: .topTrailing) {
+                            Image(uiImage: selectedImages[index])
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 100, height: 100)
+                                .clipped()
+                                .cornerRadius(12)
+                            
+                            Button(action: {
+                                selectedImages.remove(at: index)
+                            }) {
+                                Image("circleClose")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                            }
+                            .padding(6)
+                        }
+                    }
+                }
+                .padding(.horizontal)
             }
             
             Spacer()
@@ -94,4 +125,31 @@ struct WriteReviewView: View {
 
 #Preview {
     WriteReviewView(bakeryMenus: BakeryMenu.mockData)
+}
+
+import Photos
+
+final class PhotoAuthorizationManager: ObservableObject {
+    @Published var isAuthorized: Bool = false
+
+    init() {
+        checkAuthorization()
+    }
+
+    func checkAuthorization() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+
+        switch status {
+        case .authorized, .limited:
+            isAuthorized = true
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
+                DispatchQueue.main.async {
+                    self.isAuthorized = (newStatus == .authorized || newStatus == .limited)
+                }
+            }
+        default:
+            isAuthorized = false
+        }
+    }
 }

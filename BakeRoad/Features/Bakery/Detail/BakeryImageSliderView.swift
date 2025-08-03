@@ -36,11 +36,6 @@ struct BakeryImageSliderView: View {
                     
                     Spacer()
                     
-                    BakeRoadCircleButton(icon: "share") {
-                        print("공유")
-                    }
-                    .padding(.trailing, 12)
-                    
                     BakeRoadCircleButton(icon: "heart") {
                         print("좋아요")
                     }
