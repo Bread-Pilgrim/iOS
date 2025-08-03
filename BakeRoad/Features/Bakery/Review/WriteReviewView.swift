@@ -79,6 +79,15 @@ struct WriteReviewView: View {
             }
             
             Spacer()
+            
+            BakeRoadSolidButton(title: "작성 완료",
+                                style: .primary,
+                                size: .xlarge,
+                                isDisabled: reviewContent.count < 10) {
+                print("작성 완료")
+            }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 24)
         }
     }
 }
