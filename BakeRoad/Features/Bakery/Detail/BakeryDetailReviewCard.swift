@@ -48,7 +48,7 @@ struct BakeryDetailReviewCard: View {
                     
                     Spacer()
                     
-                    Image("reviewStar")
+                    Image("fillStar")
                         .resizable()
                         .frame(width: 16, height: 16)
                     Text(String(format: "%.1f", review.averageRating))

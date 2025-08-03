@@ -29,11 +29,19 @@ struct BakeRoadTextButton: View {
     let type: BakeRoadTextButtonType
     let size: BakeRoadTextButtonSize
     let isDisabled: Bool?
-    let leadingIcon: Image?
-    let trailingIcon: Image?
+    let leadingIcon: (() -> AnyView)?
+    let trailingIcon: (() -> AnyView)?
     let action: () -> Void
-    
-    init(title: String, type: BakeRoadTextButtonType, size: BakeRoadTextButtonSize, isDisabled: Bool? = false, leadingIcon: Image? = nil, trailingIcon: Image? = nil, action: @escaping () -> Void) {
+
+    init(
+        title: String,
+        type: BakeRoadTextButtonType,
+        size: BakeRoadTextButtonSize,
+        isDisabled: Bool? = false,
+        leadingIcon: (() -> AnyView)? = nil,
+        trailingIcon: (() -> AnyView)? = nil,
+        action: @escaping () -> Void
+    ) {
         self.title = title
         self.type = type
         self.size = size
@@ -47,7 +55,7 @@ struct BakeRoadTextButton: View {
         Button(action: action) {
             HStack(spacing: 4) {
                 if let leadingIcon = leadingIcon {
-                    leadingIcon
+                    leadingIcon()
                 }
 
                 Text(title)
@@ -55,7 +63,7 @@ struct BakeRoadTextButton: View {
                     .foregroundColor(foregroundColor)
 
                 if let trailingIcon = trailingIcon {
-                    trailingIcon
+                    trailingIcon()
                 }
             }
             .padding()

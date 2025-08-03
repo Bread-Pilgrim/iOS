@@ -40,7 +40,7 @@ struct DetailReviewSection: View {
                 Spacer()
                 
                 if selectedTab == .home {
-                    Image("reviewStar")
+                    Image("fillStar")
                         .resizable()
                         .frame(width: 20, height: 20)
                         .padding(.trailing, 5)
@@ -63,7 +63,7 @@ struct DetailReviewSection: View {
             
             if !reviews.isEmpty && selectedTab == .review && selectedReviewType == 0 {
                 HStack(spacing: 0) {
-                    Image("reviewStar")
+                    Image("fillStar")
                         .resizable()
                         .frame(width: 20, height: 20)
                         .padding(.trailing, 5)

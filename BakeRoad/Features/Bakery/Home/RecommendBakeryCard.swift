@@ -30,7 +30,7 @@ struct RecommendBakeryCard: View {
                 .foregroundColor(.gray990)
             
             HStack(spacing: 0) {
-                Image("reviewStar")
+                Image("fillStar")
                     .resizable()
                     .frame(width: 14, height: 14)
                 Text(String(format: "%.1f", recommendBakery.avgRating))

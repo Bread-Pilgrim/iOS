@@ -167,16 +167,6 @@ struct QuantitySelector: View {
     }
 }
 
-struct MenuSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuSelectionView(menus: [
-            BakeryMenu(id: 1, name: "꿀고구마 휘낭시에", isSignature: true),
-            BakeryMenu(id: 2, name: "초코 휘낭시에", isSignature: false),
-            BakeryMenu(id: 3, name: "여기에 없어요 😶", isSignature: false)
-        ])
-    }
-}
-
 #Preview {
-    MenuSelectionView_Previews.previews
+    MenuSelectionView(menus: BakeryMenu.mockData)
 }

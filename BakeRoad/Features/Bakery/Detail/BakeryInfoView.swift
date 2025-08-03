@@ -17,7 +17,7 @@ struct BakeryInfoView: View {
                     .font(.bodyXlargeSemibold)
                 
                 HStack(spacing: 2) {
-                    Image("reviewStar")
+                    Image("fillStar")
                         .resizable()
                         .frame(width: 16, height: 16)
                     Text("\(String(format: "%.1f", bakery.rating))")
