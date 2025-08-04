@@ -11,13 +11,11 @@ struct GetPreferencesResponseDTO: Decodable {
     let breadType: [PreferenceTypeDTO]
     let flavor: [PreferenceTypeDTO]
     let atmosphere: [PreferenceTypeDTO]
-    let cArea: [PreferenceTypeDTO]
 
     enum CodingKeys: String, CodingKey {
         case breadType = "bread_type"
         case flavor
         case atmosphere
-        case cArea = "c_area"
     }
 }
 
