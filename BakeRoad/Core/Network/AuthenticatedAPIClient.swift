@@ -21,10 +21,12 @@ final class AuthenticatedAPIClientImpl: APIClient {
     }
     
     func request<T: Decodable>(_ request: APIRequest, responseType: T.Type) async throws -> T {
-        guard let access = tokenStore.accessToken,
-              let refresh = tokenStore.refreshToken,
-              !access.isEmpty, !refresh.isEmpty else {
-            throw TokenError.tokenNotFound
+        if request.customHeaders == nil {
+            guard let access = tokenStore.accessToken,
+                  let refresh = tokenStore.refreshToken,
+                  !access.isEmpty, !refresh.isEmpty else {
+                throw TokenError.tokenNotFound
+            }
         }
         
         return try await apiService.request(request, responseType: responseType)

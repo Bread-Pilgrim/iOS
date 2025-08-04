@@ -21,6 +21,11 @@ struct BakeRoadApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(coordinator)
+                .onOpenURL { url in
+                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                        AuthController.handleOpenUrl(url: url)
+                    }
+                }
         }
     }
 }
