@@ -8,7 +8,7 @@
 import Foundation
 
 enum LoginType: String, Encodable {
-    case kakao
+    case KAKAO
 }
 
 struct LoginRequestDTO: Encodable {
