@@ -14,7 +14,7 @@ final class APIService {
     private let session: Session
     private let tokenStore: TokenStore
     
-    private init(tokenStore: TokenStore = KeychainTokenStore()) {
+    private init(tokenStore: TokenStore = UserDefaultsTokenStore()) {
         let interceptor = AuthInterceptor(tokenStore: tokenStore)
         self.session = Session(interceptor: interceptor)
         self.tokenStore = tokenStore

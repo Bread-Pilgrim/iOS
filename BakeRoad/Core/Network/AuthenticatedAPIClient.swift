@@ -15,7 +15,7 @@ final class AuthenticatedAPIClientImpl: APIClient {
     private let apiService: APIService
     private let tokenStore: TokenStore
     
-    init(apiService: APIService = .shared, tokenStore: TokenStore = KeychainTokenStore()) {
+    init(apiService: APIService = .shared, tokenStore: TokenStore = UserDefaultsTokenStore()) {
         self.apiService = apiService
         self.tokenStore = tokenStore
     }

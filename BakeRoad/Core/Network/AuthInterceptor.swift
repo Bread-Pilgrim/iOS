@@ -11,7 +11,7 @@ import Alamofire
 final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
     private let tokenStore: TokenStore
 
-    init(tokenStore: TokenStore = KeychainTokenStore()) {
+    init(tokenStore: TokenStore = UserDefaultsTokenStore()) {
         self.tokenStore = tokenStore
     }
 
