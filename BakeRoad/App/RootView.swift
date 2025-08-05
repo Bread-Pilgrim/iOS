@@ -32,12 +32,12 @@ extension RootView {
             loginUseCase: AppDependency.shared.loginUseCase,
             coordinator: coordinator
         ))
-        
     }
     
     private var onboarding: some View {
-        OnboardingView(viewModel: OnboardingViewModel(
-            getPreferenceOptionsUseCase: AppDependency.shared.getPreferenceOptionsUseCase
+        OnboardingFlowView(viewModel: OnboardingViewModel(
+            getPreferenceOptionsUseCase: AppDependency.shared.getPreferenceOptionsUseCase,
+            userOnboardUseCase: AppDependency.shared.userOnboardUseCase
         ))
     }
 }

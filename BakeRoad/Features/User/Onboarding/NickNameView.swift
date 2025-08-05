@@ -7,28 +7,13 @@
 
 import SwiftUI
 
-struct NickNameView: View {    
-    var body: some View {
-        NavigationStack {
-            NickNameSetView()
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: {
-                            // 뒤로가기 또는 커스텀 액션
-                        }) {
-                            Image("arrowLeft")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                        }
-                    }
-                }
-        }
-    }
-}
-
-struct NickNameSetView: View {
+struct NickNameView: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+    var onComplete: () -> Void
+    
     @State private var nickname: String = ""
     @State private var isCheckMsg: String = ""
+    @FocusState private var isTextFieldFocused: Bool
     
     private var isValid: Bool {
         nickname.trimmingCharacters(in: .whitespaces).isEmpty ||
@@ -58,6 +43,7 @@ struct NickNameSetView: View {
                                   showDescription: false,
                                   isEssential: false,
                                   text: $nickname)
+                .focused($isTextFieldFocused)
                 .padding(.bottom, 4)
                 
                 if !isCheckMsg.isEmpty {
@@ -74,15 +60,14 @@ struct NickNameSetView: View {
                                 style: .primary,
                                 size: .xlarge,
                                 isDisabled: isValid) {
-                print("기릿")
+                Task {
+                    await viewModel.submitOnboarding(nickname)
+                    onComplete()
+                }
             }
         }
         .padding(.top, 11)
         .padding(.bottom, 24)
         .padding(.horizontal, 16)
     }
-}
-
-#Preview {
-    NickNameView()
 }

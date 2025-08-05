@@ -23,7 +23,7 @@ struct BakeRoadApp: App {
                 .environmentObject(coordinator)
                 .onOpenURL { url in
                     if (AuthApi.isKakaoTalkLoginUrl(url)) {
-                        AuthController.handleOpenUrl(url: url)
+                        let _ = AuthController.handleOpenUrl(url: url)
                     }
                 }
         }

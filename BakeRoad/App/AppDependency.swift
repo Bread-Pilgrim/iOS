@@ -19,15 +19,17 @@ final class AppDependency {
     let loginRepository: LoginRepository
     let verifyTokenRepository: VerifyTokenRepository
     let preferenceRepository: PreferenceRepository
+    let userOnboardRepository: UserOnboardRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
     let verifyTokenUseCase: VerifyTokenUseCase
     let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
+    let userOnboardUseCase: UserOnboardUseCase
     
     private init() {
         // 네트워크/토큰 관련
-        self.tokenStore = KeychainTokenStore()
+        self.tokenStore = UserDefaultsTokenStore()
         let apiService = APIService.shared
         
         self.authenticatedClient = AuthenticatedAPIClientImpl(apiService: apiService, tokenStore: tokenStore)
@@ -45,9 +47,12 @@ final class AppDependency {
         
         self.preferenceRepository = PreferenceRepositoryImpl(apiClient: authenticatedClient)
         
+        self.userOnboardRepository = UserOnboardRepositoryImpl(apiClient: authenticatedClient)
+        
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
         self.verifyTokenUseCase = VerifyTokenUseCaseImpl(repository: verifyTokenRepository)
         self.getPreferenceOptionsUseCase = GetPreferenceOptionsUseCaseImpl(repository: preferenceRepository)
+        self.userOnboardUseCase = UserOnboardUseCaseImpl(repository: userOnboardRepository)
     }
 }

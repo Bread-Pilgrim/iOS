@@ -23,7 +23,7 @@ final class LoginRepositoryImpl: LoginRepository {
         let request = APIRequest(
             path: AuthEndpoint.login,
             method: .post,
-            parameters: LoginRequestDTO(loginType: .kakao),
+            parameters: LoginRequestDTO(loginType: .KAKAO),
             customHeaders: ["access-token": kakaoAccessToken]
         )
         

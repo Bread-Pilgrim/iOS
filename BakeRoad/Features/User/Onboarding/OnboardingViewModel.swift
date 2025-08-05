@@ -39,9 +39,14 @@ final class OnboardingViewModel: ObservableObject {
     }
     
     private let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
+    private let userOnboardUseCase: UserOnboardUseCase
     
-    init(getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase) {
+    init(
+        getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase,
+        userOnboardUseCase: UserOnboardUseCase
+    ) {
         self.getPreferenceOptionsUseCase = getPreferenceOptionsUseCase
+        self.userOnboardUseCase = userOnboardUseCase
         Task {
             await fetchPreferences()
         }
@@ -50,7 +55,21 @@ final class OnboardingViewModel: ObservableObject {
     func fetchPreferences() async {
         do {
             allOptions = try await getPreferenceOptionsUseCase.execute()
-            print(allOptions)
+        } catch {
+            print("\(error)")
+        }
+    }
+    
+    func submitOnboarding(_ nickName: String) async {
+        let dto = UserOnboardRequestDTO(
+                   nickname: nickName,
+                   bread_types: selections[.breadType]?.map(\.id) ?? [],
+                   flavors: selections[.flavor]?.map(\.id) ?? [],
+                   atmospheres: selections[.atmosphere]?.map(\.id) ?? []
+        )
+        
+        do {
+            try await userOnboardUseCase.execute(dto)
         } catch {
             print("\(error)")
         }

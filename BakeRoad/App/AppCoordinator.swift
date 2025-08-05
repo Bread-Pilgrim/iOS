@@ -25,4 +25,8 @@ final class AppCoordinator: ObservableObject {
     func showOnboarding() {
         route = .onboarding
     }
+    
+    func showMain() {
+        route = .main
+    }
 }
