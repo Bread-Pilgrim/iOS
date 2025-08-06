@@ -8,5 +8,5 @@
 import Foundation
 
 protocol BakeryRepository {
-    func getRecommendBakeries(_ type: RecommendBakeryType) async throws -> [RecommendBakery]
+    func getRecommendBakeries(_ type: RecommendBakeryType, areaCode: String) async throws -> [RecommendBakery]
 }

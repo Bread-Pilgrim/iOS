@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject private var viewModel = HomeViewModel()
+    @StateObject private var viewModel: HomeViewModel
     
     var body: some View {
         HeaderView {
@@ -51,7 +51,7 @@ struct HomeView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(RecommendBakery.mockData, id: \.id) { recommendBakery in
+                        ForEach(viewModel.preferenceBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
                         }
                     }
@@ -76,7 +76,7 @@ struct HomeView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(RecommendBakery.mockData, id: \.id) { recommendBakery in
+                        ForEach(viewModel.hotBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
                         }
                     }
@@ -92,7 +92,6 @@ struct HomeView: View {
                 .padding(.top, 40)
                 
                 TourCategorySelectionView(
-                    categories: viewModel.allCategories,
                     selectedIDs: viewModel.selectedCategoryCodes,
                     onToggle: viewModel.toggleCategory
                 )
@@ -126,8 +125,4 @@ struct HomeView: View {
             )
         )
     }
-}
-
-#Preview {
-    HomeView()
 }

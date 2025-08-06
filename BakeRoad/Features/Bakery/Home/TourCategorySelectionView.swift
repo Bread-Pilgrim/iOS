@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TourCategorySelectionView: View {
-    let categories: [TourCategory]
+    let categories = TourCategory.allCases
     let selectedIDs: Set<String>
     let onToggle: (String) -> Void
 

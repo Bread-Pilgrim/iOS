@@ -8,7 +8,7 @@
 import Foundation
 
 protocol GetBakeriesUseCase {
-    func execute(_ type: RecommendBakeryType) async throws -> [RecommendBakery]
+    func execute(_ type: RecommendBakeryType, areaCode: String) async throws -> [RecommendBakery]
 }
 
 final class GetBakeriesUseCaseImpl: GetBakeriesUseCase {
@@ -18,8 +18,7 @@ final class GetBakeriesUseCaseImpl: GetBakeriesUseCase {
         self.repository = repository
     }
 
-    func execute(_ type: RecommendBakeryType) async throws -> [RecommendBakery] {
-        return try await repository.getRecommendBakeries(type)
+    func execute(_ type: RecommendBakeryType, areaCode: String) async throws -> [RecommendBakery] {
+        return try await repository.getRecommendBakeries(type, areaCode: areaCode)
     }
 }
-

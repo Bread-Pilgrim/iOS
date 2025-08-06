@@ -14,10 +14,11 @@ final class BakeryRepositoryImpl: BakeryRepository {
         self.apiClient = apiClient
     }
     
-    func getRecommendBakeries(_ type: RecommendBakeryType) async throws -> [RecommendBakery] {
+    func getRecommendBakeries(_ type: RecommendBakeryType, areaCode: String) async throws -> [RecommendBakery] {
         let request = APIRequest(
             path: type.endpoint,
-            method: .get
+            method: .get,
+            parameters: ["area_code": areaCode]
         )
         
         let dto = try await apiClient.request(request, responseType: BakeriesRecommendResponseDTO.self)
