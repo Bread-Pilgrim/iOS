@@ -14,9 +14,11 @@ final class HomeViewModel: ObservableObject {
     @Published var allAreas: [Area] = []
     @Published var preferenceBakeries: [RecommendBakery] = []
     @Published var hotBakeries: [RecommendBakery] = []
+    @Published var tourInfoList: [TourInfo] = []
     
     private let getAreaListUseCase: GetAreaListUseCase
     private let getBakeriesUseCase: GetBakeriesUseCase
+    private let getTourListUseCase: GetTourListUseCase
     
     private var areaCodes: String {
         selectedAreaCodes
@@ -24,17 +26,25 @@ final class HomeViewModel: ObservableObject {
             .joined(separator: ", ")
     }
     
+    private var tourCatCodes: String {
+        selectedCategoryCodes
+            .joined(separator: ", ")
+    }
+    
     init(
         getAreaListUseCase: GetAreaListUseCase,
-        getBakeriesUseCase: GetBakeriesUseCase
+        getBakeriesUseCase: GetBakeriesUseCase,
+        getTourListUseCase: GetTourListUseCase
     ) {
         self.getAreaListUseCase = getAreaListUseCase
         self.getBakeriesUseCase = getBakeriesUseCase
+        self.getTourListUseCase = getTourListUseCase
         
         Task {
             allAreas = await getAreaList()
             preferenceBakeries = await getBakeries(.preference)
             hotBakeries = await getBakeries(.hot)
+            tourInfoList = await getTourList()
         }
     }
     
@@ -49,6 +59,14 @@ final class HomeViewModel: ObservableObject {
     func getBakeries(_ type: RecommendBakeryType) async -> [RecommendBakery] {
         do {
             return try await getBakeriesUseCase.execute(type, areaCode: areaCodes)
+        } catch {
+            return []
+        }
+    }
+    
+    func getTourList() async -> [TourInfo] {
+        do {
+            return try await getTourListUseCase.execute(areaCodes: areaCodes, tourCatCodes: tourCatCodes)
         } catch {
             return []
         }
