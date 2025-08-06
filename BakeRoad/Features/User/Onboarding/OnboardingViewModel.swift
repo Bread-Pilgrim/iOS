@@ -52,7 +52,7 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
     
-    func fetchPreferences() async {
+    private func fetchPreferences() async {
         do {
             allOptions = try await getPreferenceOptionsUseCase.execute()
         } catch {

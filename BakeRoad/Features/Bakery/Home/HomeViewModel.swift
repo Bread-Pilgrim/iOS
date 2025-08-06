@@ -11,6 +11,8 @@ import Foundation
 final class HomeViewModel: ObservableObject {
     @Published var selectedAreaCodes: Set<Int> = [14]
     @Published var selectedCategoryCodes: Set<String> = ["A01"]
+    @Published var preferenceBakeries: [RecommendBakery] = []
+    @Published var hotBakeries: [RecommendBakery] = []
     
     let allAreas: [Area] = [
         Area(code: 14, name: "부산 전체"),
@@ -28,6 +30,30 @@ final class HomeViewModel: ObservableObject {
         TourCategory(id: "A04", title: "쇼핑"),
         TourCategory(id: "C01", title: "추천코스")
     ]
+    
+    private let getBakeriesUseCase: GetBakeriesUseCase
+    
+    init(
+        selectedAreaCodes: Set<Int>,
+        selectedCategoryCodes: Set<String>,
+        getBakeriesUseCase: GetBakeriesUseCase
+    ) {
+        self.selectedAreaCodes = selectedAreaCodes
+        self.selectedCategoryCodes = selectedCategoryCodes
+        self.getBakeriesUseCase = getBakeriesUseCase
+        Task {
+            preferenceBakeries = await getBakeries(.preference)
+            hotBakeries = await getBakeries(.hot)
+        }
+    }
+    
+    private func getBakeries(_ type: RecommendBakeryType) async -> [RecommendBakery] {
+        do {
+            return try await getBakeriesUseCase.execute(type)
+        } catch {
+            return []
+        }
+    }
     
     func toggleArea(_ id: Int) {
         if id == 14 {
