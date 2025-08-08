@@ -21,7 +21,7 @@ enum RecommendBakeryType: String {
     }
 }
 
-struct RecommendBakery {
+struct RecommendBakery: Identifiable {
     let id: Int
     let name: String
     let avgRating: Double

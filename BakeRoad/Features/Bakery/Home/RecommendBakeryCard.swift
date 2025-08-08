@@ -47,14 +47,3 @@ struct RecommendBakeryCard: View {
         }
     }
 }
-
-#Preview {
-    ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 16) {
-            ForEach(RecommendBakery.mockData, id: \.id) { recommendBakery in
-                RecommendBakeryCard(recommendBakery: recommendBakery)
-            }
-        }
-        .padding()
-    }
-}
