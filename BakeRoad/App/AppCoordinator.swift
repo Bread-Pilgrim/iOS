@@ -15,18 +15,23 @@ final class AppCoordinator: ObservableObject {
         case onboarding
         case main
     }
-
+    
     @Published var route: Route = .splash
-
+    
+    @Published var mainCoordinator: MainCoordinator?
+    
+    let dependency: AppDependency = .shared
+    
     func showLogin() {
         route = .login
     }
-
+    
     func showOnboarding() {
         route = .onboarding
     }
     
     func showMain() {
+        mainCoordinator = MainCoordinator(dependency: dependency)
         route = .main
     }
 }
