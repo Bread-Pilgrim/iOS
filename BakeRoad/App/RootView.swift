@@ -15,7 +15,7 @@ struct RootView: View {
         case .splash: splash
         case .login: login
         case .onboarding: onboarding
-        case .main: splash
+        case .main: home
         }
     }
 }
@@ -39,5 +39,12 @@ extension RootView {
             getPreferenceOptionsUseCase: AppDependency.shared.getPreferenceOptionsUseCase,
             userOnboardUseCase: AppDependency.shared.userOnboardUseCase
         ))
+    }
+    
+    private var home: some View {
+        HomeView(viewModel: HomeViewModel(
+            getAreaListUseCase: AppDependency.shared.getAreaListUseCase,
+            getBakeriesUseCase: AppDependency.shared.getBakeriesUseCase,
+            getTourListUseCase: AppDependency.shared.getTourListUseCase))
     }
 }

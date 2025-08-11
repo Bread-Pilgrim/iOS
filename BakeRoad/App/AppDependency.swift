@@ -20,12 +20,18 @@ final class AppDependency {
     let verifyTokenRepository: VerifyTokenRepository
     let preferenceRepository: PreferenceRepository
     let userOnboardRepository: UserOnboardRepository
+    let areasRepository: AreasRepository
+    let bakeryRepository: BakeryRepository
+    let tourRepository: TourRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
     let verifyTokenUseCase: VerifyTokenUseCase
     let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
     let userOnboardUseCase: UserOnboardUseCase
+    let getAreaListUseCase: GetAreaListUseCase
+    let getBakeriesUseCase: GetBakeriesUseCase
+    let getTourListUseCase: GetTourListUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -40,19 +46,22 @@ final class AppDependency {
             apiClient: authenticatedClient,
             kakaoLoginService: kakaoLoginService
         )
-        
         self.verifyTokenRepository = VerifyTokenRepositoryImpl(
             apiClient: authenticatedClient
         )
-        
         self.preferenceRepository = PreferenceRepositoryImpl(apiClient: authenticatedClient)
-        
         self.userOnboardRepository = UserOnboardRepositoryImpl(apiClient: authenticatedClient)
+        self.areasRepository = AreasRepositoryImpl(apiClient: authenticatedClient)
+        self.bakeryRepository = BakeryRepositoryImpl(apiClient: authenticatedClient)
+        self.tourRepository = TourRepositoryImpl(apiClient: authenticatedClient)
         
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
         self.verifyTokenUseCase = VerifyTokenUseCaseImpl(repository: verifyTokenRepository)
         self.getPreferenceOptionsUseCase = GetPreferenceOptionsUseCaseImpl(repository: preferenceRepository)
         self.userOnboardUseCase = UserOnboardUseCaseImpl(repository: userOnboardRepository)
+        self.getAreaListUseCase = GetAreaListUseCaseImpl(repository: areasRepository)
+        self.getBakeriesUseCase = GetBakeriesUseCaseImpl(repository: bakeryRepository)
+        self.getTourListUseCase = GetTourListUseCaseImpl(repository: tourRepository)
     }
 }
