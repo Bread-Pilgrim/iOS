@@ -15,7 +15,7 @@ struct RootView: View {
         case .splash: splash
         case .login: login
         case .onboarding: onboarding
-        case .main: home
+        case .main: main
         }
     }
 }
@@ -41,10 +41,14 @@ extension RootView {
         ))
     }
     
-    private var home: some View {
-        HomeView(viewModel: HomeViewModel(
-            getAreaListUseCase: AppDependency.shared.getAreaListUseCase,
-            getBakeriesUseCase: AppDependency.shared.getBakeriesUseCase,
-            getTourListUseCase: AppDependency.shared.getTourListUseCase))
+    private var main: some View {
+        Group {
+            if let mainCoor = coordinator.mainCoordinator {
+                MainView()
+                    .environmentObject(mainCoor)
+            } else {
+                Color.clear.onAppear { coordinator.showMain() }
+            }
+        }
     }
 }
