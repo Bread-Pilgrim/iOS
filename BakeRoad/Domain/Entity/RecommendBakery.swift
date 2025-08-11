@@ -28,6 +28,5 @@ struct RecommendBakery: Identifiable {
     let reviewCount: Int
     let openStatus: String
     let imgUrl: String
-    let isLike: Bool
     let commercialAreaId: Int
 }

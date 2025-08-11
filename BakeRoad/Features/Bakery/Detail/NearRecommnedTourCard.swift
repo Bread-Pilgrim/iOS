@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NearRecommnedTourCard: View {
-    let tour: TourItem
+    let tour: TourInfo
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -41,8 +41,4 @@ struct NearRecommnedTourCard: View {
         }
         .frame(width: 100)
     }
-}
-
-#Preview {
-    NearRecommnedTourCard(tour: TourItem.mockData.first!)
 }

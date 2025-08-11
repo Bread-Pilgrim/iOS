@@ -20,6 +20,7 @@ struct MainView: View {
                 case .my:        myTab
                 }
             }
+            .padding(.bottom, 72)
         }
         .overlay(alignment: .bottom) {
             CustomTabBar(

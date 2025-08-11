@@ -99,7 +99,7 @@ struct HomeView: View {
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 20) {
-                        ForEach(TourItem.mockData, id: \.title) { item in
+                        ForEach(viewModel.tourInfoList) { item in
                             RecommendTourCard(
                                 title: item.title,
                                 address: item.address,
@@ -124,5 +124,6 @@ struct HomeView: View {
                 endPoint: .bottom
             )
         )
+        .padding(.bottom, 28)
     }
 }

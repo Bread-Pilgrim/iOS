@@ -12,18 +12,12 @@ struct RecommendBakeryCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            ZStack(alignment: .topTrailing) {
-                BakeryImageView(
-                    imageUrl: recommendBakery.imgUrl,
-                    placeholder: .ratio1_1
-                )
-                .frame(width: 116, height: 116)
-                .cornerRadius(12)
-                
-                Image(systemName: recommendBakery.isLike ? "heart.fill" : "heart")
-                    .foregroundColor(.white)
-                    .padding(8)
-            }
+            BakeryImageView(
+                imageUrl: recommendBakery.imgUrl,
+                placeholder: .ratio1_1
+            )
+            .frame(width: 116, height: 116)
+            .cornerRadius(12)
             
             Text(recommendBakery.name)
                 .font(.bodyXsmallSemibold)

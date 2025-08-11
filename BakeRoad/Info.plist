@@ -26,5 +26,16 @@
 		<string>Pretendard-Regular.otf</string>
 		<string>Pretendard-SemiBold.otf</string>
 	</array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSExceptionDomains</key>
+      <dict>
+        <key>tong.visitkorea.or.kr</key>
+        <dict>
+          <key>NSIncludesSubdomains</key><true/>
+          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
+        </dict>
+      </dict>
+    </dict>
 </dict>
 </plist>

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailTourSection: View {
-    let tours: [TourItem]
+    let tours: [TourInfo]
     @Binding var selectedTab: DetailTab
     
     var body: some View {
@@ -53,8 +53,4 @@ struct DetailTourSection: View {
         .padding(.horizontal, 16)
         .id(DetailTab.tour)
     }
-}
-
-#Preview {
-    DetailTourSection(tours: TourItem.mockData, selectedTab: .constant(.tour))
 }

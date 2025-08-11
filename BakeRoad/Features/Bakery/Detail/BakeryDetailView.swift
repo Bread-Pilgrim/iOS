@@ -33,7 +33,7 @@ enum DetailTab: String, CaseIterable {
 struct BakeryDetailView: View {
     let bakeryDetail: BakeryDetail
     let bakeryReviewList: [BakeryReview]
-    let nearRecommendTour: [TourItem]
+    let nearRecommendTour: [TourInfo]
     
     @State private var selectedTab: DetailTab = .home
     
@@ -96,12 +96,4 @@ struct BakeryDetailView: View {
         .padding(.horizontal, 16)
         .background(Color.white)
     }
-}
-
-#Preview {
-    BakeryDetailView(
-        bakeryDetail: BakeryDetail.mockData,
-        bakeryReviewList: BakeryReview.mocks,
-        nearRecommendTour: TourItem.mockData
-    )
 }

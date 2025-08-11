@@ -14,7 +14,6 @@ struct BakeryRecommendResponseDTO: Decodable {
     let bakeryName: String
     let openStatus: String
     let imgURL: String
-    let isLike: Bool
     let avgRating: Double
     let reviewCount: Int
     let commercialAreaID: Int
@@ -24,7 +23,6 @@ struct BakeryRecommendResponseDTO: Decodable {
         case bakeryName = "bakery_name"
         case openStatus = "open_status"
         case imgURL = "img_url"
-        case isLike = "is_like"
         case avgRating = "avg_rating"
         case reviewCount = "review_count"
         case commercialAreaID = "commercial_area_id"
@@ -40,7 +38,6 @@ extension BakeryRecommendResponseDTO {
             reviewCount: reviewCount,
             openStatus: openStatus,
             imgUrl: imgURL,
-            isLike: isLike,
             commercialAreaId: commercialAreaID
         )
     }

@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct TourInfo {
+struct TourInfo: Identifiable {
+    let id = UUID()
     let title: String
     let address: String
     let imageUrl: String

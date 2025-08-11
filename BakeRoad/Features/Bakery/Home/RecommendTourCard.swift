@@ -19,6 +19,9 @@ struct RecommendTourCard: View {
                 imageUrl: imageUrl,
                 placeholder: .ratio16_9
             )
+            .aspectRatio(16/9, contentMode: .fit)
+            .cornerRadius(12)
+            .clipped()
             .frame(maxWidth: .infinity)
             
             VStack(alignment: .leading, spacing: 4) {
@@ -43,23 +46,4 @@ struct RecommendTourCard: View {
             }
         }
     }
-}
-
-#Preview {
-    @Previewable
-    @State var items = TourItem.mockData
-    
-    ScrollView {
-        VStack(spacing: 20) {
-            ForEach(items, id: \.title) { item in
-                RecommendTourCard(
-                    title: item.title,
-                    address: item.address,
-                    imageUrl: item.imageUrl,
-                    categoryName: item.categoryName
-                )
-            }
-        }
-    }
-    .padding(.horizontal, 16)
 }
