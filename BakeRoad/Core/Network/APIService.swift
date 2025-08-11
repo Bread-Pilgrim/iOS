@@ -5,6 +5,7 @@
 //  Created by 이현호 on 7/2/25.
 //
 
+import Foundation
 import Alamofire
 
 final class APIService {
@@ -43,15 +44,26 @@ final class APIService {
             encoding: request.method == .get ? URLEncoding.default : JSONEncoding.default,
             headers: headers
         )
-            .validate()
         
-        let baseResponse = try await withCheckedThrowingContinuation { continuation in
-            dataTask.responseDecodable(of: BaseResponse<T>.self) { response in
+        let baseResponse: BaseResponse<T> = try await withCheckedThrowingContinuation { continuation in
+            dataTask.responseData { response in
                 switch response.result {
-                case .success(let result):
-                    continuation.resume(returning: result)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
+                case .success(let data):
+                    do {
+                        let decoded = try JSONDecoder().decode(BaseResponse<T>.self, from: data)
+                        continuation.resume(returning: decoded)
+                    } catch {
+                        continuation.resume(throwing: APIError.decoding)
+                    }
+                case .failure(let afError):
+                    if let data = response.data,
+                       let decoded = try? JSONDecoder().decode(BaseResponse<T>.self, from: data) {
+                        continuation.resume(
+                            throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
+                        )
+                    } else {
+                        continuation.resume(throwing: APIError.network(afError))
+                    }
                 }
             }
         }
@@ -61,14 +73,14 @@ final class APIService {
             tokenStore.refreshToken = token.refreshToken
         }
         
-        if baseResponse.statusCode != 200 {
-            throw APIError.serverError(message: baseResponse.message)
+        guard baseResponse.statusCode == 200 else {
+            throw APIError.serverError(code: baseResponse.statusCode, message: baseResponse.message)
         }
-
+        
         guard let data = baseResponse.data else {
             throw APIError.emptyData
         }
-
+        
         return data
     }
 }

@@ -20,6 +20,6 @@ final class VerifyTokenRepositoryImpl: VerifyTokenRepository {
             method: .post
         )
         
-        let _ = try await apiClient.request(request, responseType: VerifyTokenResponseDTO.self)
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
     }
 }

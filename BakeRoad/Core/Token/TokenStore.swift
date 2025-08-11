@@ -10,4 +10,5 @@ import Foundation
 protocol TokenStore: AnyObject, Sendable {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
+    var onboardingCompleted: Bool { get set }
 }

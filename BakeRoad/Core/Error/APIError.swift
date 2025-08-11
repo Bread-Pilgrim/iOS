@@ -8,6 +8,8 @@
 import Foundation
 
 enum APIError: Error {
-    case serverError(message: String)
+    case serverError(code: Int, message: String)
     case emptyData
+    case decoding
+    case network(Error)
 }

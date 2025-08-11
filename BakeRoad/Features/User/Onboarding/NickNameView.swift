@@ -60,9 +60,14 @@ struct NickNameView: View {
                                 style: .primary,
                                 size: .xlarge,
                                 isDisabled: isValid) {
-                Task {
-                    await viewModel.submitOnboarding(nickname)
-                    onComplete()
+                Task { @MainActor in
+                    let success = await viewModel.submitOnboarding(nickname)
+                    if success {
+                        onComplete()
+                    } else {
+                        isCheckMsg = viewModel.errorMessage
+                        isTextFieldFocused = true
+                    }
                 }
             }
         }

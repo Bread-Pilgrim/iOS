@@ -11,15 +11,21 @@ import Foundation
 final class SplashViewModel: ObservableObject {
     enum Route {
         case login
+        case onboarding
         case main
     }
     
     @Published var route: Route?
     
     private let verifyTokenUseCase: VerifyTokenUseCase
+    private let tokenStore: TokenStore
     
-    init(verifyTokenUseCase: VerifyTokenUseCase) {
+    init(
+        verifyTokenUseCase: VerifyTokenUseCase,
+        tokenStore: TokenStore = UserDefaultsTokenStore()
+    ) {
         self.verifyTokenUseCase = verifyTokenUseCase
+        self.tokenStore = tokenStore
     }
     
     func onAppear() {
@@ -30,7 +36,7 @@ final class SplashViewModel: ObservableObject {
             do {
                 try await verify
                 try await wait
-                route = .main
+                route = tokenStore.onboardingCompleted ? .main : .onboarding
             } catch {
                 try? await wait
                 route = .login

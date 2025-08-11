@@ -21,19 +21,6 @@ final class UserOnboardRepositoryImpl: UserOnboardRepository {
             parameters: dto
         )
         
-        let _ = try await apiClient.request(request, responseType: EmptyPayload.self)
-    }
-}
-
-struct EmptyPayload: Decodable {
-    init(from decoder: Decoder) throws {
-        // 어떤 형태가 오든( null / "" / {} / [] ) 조용히 무시
-        _ = try? decoder.singleValueContainer()
-        _ = try? decoder.container(keyedBy: DynamicCodingKeys.self)
-        _ = try? decoder.unkeyedContainer()
-    }
-    private struct DynamicCodingKeys: CodingKey {
-        var stringValue: String; init?(stringValue: String) { self.stringValue = stringValue }
-        var intValue: Int?; init?(intValue: Int) { self.intValue = intValue; self.stringValue = "\(intValue)" }
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
     }
 }

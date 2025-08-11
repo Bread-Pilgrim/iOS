@@ -10,11 +10,16 @@ import Foundation
 final class LoginRepositoryImpl: LoginRepository {
     private let apiClient: APIClient
     private let kakaoLoginService: KakaoLoginService
+    private let tokenStore: TokenStore
     
-    init(apiClient: APIClient,
-         kakaoLoginService: KakaoLoginService) {
+    init(
+        apiClient: APIClient,
+        kakaoLoginService: KakaoLoginService,
+        tokenStore: TokenStore = UserDefaultsTokenStore()
+    ) {
         self.apiClient = apiClient
         self.kakaoLoginService = kakaoLoginService
+        self.tokenStore = tokenStore
     }
     
     func loginWithKakao() async throws -> Login {
@@ -30,6 +35,8 @@ final class LoginRepositoryImpl: LoginRepository {
         let dto = try await apiClient.request(request, responseType: LoginReponseDTO.self)
         
         let entity = LoginMapper.map(from: dto)
+        
+        tokenStore.onboardingCompleted = entity.onboardingCompleted
         
         return entity
     }

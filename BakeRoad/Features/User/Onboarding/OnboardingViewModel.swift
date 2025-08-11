@@ -38,6 +38,8 @@ final class OnboardingViewModel: ObservableObject {
         !(selections[currentStep]?.isEmpty ?? true)
     }
     
+    @Published var errorMessage: String = ""
+    
     private let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
     private let userOnboardUseCase: UserOnboardUseCase
     
@@ -60,18 +62,22 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
     
-    func submitOnboarding(_ nickName: String) async {
-        let dto = UserOnboardRequestDTO(
-                   nickname: nickName,
-                   bread_types: selections[.breadType]?.map(\.id) ?? [],
-                   flavors: selections[.flavor]?.map(\.id) ?? [],
-                   atmospheres: selections[.atmosphere]?.map(\.id) ?? []
-        )
-        
+    func submitOnboarding(_ nickName: String) async -> Bool {
         do {
-            try await userOnboardUseCase.execute(dto)
+            try await userOnboardUseCase.execute(.init(
+                nickname: nickName,
+                bread_types: selections[.breadType]?.map(\.id) ?? [],
+                flavors: selections[.flavor]?.map(\.id) ?? [],
+                atmospheres: selections[.atmosphere]?.map(\.id) ?? []
+            ))
+            errorMessage = ""
+            return true
+        } catch let APIError.serverError(code, message) {
+            errorMessage = message
+            return false
         } catch {
-            print("\(error)")
+            errorMessage = "잠시 후 다시 시도해주세요."
+            return false
         }
     }
 }

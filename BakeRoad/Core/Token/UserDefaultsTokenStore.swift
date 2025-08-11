@@ -10,6 +10,7 @@ import Foundation
 final class UserDefaultsTokenStore: TokenStore, @unchecked Sendable {
     private let accessTokenKey = "access-token"
     private let refreshTokenKey = "refresh-token"
+    private let onboardingCompletedKey = "onboarding_completed"
     private let userDefaults = UserDefaults.standard
 
     var accessToken: String? {
@@ -32,5 +33,10 @@ final class UserDefaultsTokenStore: TokenStore, @unchecked Sendable {
                 userDefaults.removeObject(forKey: refreshTokenKey)
             }
         }
+    }
+    
+    var onboardingCompleted: Bool {
+        get { userDefaults.bool(forKey: onboardingCompletedKey) }
+        set { userDefaults.set(newValue, forKey: onboardingCompletedKey) }
     }
 }

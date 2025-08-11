@@ -48,7 +48,7 @@ struct MainView: View {
                     //                        getTourListUseCase: coordinator.dependency.getTourListUseCase,
                     //                        onSelectBakery: { id in coordinator.push(.bakeryDetail(id: id)) }
                     //                    ))
-                case .bakeryDetail(let id):
+                case .bakeryDetail(_):
                     EmptyView()
                     //                    BakeryDetailView(
                     //                        viewModel: BakeryDetailViewModel(
@@ -68,7 +68,7 @@ struct MainView: View {
                     switch screen {
                     case .search:
                         EmptyView()
-                    case .bakeryDetail(let id):
+                    case .bakeryDetail(_):
                         EmptyView()
                     }
                 }
@@ -82,7 +82,7 @@ struct MainView: View {
                     switch screen {
                     case .favorites:
                         EmptyView()
-                    case .bakeryDetail(let id):
+                    case .bakeryDetail(_):
                         EmptyView()
                     }
                 }
@@ -124,11 +124,11 @@ struct CustomTabBar: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
-                .padding(.bottom, 33)
+                .padding(.bottom, 19)
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 86)
+        .frame(height: 72)
     }
     
     private func tab(_ tab: MainCoordinator.Tab,

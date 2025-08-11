@@ -23,8 +23,10 @@ struct SplashView: View {
             .onChange(of: viewModel.route) {
                 guard let route = viewModel.route else { return }
                 switch route {
-                case .main:
+                case .onboarding:
                     coordinator.showOnboarding()
+                case .main:
+                    coordinator.showMain()
                 case .login:
                     coordinator.showLogin()
                 }
