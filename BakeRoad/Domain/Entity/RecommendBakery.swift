@@ -7,20 +7,6 @@
 
 import Foundation
 
-enum RecommendBakeryType: String {
-    case preference
-    case hot
-    
-    var endpoint: String {
-        switch self {
-        case .preference:
-            return BakeryEndPoint.recommendPreferenceList
-        case .hot:
-            return BakeryEndPoint.recommendHotList
-        }
-    }
-}
-
 struct RecommendBakery: Identifiable {
     let id: Int
     let name: String

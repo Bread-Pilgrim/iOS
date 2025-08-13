@@ -11,6 +11,7 @@ enum BakeryOpenStatus: String {
     case open = "O"
     case close = "C"
     case dayOff = "D"
+    case before = "B"
     
     var displayName: String {
         switch self {
@@ -20,6 +21,8 @@ enum BakeryOpenStatus: String {
             return "영업종료"
         case .dayOff:
             return "오늘 휴무"
+        case .before:
+            return "영업전"
         }
     }
 }

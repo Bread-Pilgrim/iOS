@@ -82,7 +82,7 @@ final class HomeViewModel: ObservableObject {
     func getAreaList() async -> [Area] {
         (try? await getAreaListUseCase.execute()) ?? []
     }
-    func getBakeries(_ type: RecommendBakeryType) async -> [RecommendBakery] {
+    func getBakeries(_ type: BakeryType) async -> [RecommendBakery] {
         let result = (try? await getBakeriesUseCase.execute(type, areaCode: areaCodes)) ?? []
         return Array(result.prefix(20))
     }

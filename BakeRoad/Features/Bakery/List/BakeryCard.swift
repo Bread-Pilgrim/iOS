@@ -20,20 +20,10 @@ struct BakeryCard: View {
                 .cornerRadius(12)
                 
                 VStack {
-                    HStack {
-                        Spacer()
-                        Image(systemName: bakery.isLike ? "heart.fill" : "heart")
-                            .foregroundColor(.white)
-                            .padding(8)
-                    }
-                    Spacer()
-                }
-                
-                VStack {
                     Spacer()
                     HStack {
                         BakeryOpenStatusChip(
-                            openStatus: BakeryOpenStatus(rawValue: bakery.openStatus),
+                            openStatus: bakery.openStatus,
                             style: .fill
                         )
                         Spacer()
@@ -80,46 +70,36 @@ struct BakeryCard: View {
     }
 }
 
-#Preview {
-    ScrollView(.vertical, showsIndicators: false) {
-        VStack(alignment: .center, spacing: 16) {
-            ForEach(Bakery.mockData, id: \.id) { bakery in
-                BakeryCard(bakery: bakery)
-                    .frame(height: 126)
-            }
-        }
-        .padding(.horizontal, 16)
-    }
-}
-
-
 struct SignatureMenuChipsView: View {
-    let signatureMenus: [Bakery.SignatureMenu]
+    let signatureMenus: [String]
+    
+    private func chip(_ name: String) -> some View {
+        BakeRoadChip(title: name, color: .lightGray, size: .small, style: .weak)
+    }
     
     var body: some View {
-        // 자동 줄바꿈이 필요한 경우 LazyVGrid, 혹은 Custom FlowLayout 사용 고려
-        VStack(alignment: .leading, spacing: 8) {
-            // 두 줄 예시
+        let menus = Array(signatureMenus.prefix(3))
+        
+        ViewThatFits(in: .horizontal) {
             HStack(spacing: 8) {
-                ForEach(0..<min(2, signatureMenus.count), id: \.self) { index in
-                    BakeRoadChip(
-                        title: signatureMenus[index].menuName,
-                        color: .lightGray,
-                        size: .small,
-                        style: .weak
-                    )
+                ForEach(menus, id: \.self) { chip($0) }
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    ForEach(menus.prefix(2), id: \.self) { chip($0) }
+                }
+                if menus.count > 2 {
+                    HStack(spacing: 8) { chip(menus[2]) }
                 }
             }
-            if signatureMenus.count > 2 {
+            
+            VStack(alignment: .leading, spacing: 8) {
+                if let first = menus.first {
+                    HStack(spacing: 8) { chip(first) }
+                }
                 HStack(spacing: 8) {
-                    ForEach(2..<signatureMenus.count, id: \.self) { index in
-                        BakeRoadChip(
-                            title: signatureMenus[index].menuName,
-                            color: .lightGray,
-                            size: .small,
-                            style: .weak
-                        )
-                    }
+                    ForEach(menus.dropFirst(), id: \.self) { chip($0) }
                 }
             }
         }

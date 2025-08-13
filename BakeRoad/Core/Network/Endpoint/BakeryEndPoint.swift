@@ -8,6 +8,8 @@
 import Foundation
 
 enum BakeryEndPoint {
-    static let recommendPreferenceList = "/bakeries/recommend/preference"
-    static let recommendHotList = "/bakeries/recommend/hot"
+    static let recommendPreference = "/bakeries/recommend/preference"
+    static let recommendHot = "/bakeries/recommend/hot"
+    static let listPreference = "/bakeries/preference"
+    static let listHot = "/bakeries/hot"
 }

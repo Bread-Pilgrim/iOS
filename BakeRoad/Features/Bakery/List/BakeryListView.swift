@@ -8,32 +8,19 @@
 import SwiftUI
 
 struct BakeryListView: View {
-    var bakeries: [Bakery] = Bakery.mockData
-
+    @StateObject var viewModel: BakeryListViewModel
+    @Environment(\.dismiss) private var dismiss
+    
     var body: some View {
         VStack {
-            HeaderView {
-                Button {
-                    print("뒤로가기")
-                } label: {
-                    Image("arrowLeft")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                }
-                .padding(.leading, 14)
-                .padding(.vertical, 16)
-            } centerItem: {
-                Text("내 취향 빵집")
-                    .font(.headingMediumBold)
-                    .foregroundColor(.gray990)
-            }
-
-            // 리스트
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 16) {
-                    ForEach(bakeries, id: \.id) { bakery in
+                LazyVStack(spacing: 16) {
+                    ForEach(viewModel.bakeries) { bakery in
                         BakeryCard(bakery: bakery)
                             .frame(height: 126)
+                            .task {
+                                await viewModel.loadMoreIfNeeded(currentItem: bakery)
+                            }
                     }
                 }
                 .padding(.horizontal, 16)
@@ -42,9 +29,26 @@ struct BakeryListView: View {
             .padding(.top, 16)
         }
         .background(Color.white)
+        .task {
+            await viewModel.loadInitial()
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image("arrowLeft")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+            }
+            
+            ToolbarItem(placement: .principal) {
+                Text("내 취향 빵집")
+                    .font(.headingSmallBold)
+                    .foregroundColor(.gray990)
+            }
+        }
     }
-}
-
-#Preview {
-    BakeryListView()
 }

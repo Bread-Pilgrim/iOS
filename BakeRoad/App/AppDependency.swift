@@ -32,6 +32,7 @@ final class AppDependency {
     let getAreaListUseCase: GetAreaListUseCase
     let getBakeriesUseCase: GetBakeriesUseCase
     let getTourListUseCase: GetTourListUseCase
+    let getBakeryListUseCase: GetBakeryListUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -63,5 +64,6 @@ final class AppDependency {
         self.getAreaListUseCase = GetAreaListUseCaseImpl(repository: areasRepository)
         self.getBakeriesUseCase = GetBakeriesUseCaseImpl(repository: bakeryRepository)
         self.getTourListUseCase = GetTourListUseCaseImpl(repository: tourRepository)
+        self.getBakeryListUseCase = GetBakeryListUseCaseImpl(repository: bakeryRepository)
     }
 }

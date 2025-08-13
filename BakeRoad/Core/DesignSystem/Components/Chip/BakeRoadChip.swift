@@ -9,7 +9,7 @@ import SwiftUI
 
 enum ChipColor {
     case main, sub, gray, lightGray, red, success
-
+    
     var backgroundColor: Color {
         switch self {
         case .main: return Color.primary500
@@ -20,7 +20,7 @@ enum ChipColor {
         case .success: return Color.success500
         }
     }
-
+    
     var weakBackgroundColor: Color {
         switch self {
         case .main: return Color.primary50
@@ -31,7 +31,7 @@ enum ChipColor {
         case .success: return Color.success100
         }
     }
-
+    
     var weakForegroundColor: Color {
         backgroundColor
     }
@@ -39,14 +39,14 @@ enum ChipColor {
 
 enum ChipSize {
     case small, large
-
+    
     var font: Font {
         switch self {
         case .small: return .body3xsmallMedium
         case .large: return .bodyXsmallMedium
         }
     }
-
+    
     var horizontalPadding: CGFloat {
         switch self {
         case .small: return 8
@@ -71,9 +71,11 @@ struct BakeRoadChip: View {
     let color: ChipColor
     let size: ChipSize
     let style: ChipStyle
-
+    
     var body: some View {
         Text(title)
+            .lineLimit(1)
+            .truncationMode(.tail)
             .font(size.font)
             .foregroundColor(style == .fill ? .white : color.weakForegroundColor)
             .padding(.horizontal, size.horizontalPadding)

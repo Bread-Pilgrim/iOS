@@ -37,26 +37,17 @@ struct MainView: View {
                 getAreaListUseCase: coordinator.dependency.getAreaListUseCase,
                 getBakeriesUseCase: coordinator.dependency.getBakeriesUseCase,
                 getTourListUseCase: coordinator.dependency.getTourListUseCase
-                //                onSelectBakery: { id in coordinator.push(.bakeryDetail(id: id)) }
             ))
+            .environmentObject(coordinator)
             .navigationDestination(for: MainCoordinator.HomeScreen.self) { screen in
                 switch screen {
-                case .list:
-                    EmptyView()
-                    //                    HomeView(viewModel: /* 필요 시 루트 재생성 */ HomeViewModel(
-                    //                        getAreaListUseCase: coordinator.dependency.getAreaListUseCase,
-                    //                        getBakeriesUseCase: coordinator.dependency.getBakeriesUseCase,
-                    //                        getTourListUseCase: coordinator.dependency.getTourListUseCase,
-                    //                        onSelectBakery: { id in coordinator.push(.bakeryDetail(id: id)) }
-                    //                    ))
+                case .list(let filter):
+                    BakeryListView(viewModel: BakeryListViewModel(
+                        filter: filter,
+                        getBakeryListUseCase: coordinator.dependency.getBakeryListUseCase
+                    ))
                 case .bakeryDetail(_):
                     EmptyView()
-                    //                    BakeryDetailView(
-                    //                        viewModel: BakeryDetailViewModel(
-                    //                            bakeryID: id,
-                    //                            getBakeryDetailUseCase: coordinator.dependency.getBakeriesUseCase
-                    //                        )
-                    //                    )
                 }
             }
         }

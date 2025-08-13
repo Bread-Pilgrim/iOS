@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    @EnvironmentObject var coordinator: MainCoordinator
     
     var body: some View {
         HeaderView {
@@ -43,7 +44,12 @@ struct HomeView: View {
                         type: .assistive,
                         size: .small
                     ) {
-                        print("전체보기")
+                        coordinator.push(.list(
+                            BakeryListFilter(
+                                type: .preference,
+                                areaCodes: viewModel.selectedAreaCodes
+                            )
+                        ))
                     }
                 }
                 .padding(.horizontal, 16)
@@ -68,7 +74,12 @@ struct HomeView: View {
                         type: .assistive,
                         size: .small
                     ) {
-                        print("전체보기")
+                        coordinator.push(.list(
+                            BakeryListFilter(
+                                type: .hot,
+                                areaCodes: viewModel.selectedAreaCodes
+                            )
+                        ))
                     }
                 }
                 .padding(.horizontal, 16)

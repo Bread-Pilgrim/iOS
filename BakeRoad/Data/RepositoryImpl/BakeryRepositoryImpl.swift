@@ -14,9 +14,9 @@ final class BakeryRepositoryImpl: BakeryRepository {
         self.apiClient = apiClient
     }
     
-    func getRecommendBakeries(_ type: RecommendBakeryType, areaCode: String) async throws -> [RecommendBakery] {
+    func getRecommendBakeries(_ type: BakeryType, areaCode: String) async throws -> [RecommendBakery] {
         let request = APIRequest(
-            path: type.endpoint,
+            path: type.recommendEndpoint,
             method: .get,
             parameters: ["area_code": areaCode]
         )
@@ -24,6 +24,20 @@ final class BakeryRepositoryImpl: BakeryRepository {
         let dto = try await apiClient.request(request, responseType: BakeriesRecommendResponseDTO.self)
         
         let entity = dto.map { $0.toEntity() }
+        
+        return entity
+    }
+    
+    func getBakeryList(_ type: BakeryType, request: BakeryListRequestDTO) async throws -> Page<Bakery> {
+        let request = APIRequest(
+            path: type.listEndPoint,
+            method: .get,
+            parameters: request
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryListResponseDTO.self)
+        
+        let entity = dto.toEntity()
         
         return entity
     }
