@@ -72,7 +72,7 @@ final class OnboardingViewModel: ObservableObject {
             ))
             errorMessage = ""
             return true
-        } catch let APIError.serverError(code, message) {
+        } catch let APIError.serverError(_, message) {
             errorMessage = message
             return false
         } catch {

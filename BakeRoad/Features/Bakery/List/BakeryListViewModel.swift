@@ -35,7 +35,7 @@ final class BakeryListViewModel: ObservableObject {
         do {
             try await fetcher.loadInitial()
             syncState()
-        } catch let APIError.serverError(code, message) {
+        } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
             errorMessage = "잠시 후 다시 시도해주세요."
@@ -46,7 +46,7 @@ final class BakeryListViewModel: ObservableObject {
         do {
             try await fetcher.loadMoreIfNeeded(currentItem: currentItem)
             syncState()
-        } catch let APIError.serverError(code, message) {
+        } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
             errorMessage = "잠시 후 다시 시도해주세요."
