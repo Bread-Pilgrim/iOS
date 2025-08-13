@@ -7,51 +7,31 @@
 
 import Foundation
 
-//@MainActor
-//final class BakeryDetailViewModel: ObservableObject {
-//    @Published var bakeryDetail: BakeryDetail
-//    @Published var errorMessage: String?
-//
-//    init(
-//        id: Int,
-//        getBakeryListUseCase: GetBakeryListUseCase
-//    ) {
-//        self.fetcher = PageFetcher<Bakery>(pageSize: 15) { page, size in
-//            let request = BakeryListRequestDTO(
-//                area_code: filter.areaCodes.map(String.init).joined(separator: ","),
-//                page_no: page,
-//                page_size: size
-//            )
-//            return try await getBakeryListUseCase.execute(filter.type, request: request)
-//        }
-//
-//        Task { await loadInitial() }
-//    }
-//
-//    func loadInitial() async {
-//        do {
-//            try await fetcher.loadInitial()
-//            syncState()
-//        } catch let APIError.serverError(_, message) {
-//            errorMessage = message
-//        } catch {
-//            errorMessage = "잠시 후 다시 시도해주세요."
-//        }
-//    }
-//
-//    func loadMoreIfNeeded(currentItem: Bakery) async {
-//        do {
-//            try await fetcher.loadMoreIfNeeded(currentItem: currentItem)
-//            syncState()
-//        } catch let APIError.serverError(_, message) {
-//            errorMessage = message
-//        } catch {
-//            errorMessage = "잠시 후 다시 시도해주세요."
-//        }
-//    }
-//
-//    private func syncState() {
-//        bakeries = fetcher.page.items
-//        hasNext = fetcher.page.hasNext
-//    }
-//}
+@MainActor
+final class BakeryDetailViewModel: ObservableObject {
+    @Published var bakeryDetail: BakeryDetail
+    @Published var errorMessage: String?
+
+    private let getBakeryDetailUseCase: GetBakeryDetailUseCase
+    
+    init(
+        id: Int,
+        getBakeryDetailUseCase: GetBakeryDetailUseCase
+    ) {
+        self.getBakeryDetailUseCase = getBakeryDetailUseCase
+        Task { await loadInitial(id) }
+    }
+    
+    private func loadInitial(_ id: Int) async {
+        async let detail = getBakeryDetail(id)
+        bakeryDetail = await detail
+    }
+    
+    private func getBakeryDetail(_ id: Int) async -> BakeryDetail {
+        do {
+            return try await getBakeryDetailUseCase.execute(id)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+}
