@@ -28,11 +28,11 @@ final class BakeryRepositoryImpl: BakeryRepository {
         return entity
     }
     
-    func getBakeryList(_ type: BakeryType, request: BakeryListRequestDTO) async throws -> Page<Bakery> {
+    func getBakeryList(_ type: BakeryType, requestDTO: BakeryListRequestDTO) async throws -> Page<Bakery> {
         let request = APIRequest(
             path: type.listEndPoint,
             method: .get,
-            parameters: request
+            parameters: requestDTO
         )
         
         let dto = try await apiClient.request(request, responseType: BakeryListResponseDTO.self)
@@ -41,4 +41,72 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         return entity
     }
+    
+    func getBakeryDetail(_ id: Int) async throws -> BakeryDetail {
+        let request = APIRequest(
+            path: BakeryEndPoint.detail(id),
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryDetailResponseDTO.self)
+        
+        let entity = dto.toEntity()
+        
+        return entity
+    }
+    
+    func getBakeryMenus(_ id: Int) async throws -> [BakeryMenu] {
+        let request = APIRequest(
+            path: BakeryEndPoint.menus(id),
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryMenusDTO.self)
+        
+        let entity = dto.map { $0.toEntity() }
+        
+        return entity
+    }
+    
+    func getBakeryReviews(_ id: Int, requestDTO: BakeryReviewRequestDTO) async throws -> BakeryReviewPage {
+        let request = APIRequest(
+            path: BakeryEndPoint.reviews(id),
+            method: .get,
+            parameters: requestDTO
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryReviewResponseDTO.self)
+        
+        let reviews = dto.reviews.map { $0.toEntity() }
+        
+        let entity = BakeryReviewPage(
+            page: Page(items: reviews,
+                       hasNext: dto.hasNext),
+            data: BakeryReviewData(avgRating: dto.avgRating,
+                                   reviewCount: dto.reviewCount)
+        )
+        
+        return entity
+    }
+    
+//    func getBakeryMyReviews(_ id: Int, requestDTO: BakeryMyReviewRequestDTO) async throws -> BakeryReviewPage {
+//        let request = APIRequest(
+//            path: BakeryEndPoint.myReviews(id),
+//            method: .get,
+//            parameters: requestDTO
+//        )
+//        
+//        let dto = try await apiClient.request(request, responseType: BakeryReviewResponseDTO.self)
+//        
+//        let reviews = dto.reviews.map { $0.toEntity() }
+//        
+//        let entity = BakeryReviewPage(
+//            page: Page(items: reviews,
+//                       hasNext: dto.hasNext),
+//            data: BakeryReviewData(avgRating: dto.avgRating,
+//                                   reviewCount: dto.reviewCount)
+//        )
+//        
+//        return entity
+//    }
 }

@@ -59,6 +59,9 @@ struct HomeView: View {
                     HStack(spacing: 10) {
                         ForEach(viewModel.preferenceBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
+                                .onTapGesture {
+                                    coordinator.push(.bakeryDetail(recommendBakery.id))
+                                }
                         }
                     }
                 }
@@ -89,6 +92,9 @@ struct HomeView: View {
                     HStack(spacing: 10) {
                         ForEach(viewModel.hotBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
+                                .onTapGesture {
+                                    coordinator.push(.bakeryDetail(recommendBakery.id))
+                                }
                         }
                     }
                 }

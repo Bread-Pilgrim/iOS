@@ -19,6 +19,6 @@ final class GetBakeryListUseCaseImpl: GetBakeryListUseCase {
     }
 
     func execute(_ type: BakeryType, request: BakeryListRequestDTO) async throws -> Page<Bakery> {
-        return try await repository.getBakeryList(type, request: request)
+        return try await repository.getBakeryList(type, requestDTO: request)
     }
 }

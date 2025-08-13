@@ -17,9 +17,9 @@ final class MainCoordinator: ObservableObject {
     }
     
     // 탭별 화면 enum
-    enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(id: String) }
-    enum SearchScreen: Hashable { case search, bakeryDetail(id: String) }
-    enum FavoritesScreen: Hashable { case favorites, bakeryDetail(id: String) }
+    enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(_ id: Int) }
+    enum SearchScreen: Hashable { case search, bakeryDetail(id: Int) }
+    enum FavoritesScreen: Hashable { case favorites, bakeryDetail(id: Int) }
     enum MyScreen: Hashable { case my, settings }
     
     @Published var selectedTab: Tab = .home
@@ -42,7 +42,7 @@ final class MainCoordinator: ObservableObject {
     func popHome() { if !homePath.isEmpty { homePath.removeLast() } }
     
     // 탭 교차 이동(예: 홈에서 검색 상세로 직행)
-    func goToSearchDetail(id: String) {
+    func goToSearchDetail(id: Int) {
         selectedTab = .search
         searchPath = NavigationPath()
         searchPath.append(SearchScreen.bakeryDetail(id: id))

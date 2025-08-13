@@ -12,4 +12,20 @@ enum BakeryEndPoint {
     static let recommendHot = "/bakeries/recommend/hot"
     static let listPreference = "/bakeries/preference"
     static let listHot = "/bakeries/hot"
+    
+    static func detail(_ id: Int) -> String {
+        return "/bakeries/\(id)"
+    }
+    static func menus(_ id: Int) -> String {
+        return "/bakeries/\(id)/menus"
+    }
+    static func reviews(_ id: Int) -> String {
+        return "/bakeries/\(id)/reviews"
+    }
+    static func myReviews(_ id: Int) -> String {
+        return "/bakeries/\(id)/my-reviews"
+    }
+    static func canReview(_ id: Int) -> String {
+        return "/bakeries/\(id)/review/eligibility"
+    }
 }

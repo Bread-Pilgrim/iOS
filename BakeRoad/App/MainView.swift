@@ -46,8 +46,8 @@ struct MainView: View {
                         filter: filter,
                         getBakeryListUseCase: coordinator.dependency.getBakeryListUseCase
                     ))
-                case .bakeryDetail(_):
-                    EmptyView()
+                case .bakeryDetail(let id):
+                    
                 }
             }
         }

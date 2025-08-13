@@ -7,13 +7,15 @@
 
 import Foundation
 
-struct MenuDTO: Decodable {
+typealias BakeryMenusDTO = [BakeryMenuDTO]
+
+struct BakeryMenuDTO: Decodable {
     let menu_id: Int
     let menu_name: String
     let is_signature: Bool
 }
 
-extension MenuDTO {
+extension BakeryMenuDTO {
     func toEntity() -> BakeryMenu {
         BakeryMenu(
             id: menu_id,

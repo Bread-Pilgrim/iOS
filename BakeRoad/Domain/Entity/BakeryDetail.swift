@@ -7,13 +7,11 @@
 
 import Foundation
 
-struct BakeryDetail: Equatable {
+struct BakeryDetail: Equatable, Identifiable {
     let id: Int
     let name: String
     let address: String
     let phone: String?
-    let rating: Double
-    let reviewCount: Int
     let openStatus: BakeryOpenStatus
     let operatingHours: [OperatingHour]
     let isLike: Bool
@@ -72,45 +70,4 @@ extension Array where Element == BakeryDetail.OperatingHour {
             return closedDays.joined(separator: ", ") + " 휴무"
         }
     }
-}
-
-extension BakeryDetail {
-    static let mockData = BakeryDetail(
-        id: 1,
-        name: "서라당",
-        address: "서울시 관악구 신사로 120-1 1층 서라당",
-        phone: "010-1234-5678",
-        rating: 4.7,
-        reviewCount: 10023,
-        openStatus: .open,
-        operatingHours: [
-            OperatingHour(dayOfWeek: 0, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 1, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 2, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 3, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 4, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 5, openTime: "10:00", closeTime: "20:00", isOpened: true),
-            OperatingHour(dayOfWeek: 6, openTime: "", closeTime: "", isOpened: false)
-        ],
-        isLike: false,
-        imageUrls: [
-            "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4", // 대표 이미지
-            "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe",
-            "https://images.unsplash.com/photo-1578985545062-69928b1d9587"
-        ],
-        menus: [
-            BakeryDetail.BakeryMenu(
-                name: "바닐라 크림 케이크",
-                price: 4500,
-                isSignature: true,
-                imageUrl: nil
-            ),
-            BakeryDetail.BakeryMenu(
-                name: "마카롱 세트",
-                price: 12000,
-                isSignature: false,
-                imageUrl: nil
-            )
-        ]
-    )
 }
