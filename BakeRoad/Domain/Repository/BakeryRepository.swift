@@ -10,4 +10,7 @@ import Foundation
 protocol BakeryRepository {
     func getRecommendBakeries(_ type: BakeryType, areaCode: String) async throws -> [RecommendBakery]
     func getBakeryList(_ type: BakeryType, requestDTO: BakeryListRequestDTO) async throws -> Page<Bakery>
+    func getBakeryDetail(_ id: Int) async throws -> BakeryDetail
+    func getBakeryMenus(_ id: Int) async throws -> [BakeryMenu]
+    func getBakeryReviews(_ id: Int, requestDTO: BakeryReviewRequestDTO) async throws -> BakeryReviewPage
 }
