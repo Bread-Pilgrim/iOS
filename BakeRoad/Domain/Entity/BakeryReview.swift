@@ -27,5 +27,5 @@ struct BakeryReviewData: Equatable {
 
 struct BakeryReviewPage {
     let page: Page<BakeryReview>
-    let data: BakeryReviewData
+    let data: BakeryReviewData?
 }

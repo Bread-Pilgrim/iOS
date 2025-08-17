@@ -43,10 +43,12 @@ struct DetailMenuSection: View {
         .padding(.bottom, 20)
         .id(DetailTab.menu)
         
-        Rectangle()
-            .frame(height: 8)
-            .foregroundColor(.gray50)
-            .padding(.bottom, 20)
+        if selectedTab == .home {
+            Rectangle()
+                .frame(height: 8)
+                .foregroundColor(.gray50)
+                .padding(.bottom, 20)
+        }
     }
     
     private var displayedMenus: [BakeryDetail.BakeryMenu] {

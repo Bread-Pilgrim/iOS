@@ -13,48 +13,6 @@ struct BakeryReviewResponseDTO: Decodable {
     let reviews: [BakeryReviewDTO]
     let hasNext: Bool
     
-    struct BakeryReviewDTO: Decodable {
-        let userName: String
-        let profileImg: String?
-        let isLike: Bool
-        let reviewId: Int
-        let reviewContent: String
-        let reviewRating: Double
-        let reviewLikeCount: Int
-        let reviewCreatedAt: String
-        let reviewMenus: [MenuDTO]?
-        let reviewPhotos: [PhotoDTO]?
-        
-        struct MenuDTO: Decodable {
-            let menuName: String
-            
-            private enum CodingKeys: String, CodingKey {
-                case menuName = "menu_name"
-            }
-        }
-        
-        struct PhotoDTO: Decodable {
-            let imgUrl: String
-            
-            private enum CodingKeys: String, CodingKey {
-                case imgUrl = "img_url"
-            }
-        }
-        
-        private enum CodingKeys: String, CodingKey {
-            case userName = "user_name"
-            case profileImg = "profile_img"
-            case isLike = "is_like"
-            case reviewId = "review_id"
-            case reviewContent = "review_content"
-            case reviewRating = "review_rating"
-            case reviewLikeCount = "review_like_count"
-            case reviewCreatedAt = "review_created_at"
-            case reviewMenus = "review_menus"
-            case reviewPhotos = "review_photos"
-        }
-    }
-    
     private enum CodingKeys: String, CodingKey {
         case avgRating = "avg_rating"
         case reviewCount = "review_count"
@@ -63,7 +21,49 @@ struct BakeryReviewResponseDTO: Decodable {
     }
 }
 
-extension BakeryReviewResponseDTO.BakeryReviewDTO {
+struct BakeryReviewDTO: Decodable {
+    let userName: String
+    let profileImg: String?
+    let isLike: Bool
+    let reviewId: Int
+    let reviewContent: String
+    let reviewRating: Double
+    let reviewLikeCount: Int
+    let reviewCreatedAt: String
+    let reviewMenus: [MenuDTO]?
+    let reviewPhotos: [PhotoDTO]?
+    
+    struct MenuDTO: Decodable {
+        let menuName: String
+        
+        private enum CodingKeys: String, CodingKey {
+            case menuName = "menu_name"
+        }
+    }
+    
+    struct PhotoDTO: Decodable {
+        let imgUrl: String
+        
+        private enum CodingKeys: String, CodingKey {
+            case imgUrl = "img_url"
+        }
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case userName = "user_name"
+        case profileImg = "profile_img"
+        case isLike = "is_like"
+        case reviewId = "review_id"
+        case reviewContent = "review_content"
+        case reviewRating = "review_rating"
+        case reviewLikeCount = "review_like_count"
+        case reviewCreatedAt = "review_created_at"
+        case reviewMenus = "review_menus"
+        case reviewPhotos = "review_photos"
+    }
+}
+
+extension BakeryReviewDTO {
     func toEntity() -> BakeryReview {
         BakeryReview(
             id: reviewId,

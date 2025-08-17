@@ -38,12 +38,12 @@ struct BakeryDetailView: View {
     var body: some View {
         Group {
             if let bakeryDetail = viewModel.bakeryDetail,
-               let bakeryReviews = viewModel.bakeryReviews {
+               let reviewData = viewModel.reviewData {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                     DetailInfoSection(
                         bakeryDetail: bakeryDetail,
-                        reviewData: bakeryReviews.data,
+                        reviewData: reviewData,
                         onBackButtonTap: {
                             viewModel.didTapBackButton()
                         }
@@ -59,8 +59,9 @@ struct BakeryDetailView: View {
                         
                         if selectedTab.showsReviewSection {
                             DetailReviewSection(
-                                bakeryReview: bakeryReviews,
-                                selectedTab: $selectedTab
+                                reviewData: reviewData,
+                                selectedTab: $selectedTab,
+                                viewModel: viewModel
                             )
                         }
                         
@@ -81,6 +82,15 @@ struct BakeryDetailView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .onChange(of: selectedTab) { oldValue, newValue in
+            if newValue == .home {
+                viewModel.resetToVisitorReviews()
+            } else if newValue == .review {
+                Task {
+                    await viewModel.loadReviews(type: .visitor)
+                }
+            }
+        }
     }
     
     private var detailTabBar: some View {

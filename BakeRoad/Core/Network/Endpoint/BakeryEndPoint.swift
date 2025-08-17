@@ -22,8 +22,8 @@ enum BakeryEndPoint {
     static func reviews(_ id: Int) -> String {
         return "/bakeries/\(id)/reviews"
     }
-    static func myReviews(_ id: Int) -> String {
-        return "/bakeries/\(id)/my-reviews"
+    static func myReview(_ id: Int) -> String {
+        return "/bakeries/\(id)/my-review"
     }
     static func canReview(_ id: Int) -> String {
         return "/bakeries/\(id)/review/eligibility"

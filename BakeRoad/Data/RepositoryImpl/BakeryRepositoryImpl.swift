@@ -89,24 +89,17 @@ final class BakeryRepositoryImpl: BakeryRepository {
         return entity
     }
     
-//    func getBakeryMyReviews(_ id: Int, requestDTO: BakeryMyReviewRequestDTO) async throws -> BakeryReviewPage {
-//        let request = APIRequest(
-//            path: BakeryEndPoint.myReviews(id),
-//            method: .get,
-//            parameters: requestDTO
-//        )
-//        
-//        let dto = try await apiClient.request(request, responseType: BakeryReviewResponseDTO.self)
-//        
-//        let reviews = dto.reviews.map { $0.toEntity() }
-//        
-//        let entity = BakeryReviewPage(
-//            page: Page(items: reviews,
-//                       hasNext: dto.hasNext),
-//            data: BakeryReviewData(avgRating: dto.avgRating,
-//                                   reviewCount: dto.reviewCount)
-//        )
-//        
-//        return entity
-//    }
+    func getBakeryMyReviews(_ id: Int, requestDTO: BakeryMyReviewRequestDTO) async throws -> Page<BakeryReview> {
+        let request = APIRequest(
+            path: BakeryEndPoint.myReview(id),
+            method: .get,
+            parameters: requestDTO
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryMyReviewResponseDTO.self)
+        
+        let items = dto.reviews.map { $0.toEntity() }
+        
+        return Page(items: items, hasNext: dto.hasNext)
+    }
 }

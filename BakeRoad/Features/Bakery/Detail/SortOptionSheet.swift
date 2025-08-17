@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum SortOption: String, CaseIterable, Identifiable {
+enum SortOption: String, CaseIterable, Identifiable, Encodable {
     case like = "LIKE_COUNT.DESC"
     case newest = "CREATED_AT.DESC"
     case ratingHigh = "RATING.DESC"

@@ -8,21 +8,10 @@
 import SwiftUI
 
 struct DetailReviewSection: View {
-    let bakeryReview: BakeryReviewPage
-    
-    private let reviewData: BakeryReviewData
-    private let reviews: [BakeryReview]
-    
-    init(bakeryReview: BakeryReviewPage,
-         selectedTab: Binding<DetailTab>
-    ) {
-        self.bakeryReview = bakeryReview
-        self.reviewData = bakeryReview.data
-        self.reviews = bakeryReview.page.items
-        self._selectedTab = selectedTab
-    }
+    let reviewData: BakeryReviewData
     
     @Binding var selectedTab: DetailTab
+    @ObservedObject var viewModel: BakeryDetailViewModel
     
     @State private var selectedReviewType = 0
     @State private var isShowingSortSheet = false
@@ -30,23 +19,31 @@ struct DetailReviewSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            BakeRoadSegmentedControl(
-                types: [
-                    "방문자 리뷰 (\(reviewData.reviewCount.formattedWithSeparator)개) ",
-                    "내가 쓴 리뷰"
-                ],
-                selectedIndex: $selectedReviewType)
-            .padding(.horizontal, 20)
+            if selectedTab == .review {
+                BakeRoadSegmentedControl(
+                    types: [
+                        "방문자 리뷰 (\(reviewData.reviewCount.formattedWithSeparator)개) ",
+                        "내가 쓴 리뷰"
+                    ],
+                    selectedIndex: $selectedReviewType)
+                .padding(.horizontal, 20)
+            }
             
             HStack(spacing: 0) {
-                Text("방문자 리뷰")
-                    .font(.bodyLargeSemibold)
-                    .foregroundColor(.gray990)
-                    .padding(.trailing, 2)
-                
-                Text("(\(reviewData.reviewCount))")
-                    .font(.bodySmallMedium)
-                    .foregroundColor(.gray990)
+                if selectedTab == .review && selectedReviewType == 1 {
+                    Text("내가 쓴 리뷰")
+                        .font(.bodyLargeSemibold)
+                        .foregroundColor(.black)
+                } else {
+                    Text("방문자 리뷰")
+                        .font(.bodyLargeSemibold)
+                        .foregroundColor(.black)
+                        .padding(.trailing, 2)
+                    
+                    Text("(\(reviewData.reviewCount))")
+                        .font(.bodySmallMedium)
+                        .foregroundColor(.gray990)
+                }
                 
                 Spacer()
                 
@@ -72,7 +69,7 @@ struct DetailReviewSection: View {
             }
             .padding(.horizontal, 16)
             
-            if !reviews.isEmpty && selectedTab == .review && selectedReviewType == 0 {
+            if !viewModel.reviews.isEmpty && selectedTab == .review && selectedReviewType == 0 {
                 HStack(spacing: 0) {
                     Image("fillStar")
                         .resizable()
@@ -96,6 +93,10 @@ struct DetailReviewSection: View {
                                 selectedOption: $selectedSortOption,
                                 onConfirm: {
                                     isShowingSortSheet = false
+                                    // 정렬 옵션 변경 시 API 재호출
+                                    Task {
+                                        await viewModel.changeSortOption(selectedSortOption)
+                                    }
                                 },
                                 onCancel: {
                                     isShowingSortSheet = false
@@ -120,8 +121,14 @@ struct DetailReviewSection: View {
                 }
                 .padding(.horizontal, 16)
             } else {
-                ForEach(reviews) { review in
+                ForEach(viewModel.reviews) { review in
                     BakeryDetailReviewCard(review: review)
+                        .task {
+                            // 리뷰 탭에서만 페이징 처리
+                            if selectedTab == .review {
+                                await viewModel.loadMoreReviews(currentReview: review)
+                            }
+                        }
                 }
                 
                 if selectedTab == .home {
@@ -131,14 +138,37 @@ struct DetailReviewSection: View {
                         size: .medium
                     ) {
                         selectedTab = .review
+                        Task {
+                            await viewModel.loadReviews(type: .visitor)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 16)
+                }
+                
+                // 리뷰 탭에서 로딩 인디케이터
+                if selectedTab == .review && viewModel.isLoadingReviews {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding()
                 }
             }
         }
         .id(DetailTab.review)
         .padding(.bottom, 20)
+        .onChange(of: selectedReviewType) { oldValue, newValue in
+            if selectedTab == .review {
+                Task {
+                    if newValue == 0 {
+                        // 방문자 리뷰
+                        await viewModel.loadReviews(type: .visitor, sortOption: selectedSortOption)
+                    } else {
+                        // 내가 쓴 리뷰
+                        await viewModel.loadReviews(type: .my)
+                    }
+                }
+            }
+        }
         
         if selectedTab == .home {
             Rectangle()

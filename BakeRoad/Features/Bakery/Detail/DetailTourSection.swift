@@ -37,7 +37,7 @@ struct DetailTourSection: View {
             } else {
                 ScrollView(.vertical) {
                     VStack(alignment: .leading, spacing: 20) {
-                        ForEach(tours) { tour in
+                        ForEach(displayedTours) { tour in
                             RecommendTourCard(
                                 title: tour.title,
                                 address: tour.address,
@@ -52,5 +52,9 @@ struct DetailTourSection: View {
         }
         .padding(.horizontal, 16)
         .id(DetailTab.tour)
+    }
+    
+    private var displayedTours: [TourInfo] {
+        selectedTab == .home ? Array(tours.prefix(5)) : tours
     }
 }
