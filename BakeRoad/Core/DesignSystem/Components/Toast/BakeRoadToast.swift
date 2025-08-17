@@ -20,15 +20,8 @@ enum ToastType {
 
     var iconColor: Color {
         switch self {
-        case .success: return .green
-        case .error: return .red
-        }
-    }
-
-    var textColor: Color {
-        switch self {
-        case .success: return .green
-        case .error: return .red
+        case .success: return .primary500
+        case .error: return .error500
         }
     }
 }
@@ -40,7 +33,7 @@ enum ToastStyle {
     var backgroundColor: Color {
         switch self {
         case .dark: return .black
-        case .light: return Color(red: 1.0, green: 0.98, blue: 0.98)
+        case .light: return .white
         }
     }
 
@@ -65,8 +58,8 @@ struct ToastView: View {
                 .foregroundColor(type.iconColor)
 
             Text(message)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(style == .dark ? .white : type.textColor)
+                .font(.bodyXsmallMedium)
+                .foregroundColor(style.textColor)
                 .lineLimit(1)
 
             Spacer()
@@ -76,7 +69,7 @@ struct ToastView: View {
         .background(style.backgroundColor)
         .cornerRadius(12)
         .shadow(radius: 4)
-        .frame(maxWidth: 300)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -84,6 +77,8 @@ class ToastManager: ObservableObject {
     @Published var toast: ToastData?
 
     private var dismissWorkItem: DispatchWorkItem?
+    
+    static let shared = ToastManager()
 
     func show(message: String, type: ToastType = .success, style: ToastStyle = .dark, duration: TimeInterval = 2.0) {
         dismissWorkItem?.cancel()
@@ -98,6 +93,10 @@ class ToastManager: ObservableObject {
 
         dismissWorkItem = task
         DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: task)
+    }
+    
+    static func show(message: String, type: ToastType = .success, style: ToastStyle = .dark, duration: TimeInterval = 2.0) {
+        shared.show(message: message, type: type, style: style, duration: duration)
     }
 }
 
@@ -116,18 +115,21 @@ struct ToastOverlayView: View {
     var body: some View {
         ZStack {
             if toastManager.toast != nil {
-                ToastView(message: toastManager.toast!.message, type: toastManager.toast!.type, style: toastManager.toast!.style)
-                    .opacity(isVisible ? 1 : 0)
-                    .offset(y: isVisible ? 0 : 20) // 아래에서 올라옴
-                    .animation(.easeOut(duration: 0.25), value: isVisible)
-                    .onAppear {
-                        isVisible = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                            withAnimation(.easeIn(duration: 0.25)) {
-                                isVisible = false
+                VStack {
+                    Spacer()
+                    ToastView(message: toastManager.toast!.message, type: toastManager.toast!.type, style: toastManager.toast!.style)
+                        .opacity(isVisible ? 1 : 0)
+                        .offset(y: isVisible ? 0 : 20) // 아래에서 올라옴
+                        .animation(.easeOut(duration: 0.25), value: isVisible)
+                        .onAppear {
+                            isVisible = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                                withAnimation(.easeIn(duration: 0.25)) {
+                                    isVisible = false
+                                }
                             }
                         }
-                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

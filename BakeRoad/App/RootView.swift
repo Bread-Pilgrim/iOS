@@ -11,11 +11,18 @@ struct RootView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     
     var body: some View {
-        switch coordinator.route {
-        case .splash: splash
-        case .login: login
-        case .onboarding: onboarding
-        case .main: main
+        ZStack {
+            switch coordinator.route {
+            case .splash: splash
+            case .login: login
+            case .onboarding: onboarding
+            case .main: main
+            }
+            
+            ToastOverlayView()
+                .environmentObject(ToastManager.shared)
+                .padding(.horizontal, 28)
+                .padding(.bottom, 16)
         }
     }
 }

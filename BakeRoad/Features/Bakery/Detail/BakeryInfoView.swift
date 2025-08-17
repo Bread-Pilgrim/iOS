@@ -78,9 +78,10 @@ struct BakeryInfoView: View {
                         Spacer()
                         
                         Button {
-                            print("전화 연결")
+                            UIPasteboard.general.string = phone
+                            ToastManager.show(message: "복사되었습니다.", type: .success, style: .dark)
                         } label: {
-                            Text("연결")
+                            Text("복사")
                                 .font(.body2xsmallMedium)
                                 .foregroundColor(.gray950)
                                 .underline()
