@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BakeryDetailReviewCard: View {
     let review: BakeryReview
+    let reviewBaseURL = "https://rmpwbqnjauejvolxmamj.supabase.co/storage/v1/object/public/bread-bucket/images/"
     
     var body: some View {
         VStack {
@@ -59,7 +60,7 @@ struct BakeryDetailReviewCard: View {
                 if !review.photos.isEmpty {
                     HStack(spacing: 7) {
                         ForEach(review.photos, id: \.self) { url in
-                            BakeryImageView(imageUrl: url, placeholder: .ratio3_2)
+                            BakeryImageView(imageUrl: reviewBaseURL+url, placeholder: .ratio3_2)
                                 .cornerRadius(8)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 104)
