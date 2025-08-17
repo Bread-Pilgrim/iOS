@@ -108,7 +108,7 @@ struct DetailReviewSection: View {
                 .padding(.horizontal, 16)
             }
             
-            if reviewData.reviewCount == 0 {
+            if viewModel.reviews.isEmpty {
                 ZStack {
                     Rectangle()
                         .fill(Color.gray40)
