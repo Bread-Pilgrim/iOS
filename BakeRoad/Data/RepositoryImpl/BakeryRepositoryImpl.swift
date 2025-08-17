@@ -120,4 +120,15 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         let _ = try await apiClient.request(request, responseType: BakeryLikeResponseDTO.self)
     }
+    
+    func getBakeryReviewEligibility(_ id: Int) async throws -> BakeryReviewEligibilityResponseDTO {
+        let request = APIRequest(
+            path: BakeryEndPoint.canReview(id),
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryReviewEligibilityResponseDTO.self)
+        
+        return dto
+    }
 }

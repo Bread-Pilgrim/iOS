@@ -100,6 +100,12 @@ struct BakeryDetailView: View {
                   showMenuSelection = true
               }
           }
+          .onChange(of: viewModel.toastMessage) { _, message in
+              if let message = message {
+                  ToastManager.show(message: message, type: .error)
+                  viewModel.toastMessage = nil
+              }
+          }
           .fullScreenCover(isPresented: $showMenuSelection) {
               NavigationStack {
                   MenuSelectionView(menus: viewModel.bakeryDetail?.menus ?? [])

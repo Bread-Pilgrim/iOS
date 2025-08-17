@@ -21,6 +21,7 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var hasNextReviews = false
     @Published var isLoadingReviews = false
     @Published var isLoadingLike = false
+    @Published var toastMessage: String?
     @Published var errorMessage: String?
     
     private var currentReviewType: ReviewType = .visitor
@@ -34,6 +35,7 @@ final class BakeryDetailViewModel: ObservableObject {
     private let getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase
     private let bakeryLikeUseCase: BakeryLikeUseCase
     private let bakeryDislikeUseCase: BakeryDislikeUseCase
+    private let getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
     
     var onNavigateBack: (() -> Void)?
     var onNavigateReviewWrite: (() -> Void)?
@@ -45,7 +47,8 @@ final class BakeryDetailViewModel: ObservableObject {
         getBakeryReviewsUseCase: GetBakeryReviewsUseCase,
         getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase,
         bakeryLikeUseCase: BakeryLikeUseCase,
-        bakeryDislikeUseCase: BakeryDislikeUseCase
+        bakeryDislikeUseCase: BakeryDislikeUseCase,
+        getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
     ) {
         self.filter = filter
         self.getBakeryDetailUseCase = getBakeryDetailUseCase
@@ -54,6 +57,7 @@ final class BakeryDetailViewModel: ObservableObject {
         self.getBakeryMyReviewsUseCase = getBakeryMyReviewsUseCase
         self.bakeryLikeUseCase = bakeryLikeUseCase
         self.bakeryDislikeUseCase = bakeryDislikeUseCase
+        self.getBakeryReviewEligibilityUseCase = getBakeryReviewEligibilityUseCase
         
         let areaCodes = filter.areaCodes.map(String.init).joined(separator: ",")
         let tourCatCodes = filter.tourCatCodes.joined(separator: ",")
@@ -123,7 +127,21 @@ final class BakeryDetailViewModel: ObservableObject {
     }
     
     func didTapWriteButton() {
-        onNavigateReviewWrite?()
+        Task {
+            do {
+                let isEligible = try await getBakeryReviewEligibilityUseCase.execute(filter.bakeryId)
+                
+                if isEligible.isEligible {
+                    onNavigateReviewWrite?()
+                } else {
+                    toastMessage = "오늘 이미 리뷰를 남겼어요!\n리뷰는 하루에 하나만 작성할 수 있습니다 :)"
+                }
+            } catch let APIError.serverError(_, message) {
+                errorMessage = message
+            } catch {
+                errorMessage = "잠시 후 다시 시도해주세요."
+            }
+        }
     }
     
     func didTapLikeButton() {
