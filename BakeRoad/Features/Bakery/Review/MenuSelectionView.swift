@@ -7,20 +7,9 @@
 
 import SwiftUI
 
-import SwiftUI
-
-struct SelectedMenu: Identifiable {
-    let id: UUID
-    let menu: BakeryDetail.BakeryMenu
-    var quantity: Int
-}
-
 struct MenuSelectionView: View {
-    let menus: [BakeryDetail.BakeryMenu]
+    @StateObject var viewModel: WriteReviewViewModel
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var selectedMenus: [UUID: SelectedMenu] = [:]
-    @State private var navigateToWriteReview = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -39,32 +28,23 @@ struct MenuSelectionView: View {
                     .foregroundColor(.gray990)
                     .padding(.vertical, 15.5)
             } rightItem: {
-                BakeRoadTextButton(title: "다음", type: .assistive, size: .medium, isDisabled: selectedMenus.isEmpty) {
-                    navigateToWriteReview = true
+                BakeRoadTextButton(title: "다음", type: .assistive, size: .medium, isDisabled: viewModel.selectedMenus.isEmpty) {
+                    viewModel.navigateToWriteReview = true
                 }
                 .padding(.trailing, 16)
                 .padding(.vertical, 13)
             }
             
             ScrollView(.vertical) {
-                ForEach(menus) { menu in
+                ForEach(viewModel.menus) { menu in
                     MenuRowView(
                         menu: menu,
-                        selectedMenu: selectedMenus[menu.id],
+                        selectedMenu: viewModel.selectedMenus[menu.id],
                         onToggle: { isSelected in
-                            if isSelected {
-                                selectedMenus[menu.id] = SelectedMenu(id: menu.id,
-                                                                      menu: menu,
-                                                                      quantity: 1)
-                            } else {
-                                selectedMenus.removeValue(forKey: menu.id)
-                            }
+                            viewModel.toggleMenu(menu, isSelected: isSelected)
                         },
-                        onQuantityChange: { newQuantity in
-                            if var selected = selectedMenus[menu.id] {
-                                selected.quantity = newQuantity
-                                selectedMenus[menu.id] = selected
-                            }
+                        onQuantityChange: { quantity in
+                            viewModel.updateMenuQuantity(menu.id, quantity: quantity)
                         }
                     )
                     .padding(.horizontal, 16)
@@ -73,14 +53,14 @@ struct MenuSelectionView: View {
             
             Spacer()
         }
-        .navigationDestination(isPresented: $navigateToWriteReview) {
-            WriteReviewView(bakeryMenus: Array(selectedMenus.values).map(\.menu))
+        .navigationDestination(isPresented: $viewModel.navigateToWriteReview) {
+            WriteReviewView(viewModel: viewModel)
         }
     }
 }
 
 struct MenuRowView: View {
-    let menu: BakeryDetail.BakeryMenu
+    let menu: BakeryMenu
     let selectedMenu: SelectedMenu?
     let onToggle: (Bool) -> Void
     let onQuantityChange: (Int) -> Void

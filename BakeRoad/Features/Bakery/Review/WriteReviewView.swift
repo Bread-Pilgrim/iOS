@@ -8,19 +8,16 @@
 import SwiftUI
 
 struct WriteReviewView: View {
-    var bakeryMenus: [BakeryDetail.BakeryMenu]
+    @StateObject var viewModel: WriteReviewViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @State private var onlyMe = true
-    @State private var rating: Double = 2.5
-    @State private var reviewContent: String = ""
     @StateObject private var authManager = PhotoAuthorizationManager()
     @State private var showPicker = false
-    @State private var selectedImages: [UIImage] = []
     @State private var showPermissionAlert = false
     
     var body: some View {
         VStack(spacing: 0) {
+            // 헤더는 키보드와 상관없이 고정
             HeaderView {
                 BakeRoadTextButton(title: "이전", type: .assistive, size: .medium) {
                     dismiss()
@@ -32,7 +29,7 @@ struct WriteReviewView: View {
                     .padding(.vertical, 16)
             } rightItem: {
                 HStack(spacing: 8) {
-                    Toggle("", isOn: $onlyMe)
+                    Toggle("", isOn: $viewModel.isPrivate)
                         .toggleStyle(SwitchToggleStyle(tint: Color.primary500))
                     
                     Text("나만보기")
@@ -42,95 +39,109 @@ struct WriteReviewView: View {
             }
             .padding(.horizontal, 16)
             
-            ReviewStarRatingView(rating: $rating)
-                .padding(10)
-            
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(bakeryMenus) { menu in
-                        BakeRoadChip(title: menu.name,
-                                     color: .lightGray,
-                                     size: .large,
-                                     style: .weak)
-                    }
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            
-            Divider()
-                .foregroundColor(.gray50)
-            
-            BakeRoadBox(placeholder: "정성스러운 리뷰는 다른 유저들의 빵 여행에 큰 도움이 됩니다.\n맛, 분위기, 추천 포인트를 자유롭게 남겨주세요!\n(최소 10자 이상 작성해주세요)",
-                        isEssential: false,
-                        showsLetterCount: true,
-                        characterLimit: 300,
-                        text: $reviewContent)
-            .frame(height: 150)
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
-            .padding(.bottom, 16)
-            .contentShape(Rectangle())
-            
-            BakeRoadTextButton(title: "사진 추가하기",
-                               type: .primary,
-                               size: .medium,
-                               isDisabled: selectedImages.count >= 5) {
-                AnyView(
-                    Image(systemName: "plus")
-                        .foregroundColor(selectedImages.count >= 5 ? .gray200 : .primary500)
-                        .frame(width: 20, height: 20)
-                )
-            } action: {
-                authManager.checkAuthorization()
-                if authManager.isAuthorized {
-                    showPicker = true
-                } else {
-                    showPermissionAlert = true
-                }
-            }
-            .fullScreenCover(isPresented: $showPicker) {
-                MultiPhotoPicker(selectedImages: $selectedImages, maxSelectionCount: 5 - selectedImages.count)
-            }
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(selectedImages.indices, id: \.self) { index in
-                        ZStack(alignment: .topTrailing) {
-                            Image(uiImage: selectedImages[index])
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipped()
-                                .cornerRadius(12)
-                            
-                            Button(action: {
-                                selectedImages.remove(at: index)
-                            }) {
-                                Image("circleClose")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
+            // 스크롤 가능한 콘텐츠 영역
+            ScrollView {
+                VStack(spacing: 0) {
+                    ReviewStarRatingView(rating: $viewModel.rating)
+                        .padding(10)
+                    
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ForEach(Array(viewModel.selectedMenus.values)) { selectedMenu in
+                                BakeRoadChip(title: selectedMenu.menu.name,
+                                             color: .lightGray,
+                                             size: .large,
+                                             style: .weak)
                             }
-                            .padding(6)
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    
+                    Divider()
+                        .foregroundColor(.gray50)
+                    
+                    BakeRoadBox(placeholder: "정성스러운 리뷰는 다른 유저들의 빵 여행에 큰 도움이 됩니다.\n맛, 분위기, 추천 포인트를 자유롭게 남겨주세요!\n(최소 10자 이상 작성해주세요)",
+                                isEssential: false,
+                                showsLetterCount: true,
+                                characterLimit: 300,
+                                text: $viewModel.reviewContent)
+                    .frame(height: 150)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 20)
+                    .padding(.bottom, 16)
+                    
+                    BakeRoadTextButton(title: "사진 추가하기",
+                                       type: .primary,
+                                       size: .medium,
+                                       isDisabled: viewModel.selectedImages.count >= 5) {
+                        AnyView(
+                            Image(systemName: "plus")
+                                .foregroundColor(viewModel.selectedImages.count >= 5 ? .gray200 : .primary500)
+                                .frame(width: 20, height: 20)
+                        )
+                    } action: {
+                        authManager.checkAuthorization()
+                        if authManager.isAuthorized {
+                            showPicker = true
+                        } else {
+                            showPermissionAlert = true
+                        }
+                    }
+                    .fullScreenCover(isPresented: $showPicker) {
+                        MultiPhotoPicker(selectedImages: $viewModel.selectedImages, maxSelectionCount: 5 - viewModel.selectedImages.count)
+                    }
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(viewModel.selectedImages.indices, id: \.self) { index in
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: viewModel.selectedImages[index])
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipped()
+                                        .cornerRadius(12)
+                                    
+                                    Button(action: {
+                                        viewModel.selectedImages.remove(at: index)
+                                    }) {
+                                        Image("circleClose")
+                                            .resizable()
+                                            .frame(width: 24, height: 24)
+                                    }
+                                    .padding(6)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
                 }
-                .padding(.horizontal)
             }
             
-            Spacer()
-            
-            BakeRoadSolidButton(title: "작성 완료",
+            // 하단 버튼은 키보드 위에 고정
+            BakeRoadSolidButton(title: viewModel.isLoading ? "작성 중..." : "작성 완료",
                                 style: .primary,
                                 size: .xlarge,
-                                isDisabled: reviewContent.count < 10) {
-                dismiss()
+                                isDisabled: viewModel.reviewContent.count < 10 || viewModel.isLoading) {
+                viewModel.submitReview()
             }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 24)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 24)
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .onChange(of: viewModel.isSubmitSuccessful) { _, isSuccessful in
+            if isSuccessful {
+                ToastManager.show(message: "리뷰가 성공적으로 작성되었습니다", type: .success)
+                dismiss()
+            }
+        }
+        .onChange(of: viewModel.errorMessage) { _, errorMessage in
+            if let errorMessage = errorMessage {
+                ToastManager.show(message: errorMessage, type: .error)
+            }
+        }
         .alert("사진 접근 권한", isPresented: $showPermissionAlert) {
             Button("설정으로 이동") {
                 if let url = URL(string: UIApplication.openSettingsURLString) {

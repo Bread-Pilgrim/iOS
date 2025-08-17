@@ -23,12 +23,13 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var isLoadingLike = false
     @Published var toastMessage: String?
     @Published var errorMessage: String?
+    @Published var showMenuSelection = false
     
     private var currentReviewType: ReviewType = .visitor
     private var currentSortOption: SortOption = .like
     private var reviewFetcher: PageFetcher<BakeryReview>?
     
-    private let filter: BakeryDetailFilter
+    let filter: BakeryDetailFilter
     private let getBakeryDetailUseCase: GetBakeryDetailUseCase
     private let getTourListUseCase: GetTourListUseCase
     private let getBakeryReviewsUseCase: GetBakeryReviewsUseCase
@@ -37,8 +38,10 @@ final class BakeryDetailViewModel: ObservableObject {
     private let bakeryDislikeUseCase: BakeryDislikeUseCase
     private let getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
     
+    let getBakeryMenuUseCase: GetBakeryMenuUseCase
+    let writeReviewUseCase: WriteReviewUseCase
+    
     var onNavigateBack: (() -> Void)?
-    var onNavigateReviewWrite: (() -> Void)?
     
     init(
         filter: BakeryDetailFilter,
@@ -48,7 +51,9 @@ final class BakeryDetailViewModel: ObservableObject {
         getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase,
         bakeryLikeUseCase: BakeryLikeUseCase,
         bakeryDislikeUseCase: BakeryDislikeUseCase,
-        getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
+        getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase,
+        getBakeryMenuUseCase: GetBakeryMenuUseCase,
+        writeReviewUseCase: WriteReviewUseCase
     ) {
         self.filter = filter
         self.getBakeryDetailUseCase = getBakeryDetailUseCase
@@ -58,6 +63,8 @@ final class BakeryDetailViewModel: ObservableObject {
         self.bakeryLikeUseCase = bakeryLikeUseCase
         self.bakeryDislikeUseCase = bakeryDislikeUseCase
         self.getBakeryReviewEligibilityUseCase = getBakeryReviewEligibilityUseCase
+        self.getBakeryMenuUseCase = getBakeryMenuUseCase
+        self.writeReviewUseCase = writeReviewUseCase
         
         let areaCodes = filter.areaCodes.map(String.init).joined(separator: ",")
         let tourCatCodes = filter.tourCatCodes.joined(separator: ",")
@@ -132,7 +139,7 @@ final class BakeryDetailViewModel: ObservableObject {
                 let isEligible = try await getBakeryReviewEligibilityUseCase.execute(filter.bakeryId)
                 
                 if isEligible.isEligible {
-                    onNavigateReviewWrite?()
+                    showMenuSelection = true
                 } else {
                     toastMessage = "오늘 이미 리뷰를 남겼어요!\n리뷰는 하루에 하나만 작성할 수 있습니다 :)"
                 }

@@ -34,7 +34,6 @@ struct BakeryDetailView: View {
     @StateObject var viewModel: BakeryDetailViewModel
     
     @State private var selectedTab: DetailTab = .home
-    @State private var showMenuSelection = false
     
     var body: some View {
         Group {
@@ -95,20 +94,19 @@ struct BakeryDetailView: View {
                 }
             }
         }
-        .onAppear {
-              viewModel.onNavigateReviewWrite = {
-                  showMenuSelection = true
-              }
-          }
           .onChange(of: viewModel.toastMessage) { _, message in
               if let message = message {
                   ToastManager.show(message: message, type: .error)
                   viewModel.toastMessage = nil
               }
           }
-          .fullScreenCover(isPresented: $showMenuSelection) {
+          .fullScreenCover(isPresented: $viewModel.showMenuSelection) {
               NavigationStack {
-                  MenuSelectionView(menus: viewModel.bakeryDetail?.menus ?? [])
+                  MenuSelectionView(viewModel: WriteReviewViewModel(
+                    bakeryId: viewModel.filter.bakeryId,
+                    getBakeryMenuUseCase: viewModel.getBakeryMenuUseCase,
+                    writeReviewUseCase: viewModel.writeReviewUseCase
+                  ))
               }
           }
     }

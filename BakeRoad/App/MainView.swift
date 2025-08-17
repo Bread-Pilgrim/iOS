@@ -81,7 +81,9 @@ struct MainView: View {
                             getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
                             bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
                             bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase,
-                            getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase
+                            getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase,
+                            getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
+                            writeReviewUseCase: coordinator.dependency.writeReviewUseCase
                         )
                         viewModel.onNavigateBack = {
                             coordinator.popHome()
