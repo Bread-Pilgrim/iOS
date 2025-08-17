@@ -13,6 +13,7 @@ struct DetailInfoSection: View {
     let isLoadingLike: Bool
     let onBackButtonTap: () -> Void
     let onLikeButtonTap: () -> Void
+    let onWriteButtonTap: () -> Void
 
     var body: some View {
         Section {
@@ -22,8 +23,11 @@ struct DetailInfoSection: View {
                 onBackButtonTap: onBackButtonTap,
                 onLikeButtonTap: onLikeButtonTap
             )
-            BakeryInfoView(bakery: bakeryDetail,
-                           reviewData: reviewData)
+            BakeryInfoView(
+                bakery: bakeryDetail,
+                reviewData: reviewData,
+                onWriteButtonTap: onWriteButtonTap
+            )
         }
         .id(DetailTab.home)
         .padding(.bottom, 20)

@@ -34,6 +34,7 @@ struct BakeryDetailView: View {
     @StateObject var viewModel: BakeryDetailViewModel
     
     @State private var selectedTab: DetailTab = .home
+    @State private var showMenuSelection = false
     
     var body: some View {
         Group {
@@ -44,11 +45,12 @@ struct BakeryDetailView: View {
                         DetailInfoSection(
                             bakeryDetail: bakeryDetail,
                             reviewData: reviewData,
-                            isLoadingLike: viewModel.isLoadingLike,
-                            onBackButtonTap: {
+                            isLoadingLike: viewModel.isLoadingLike) {
                                 viewModel.didTapBackButton()
-                            }) {
+                            } onLikeButtonTap: {
                                 viewModel.didTapLikeButton()
+                            } onWriteButtonTap: {
+                                viewModel.didTapWriteButton()
                             }
                         
                         Section(header: detailTabBar) {
@@ -93,6 +95,16 @@ struct BakeryDetailView: View {
                 }
             }
         }
+        .onAppear {
+              viewModel.onNavigateReviewWrite = {
+                  showMenuSelection = true
+              }
+          }
+          .fullScreenCover(isPresented: $showMenuSelection) {
+              NavigationStack {
+                  MenuSelectionView(menus: viewModel.bakeryDetail?.menus ?? [])
+              }
+          }
     }
     
     private var detailTabBar: some View {

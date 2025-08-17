@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct WriteReviewView: View {
-    var bakeryMenus: [BakeryMenu]
+    var bakeryMenus: [BakeryDetail.BakeryMenu]
+    @Environment(\.dismiss) private var dismiss
     
     @State private var onlyMe = true
     @State private var rating: Double = 2.5
@@ -16,12 +17,13 @@ struct WriteReviewView: View {
     @StateObject private var authManager = PhotoAuthorizationManager()
     @State private var showPicker = false
     @State private var selectedImages: [UIImage] = []
+    @State private var showPermissionAlert = false
     
     var body: some View {
         VStack(spacing: 0) {
             HeaderView {
                 BakeRoadTextButton(title: "이전", type: .assistive, size: .medium) {
-                    print("이전")
+                    dismiss()
                 }
             } centerItem: {
                 Text("리뷰 쓰기")
@@ -68,20 +70,27 @@ struct WriteReviewView: View {
             .padding(.horizontal, 16)
             .padding(.top, 20)
             .padding(.bottom, 16)
+            .contentShape(Rectangle())
             
             BakeRoadTextButton(title: "사진 추가하기",
                                type: .primary,
-                               size: .medium) {
+                               size: .medium,
+                               isDisabled: selectedImages.count >= 5) {
                 AnyView(
                     Image(systemName: "plus")
-                        .foregroundColor(.primary500)
+                        .foregroundColor(selectedImages.count >= 5 ? .gray200 : .primary500)
                         .frame(width: 20, height: 20)
                 )
             } action: {
-                showPicker = true
+                authManager.checkAuthorization()
+                if authManager.isAuthorized {
+                    showPicker = true
+                } else {
+                    showPermissionAlert = true
+                }
             }
             .fullScreenCover(isPresented: $showPicker) {
-                MultiPhotoPicker(selectedImages: $selectedImages)
+                MultiPhotoPicker(selectedImages: $selectedImages, maxSelectionCount: 5 - selectedImages.count)
             }
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -115,16 +124,24 @@ struct WriteReviewView: View {
                                 style: .primary,
                                 size: .xlarge,
                                 isDisabled: reviewContent.count < 10) {
-                print("작성 완료")
+                dismiss()
             }
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 24)
         }
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+        .alert("사진 접근 권한", isPresented: $showPermissionAlert) {
+            Button("설정으로 이동") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("취소", role: .cancel) { }
+        } message: {
+            Text("사진을 추가하려면 설정에서 사진 접근 권한을 허용해주세요.")
+        }
     }
-}
-
-#Preview {
-    WriteReviewView(bakeryMenus: BakeryMenu.mockData)
 }
 
 import Photos

@@ -10,6 +10,7 @@ import SwiftUI
 struct BakeryInfoView: View {
     let bakery: BakeryDetail
     let reviewData: BakeryReviewData
+    let onWriteButtonTap: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -34,7 +35,7 @@ struct BakeryInfoView: View {
                 title: "리뷰 작성하기",
                 style: .primary,
                 size: .medium) {
-                    print("리뷰 작성")
+                    onWriteButtonTap()
                 }
                 .frame(height: 40)
                 .frame(maxWidth: .infinity)

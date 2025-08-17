@@ -10,21 +10,23 @@ import SwiftUI
 import SwiftUI
 
 struct SelectedMenu: Identifiable {
-    let id: Int
-    let menu: BakeryMenu
+    let id: UUID
+    let menu: BakeryDetail.BakeryMenu
     var quantity: Int
 }
 
 struct MenuSelectionView: View {
-    let menus: [BakeryMenu]
+    let menus: [BakeryDetail.BakeryMenu]
+    @Environment(\.dismiss) private var dismiss
     
-    @State private var selectedMenus: [Int: SelectedMenu] = [:]
+    @State private var selectedMenus: [UUID: SelectedMenu] = [:]
+    @State private var navigateToWriteReview = false
     
     var body: some View {
         VStack(spacing: 20) {
             HeaderView {
                 Button {
-                    print("뒤로가기")
+                    dismiss()
                 } label: {
                     Image("arrowLeft")
                         .resizable()
@@ -38,7 +40,7 @@ struct MenuSelectionView: View {
                     .padding(.vertical, 15.5)
             } rightItem: {
                 BakeRoadTextButton(title: "다음", type: .assistive, size: .medium, isDisabled: selectedMenus.isEmpty) {
-                    print("다음")
+                    navigateToWriteReview = true
                 }
                 .padding(.trailing, 16)
                 .padding(.vertical, 13)
@@ -71,11 +73,14 @@ struct MenuSelectionView: View {
             
             Spacer()
         }
+        .navigationDestination(isPresented: $navigateToWriteReview) {
+            WriteReviewView(bakeryMenus: Array(selectedMenus.values).map(\.menu))
+        }
     }
 }
 
 struct MenuRowView: View {
-    let menu: BakeryMenu
+    let menu: BakeryDetail.BakeryMenu
     let selectedMenu: SelectedMenu?
     let onToggle: (Bool) -> Void
     let onQuantityChange: (Int) -> Void
@@ -165,8 +170,4 @@ struct QuantitySelector: View {
         .background(Color.white)
         .cornerRadius(6)
     }
-}
-
-#Preview {
-    MenuSelectionView(menus: BakeryMenu.mockData)
 }

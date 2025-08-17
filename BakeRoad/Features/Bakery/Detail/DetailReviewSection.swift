@@ -62,7 +62,7 @@ struct DetailReviewSection: View {
                         style: .assistive,
                         size: .small
                     ) {
-                        print("리뷰 작성")
+                        viewModel.didTapWriteButton()
                     }
                     .frame(width: 95)
                 }

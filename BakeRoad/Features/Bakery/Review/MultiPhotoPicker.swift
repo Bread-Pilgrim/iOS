@@ -10,6 +10,7 @@ import PhotosUI
 
 struct MultiPhotoPicker: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
+    let maxSelectionCount: Int
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -18,7 +19,7 @@ struct MultiPhotoPicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
         config.filter = .images
-        config.selectionLimit = 5 // 0 = 무제한
+        config.selectionLimit = maxSelectionCount
         
         let picker = PHPickerViewController(configuration: config)
         picker.delegate = context.coordinator

@@ -36,6 +36,7 @@ final class BakeryDetailViewModel: ObservableObject {
     private let bakeryDislikeUseCase: BakeryDislikeUseCase
     
     var onNavigateBack: (() -> Void)?
+    var onNavigateReviewWrite: (() -> Void)?
     
     init(
         filter: BakeryDetailFilter,
@@ -119,6 +120,10 @@ final class BakeryDetailViewModel: ObservableObject {
     
     func didTapBackButton() {
         onNavigateBack?()
+    }
+    
+    func didTapWriteButton() {
+        onNavigateReviewWrite?()
     }
     
     func didTapLikeButton() {
