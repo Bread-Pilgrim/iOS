@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct BakeryImageSliderView: View {
-    let imageUrls: [String]
-    let openStatus: BakeryOpenStatus
+    var bakeryDetail: BakeryDetail
+    let isLoadingLike: Bool
     let onBackButtonTap: () -> Void
+    let onLikeButtonTap: () -> Void
     
     @State private var currentIndex: Int = 0
     
     var body: some View {
         TabView(selection: $currentIndex) {
-            ForEach(imageUrls.indices, id: \.self) { index in
+            ForEach(bakeryDetail.imageUrls.indices, id: \.self) { index in
                 BakeryImageView(
-                    imageUrl: imageUrls[index],
+                    imageUrl: bakeryDetail.imageUrls[index],
                     placeholder: .ratio3_2
                 )
                 .frame(maxWidth: .infinity)
@@ -37,8 +38,23 @@ struct BakeryImageSliderView: View {
                     
                     Spacer()
                     
-                    BakeRoadCircleButton(icon: "heart") {
-                        print("좋아요")
+                    ZStack {
+                        BakeRoadCircleButton(icon: bakeryDetail.isLike ? "favorites_fill" : "heart") {
+                            if !isLoadingLike {
+                                onLikeButtonTap()
+                                ToastManager.show(message: bakeryDetail.isLike ? "내 빵집에 저장했어요." : "내 빵집에서 제거했어요.")
+                            }
+                        }
+                        .disabled(isLoadingLike)
+                        
+                        if isLoadingLike {
+                            Circle()
+                                .fill(Color.white.opacity(0.8))
+                                .frame(width: 32, height: 32)
+                            
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        }
                     }
                 }
                 .padding(.top, 15)
@@ -49,14 +65,14 @@ struct BakeryImageSliderView: View {
                 // 하단
                 HStack {
                     BakeryOpenStatusChip(
-                        openStatus: openStatus,
+                        openStatus: bakeryDetail.openStatus,
                         style: .fill
                     )
                     
                     Spacer()
                     
                     BakeRoadChip(
-                        title: "\(currentIndex + 1)/\(imageUrls.count)",
+                        title: "\(currentIndex + 1)/\(bakeryDetail.imageUrls.count)",
                         color: .gray,
                         size: .small,
                         style: .fill

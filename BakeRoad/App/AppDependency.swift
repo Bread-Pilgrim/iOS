@@ -36,6 +36,8 @@ final class AppDependency {
     let getBakeryDetailUseCase: GetBakeryDetailUseCase
     let getBakeryReviewsUseCase: GetBakeryReviewsUseCase
     let getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase
+    let bakeryLikeUseCase: BakeryLikeUseCase
+    let bakeryDislikeUseCase: BakeryDislikeUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -71,5 +73,7 @@ final class AppDependency {
         self.getBakeryDetailUseCase = GetBakeryDetailUseCaseImpl(repository: bakeryRepository)
         self.getBakeryReviewsUseCase = GetBakeryReviewsUseCaseImpl(repository: bakeryRepository)
         self.getBakeryMyReviewsUseCase = GetBakeryMyReviewsUseCaseImpl(repository: bakeryRepository)
+        self.bakeryLikeUseCase = BakeryLikeUseCaseImpl(repository: bakeryRepository)
+        self.bakeryDislikeUseCase = BakeryDislikeUseCaseImpl(repository: bakeryRepository)
     }
 }

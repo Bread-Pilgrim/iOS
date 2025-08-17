@@ -47,6 +47,22 @@ struct BakeryDetail: Equatable, Identifiable {
     }
 }
 
+extension BakeryDetail {
+    func toggleLike() -> BakeryDetail {
+        return BakeryDetail(
+            id: self.id,
+            name: self.name,
+            address: self.address,
+            phone: self.phone,
+            openStatus: self.openStatus,
+            operatingHours: self.operatingHours,
+            isLike: !self.isLike,
+            imageUrls: self.imageUrls,
+            menus: self.menus
+        )
+    }
+}
+
 extension Array where Element == BakeryDetail.OperatingHour {
     func sortedByWeekday() -> [BakeryDetail.OperatingHour] {
         let order: [Int] = [0, 1, 2, 3, 4, 5, 6]

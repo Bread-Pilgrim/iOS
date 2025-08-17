@@ -102,4 +102,22 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         return Page(items: items, hasNext: dto.hasNext)
     }
+    
+    func postBakeryLike(_ id: Int) async throws {
+        let request = APIRequest(
+            path: BakeryEndPoint.like(id),
+            method: .post
+        )
+        
+        let _ = try await apiClient.request(request, responseType: BakeryLikeResponseDTO.self)
+    }
+    
+    func deleteBakeryLike(_ id: Int) async throws {
+        let request = APIRequest(
+            path: BakeryEndPoint.dislike(id),
+            method: .delete
+        )
+        
+        let _ = try await apiClient.request(request, responseType: BakeryLikeResponseDTO.self)
+    }
 }

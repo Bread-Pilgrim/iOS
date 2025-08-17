@@ -20,9 +20,9 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var reviewData: BakeryReviewData?
     @Published var hasNextReviews = false
     @Published var isLoadingReviews = false
+    @Published var isLoadingLike = false
     @Published var errorMessage: String?
     
-    // 현재 리뷰 상태
     private var currentReviewType: ReviewType = .visitor
     private var currentSortOption: SortOption = .like
     private var reviewFetcher: PageFetcher<BakeryReview>?
@@ -32,6 +32,8 @@ final class BakeryDetailViewModel: ObservableObject {
     private let getTourListUseCase: GetTourListUseCase
     private let getBakeryReviewsUseCase: GetBakeryReviewsUseCase
     private let getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase
+    private let bakeryLikeUseCase: BakeryLikeUseCase
+    private let bakeryDislikeUseCase: BakeryDislikeUseCase
     
     var onNavigateBack: (() -> Void)?
     
@@ -40,13 +42,17 @@ final class BakeryDetailViewModel: ObservableObject {
         getBakeryDetailUseCase: GetBakeryDetailUseCase,
         getTourListUseCase: GetTourListUseCase,
         getBakeryReviewsUseCase: GetBakeryReviewsUseCase,
-        getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase
+        getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase,
+        bakeryLikeUseCase: BakeryLikeUseCase,
+        bakeryDislikeUseCase: BakeryDislikeUseCase
     ) {
         self.filter = filter
         self.getBakeryDetailUseCase = getBakeryDetailUseCase
         self.getTourListUseCase = getTourListUseCase
         self.getBakeryReviewsUseCase = getBakeryReviewsUseCase
         self.getBakeryMyReviewsUseCase = getBakeryMyReviewsUseCase
+        self.bakeryLikeUseCase = bakeryLikeUseCase
+        self.bakeryDislikeUseCase = bakeryDislikeUseCase
         
         let areaCodes = filter.areaCodes.map(String.init).joined(separator: ",")
         let tourCatCodes = filter.tourCatCodes.joined(separator: ",")
@@ -115,6 +121,33 @@ final class BakeryDetailViewModel: ObservableObject {
         onNavigateBack?()
     }
     
+    func didTapLikeButton() {
+        guard !isLoadingLike else { return }
+        
+        isLoadingLike = true
+        
+        Task {
+            do {
+                if bakeryDetail?.isLike ?? true {
+                    try await bakeryDislikeUseCase.execute(filter.bakeryId)
+                    self.bakeryDetail = bakeryDetail?.toggleLike()
+                } else {
+                    try await bakeryLikeUseCase.execute(filter.bakeryId)
+                    self.bakeryDetail = bakeryDetail?.toggleLike()
+                }
+            } catch let APIError.serverError(_, message) {
+                errorMessage = message
+            } catch {
+                errorMessage = "잠시 후 다시 시도해주세요."
+            }
+            
+            isLoadingLike = false
+        }
+    }
+}
+
+// 리뷰
+extension BakeryDetailViewModel {
     // 홈 탭으로 돌아올 때 리셋
     func resetToVisitorReviews() {
         Task {
@@ -155,7 +188,7 @@ final class BakeryDetailViewModel: ObservableObject {
         isLoadingReviews = false
     }
     
-    // 더 많은 리뷰 로드
+    // 리뷰 페이징
     func loadMoreReviews(currentReview: BakeryReview) async {
         do {
             try await reviewFetcher?.loadMoreIfNeeded(currentItem: currentReview)

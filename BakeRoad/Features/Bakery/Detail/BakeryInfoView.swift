@@ -79,7 +79,7 @@ struct BakeryInfoView: View {
                         
                         Button {
                             UIPasteboard.general.string = phone
-                            ToastManager.show(message: "복사되었습니다.", type: .success, style: .dark)
+                            ToastManager.show(message: "복사되었습니다.")
                         } label: {
                             Text("복사")
                                 .font(.body2xsmallMedium)

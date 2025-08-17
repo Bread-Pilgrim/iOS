@@ -78,7 +78,9 @@ struct MainView: View {
                             getBakeryDetailUseCase: coordinator.dependency.getBakeryDetailUseCase,
                             getTourListUseCase: coordinator.dependency.getTourListUseCase,
                             getBakeryReviewsUseCase: coordinator.dependency.getBakeryReviewsUseCase,
-                            getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase
+                            getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
+                            bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
+                            bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase
                         )
                         viewModel.onNavigateBack = {
                             coordinator.popHome()

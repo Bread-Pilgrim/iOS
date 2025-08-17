@@ -39,42 +39,44 @@ struct BakeryDetailView: View {
         Group {
             if let bakeryDetail = viewModel.bakeryDetail,
                let reviewData = viewModel.reviewData {
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                    DetailInfoSection(
-                        bakeryDetail: bakeryDetail,
-                        reviewData: reviewData,
-                        onBackButtonTap: {
-                            viewModel.didTapBackButton()
-                        }
-                    )
-                    
-                    Section(header: detailTabBar) {
-                        if selectedTab.showsMenuSection {
-                            DetailMenuSection(
-                                menus: bakeryDetail.menus,
-                                selectedTab: $selectedTab
-                            )
-                        }
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                        DetailInfoSection(
+                            bakeryDetail: bakeryDetail,
+                            reviewData: reviewData,
+                            isLoadingLike: viewModel.isLoadingLike,
+                            onBackButtonTap: {
+                                viewModel.didTapBackButton()
+                            }) {
+                                viewModel.didTapLikeButton()
+                            }
                         
-                        if selectedTab.showsReviewSection {
-                            DetailReviewSection(
-                                reviewData: reviewData,
-                                selectedTab: $selectedTab,
-                                viewModel: viewModel
-                            )
-                        }
-                        
-                        if selectedTab.showsTourSection {
-                            DetailTourSection(
-                                tours: viewModel.recommendTourList,
-                                selectedTab: $selectedTab
-                            )
+                        Section(header: detailTabBar) {
+                            if selectedTab.showsMenuSection {
+                                DetailMenuSection(
+                                    menus: bakeryDetail.menus,
+                                    selectedTab: $selectedTab
+                                )
+                            }
+                            
+                            if selectedTab.showsReviewSection {
+                                DetailReviewSection(
+                                    reviewData: reviewData,
+                                    selectedTab: $selectedTab,
+                                    viewModel: viewModel
+                                )
+                            }
+                            
+                            if selectedTab.showsTourSection {
+                                DetailTourSection(
+                                    tours: viewModel.recommendTourList,
+                                    selectedTab: $selectedTab
+                                )
+                            }
                         }
                     }
                 }
-            }
-            .clipped()
+                .clipped()
             } else {
                 ProgressView()
             }

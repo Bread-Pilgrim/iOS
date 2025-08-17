@@ -10,14 +10,17 @@ import SwiftUI
 struct DetailInfoSection: View {
     let bakeryDetail: BakeryDetail
     let reviewData: BakeryReviewData
+    let isLoadingLike: Bool
     let onBackButtonTap: () -> Void
+    let onLikeButtonTap: () -> Void
 
     var body: some View {
         Section {
             BakeryImageSliderView(
-                imageUrls: bakeryDetail.imageUrls,
-                openStatus: bakeryDetail.openStatus,
-                onBackButtonTap: onBackButtonTap
+                bakeryDetail: bakeryDetail,
+                isLoadingLike: isLoadingLike,
+                onBackButtonTap: onBackButtonTap,
+                onLikeButtonTap: onLikeButtonTap
             )
             BakeryInfoView(bakery: bakeryDetail,
                            reviewData: reviewData)
