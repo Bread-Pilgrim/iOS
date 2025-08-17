@@ -8,8 +8,19 @@
 import SwiftUI
 
 struct DetailReviewSection: View {
-    let bakeryDetail: BakeryDetail
-    let reviews: [BakeryReview]
+    let bakeryReview: BakeryReviewPage
+    
+    private let reviewData: BakeryReviewData
+    private let reviews: [BakeryReview]
+    
+    init(bakeryReview: BakeryReviewPage,
+         selectedTab: Binding<DetailTab>
+    ) {
+        self.bakeryReview = bakeryReview
+        self.reviewData = bakeryReview.data
+        self.reviews = bakeryReview.page.items
+        self._selectedTab = selectedTab
+    }
     
     @Binding var selectedTab: DetailTab
     
@@ -21,7 +32,7 @@ struct DetailReviewSection: View {
         VStack(alignment: .leading, spacing: 16) {
             BakeRoadSegmentedControl(
                 types: [
-                    "방문자 리뷰 (\(bakeryDetail.reviewCount.formattedWithSeparator)개) ",
+                    "방문자 리뷰 (\(reviewData.reviewCount.formattedWithSeparator)개) ",
                     "내가 쓴 리뷰"
                 ],
                 selectedIndex: $selectedReviewType)
@@ -33,7 +44,7 @@ struct DetailReviewSection: View {
                     .foregroundColor(.gray990)
                     .padding(.trailing, 2)
                 
-                Text("(\(bakeryDetail.reviewCount))")
+                Text("(\(reviewData.reviewCount))")
                     .font(.bodySmallMedium)
                     .foregroundColor(.gray990)
                 
@@ -45,7 +56,7 @@ struct DetailReviewSection: View {
                         .frame(width: 20, height: 20)
                         .padding(.trailing, 5)
                     
-                    Text(String(format: "%.1f", bakeryDetail.rating))
+                    Text(String(format: "%.1f", reviewData.avgRating))
                         .font(.bodyMediumSemibold)
                         .foregroundColor(.gray950)
                 } else {
@@ -68,7 +79,7 @@ struct DetailReviewSection: View {
                         .frame(width: 20, height: 20)
                         .padding(.trailing, 5)
                     
-                    Text(String(format: "%.1f", bakeryDetail.rating))
+                    Text(String(format: "%.1f", reviewData.avgRating))
                         .font(.bodyMediumSemibold)
                         .foregroundColor(.gray950)
                     
@@ -96,7 +107,7 @@ struct DetailReviewSection: View {
                 .padding(.horizontal, 16)
             }
             
-            if bakeryDetail.reviewCount == 0 {
+            if reviewData.reviewCount == 0 {
                 ZStack {
                     Rectangle()
                         .fill(Color.gray40)
@@ -136,12 +147,4 @@ struct DetailReviewSection: View {
                 .padding(.bottom, 20)
         }
     }
-}
-
-#Preview {
-    DetailReviewSection(
-        bakeryDetail: BakeryDetail.mockData,
-        reviews: BakeryReview.mocks,
-        selectedTab: .constant(.review)
-    )
 }

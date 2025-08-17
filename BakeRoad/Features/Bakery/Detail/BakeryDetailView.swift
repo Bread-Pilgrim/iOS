@@ -31,44 +31,56 @@ enum DetailTab: String, CaseIterable {
 }
 
 struct BakeryDetailView: View {
-    let bakeryDetail: BakeryDetail
-    let bakeryReviewList: [BakeryReview]
-    let nearRecommendTour: [TourInfo]
+    @StateObject var viewModel: BakeryDetailViewModel
     
     @State private var selectedTab: DetailTab = .home
     
     var body: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                
-                DetailInfoSection(bakeryDetail: bakeryDetail)
-                
-                Section(header: detailTabBar) {
-                    if selectedTab.showsMenuSection {
-                        DetailMenuSection(
-                            menus: bakeryDetail.menus,
-                            selectedTab: $selectedTab
-                        )
-                    }
+        Group {
+            if let bakeryDetail = viewModel.bakeryDetail,
+               let bakeryReviews = viewModel.bakeryReviews {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    DetailInfoSection(
+                        bakeryDetail: bakeryDetail,
+                        reviewData: bakeryReviews.data,
+                        onBackButtonTap: {
+                            viewModel.didTapBackButton()
+                        }
+                    )
                     
-                    if selectedTab.showsReviewSection {
-                        DetailReviewSection(
-                            bakeryDetail: bakeryDetail,
-                            reviews: bakeryReviewList,
-                            selectedTab: $selectedTab
-                        )
-                    }
-                    
-                    if selectedTab.showsTourSection {
-                        DetailTourSection(
-                            tours: nearRecommendTour,
-                            selectedTab: $selectedTab
-                        )
+                    Section(header: detailTabBar) {
+                        if selectedTab.showsMenuSection {
+                            DetailMenuSection(
+                                menus: bakeryDetail.menus,
+                                selectedTab: $selectedTab
+                            )
+                        }
+                        
+                        if selectedTab.showsReviewSection {
+                            DetailReviewSection(
+                                bakeryReview: bakeryReviews,
+                                selectedTab: $selectedTab
+                            )
+                        }
+                        
+                        if selectedTab.showsTourSection {
+                            DetailTourSection(
+                                tours: viewModel.recommendTourList,
+                                selectedTab: $selectedTab
+                            )
+                        }
                     }
                 }
             }
+            .clipped()
+            } else {
+                ProgressView()
+            }
         }
-        .clipped()
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
     private var detailTabBar: some View {

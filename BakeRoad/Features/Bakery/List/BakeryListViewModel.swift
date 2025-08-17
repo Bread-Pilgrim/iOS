@@ -14,6 +14,9 @@ final class BakeryListViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let fetcher: PageFetcher<Bakery>
+    
+    var onNavigateToBakeryDetail: ((Bakery) -> Void)?
+    var onNavigateBack: (() -> Void)?
 
     init(
         filter: BakeryListFilter,
@@ -56,6 +59,14 @@ final class BakeryListViewModel: ObservableObject {
     private func syncState() {
         bakeries = fetcher.page.items
         hasNext = fetcher.page.hasNext
+    }
+    
+    func didTapBakery(_ bakery: Bakery) {
+        onNavigateToBakeryDetail?(bakery)
+    }
+    
+    func didTapBackButton() {
+        onNavigateBack?()
     }
 }
 

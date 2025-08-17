@@ -58,7 +58,7 @@ struct BakeryReviewResponseDTO: Decodable {
     private enum CodingKeys: String, CodingKey {
         case avgRating = "avg_rating"
         case reviewCount = "review_count"
-        case reviews
+        case reviews = "items"
         case hasNext = "has_next"
     }
 }

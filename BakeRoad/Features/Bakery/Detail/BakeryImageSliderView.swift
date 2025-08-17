@@ -10,6 +10,7 @@ import SwiftUI
 struct BakeryImageSliderView: View {
     let imageUrls: [String]
     let openStatus: BakeryOpenStatus
+    let onBackButtonTap: () -> Void
     
     @State private var currentIndex: Int = 0
     
@@ -31,7 +32,7 @@ struct BakeryImageSliderView: View {
                 // 상단
                 HStack {
                     BakeRoadCircleButton(icon: "arrowLeft") {
-                        print("에로봄")
+                        onBackButtonTap()
                     }
                     
                     Spacer()
@@ -65,11 +66,4 @@ struct BakeryImageSliderView: View {
             }
         }
     }
-}
-
-#Preview {
-    BakeryImageSliderView(
-        imageUrls: BakeryDetail.mockData.imageUrls,
-        openStatus: BakeryDetail.mockData.openStatus
-    )
 }

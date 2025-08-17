@@ -9,14 +9,18 @@ import SwiftUI
 
 struct DetailInfoSection: View {
     let bakeryDetail: BakeryDetail
+    let reviewData: BakeryReviewData
+    let onBackButtonTap: () -> Void
 
     var body: some View {
         Section {
             BakeryImageSliderView(
                 imageUrls: bakeryDetail.imageUrls,
-                openStatus: bakeryDetail.openStatus
+                openStatus: bakeryDetail.openStatus,
+                onBackButtonTap: onBackButtonTap
             )
-            BakeryInfoView(bakery: bakeryDetail)
+            BakeryInfoView(bakery: bakeryDetail,
+                           reviewData: reviewData)
         }
         .id(DetailTab.home)
         .padding(.bottom, 20)

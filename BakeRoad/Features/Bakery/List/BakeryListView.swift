@@ -9,7 +9,6 @@ import SwiftUI
 
 struct BakeryListView: View {
     @StateObject var viewModel: BakeryListViewModel
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         VStack {
@@ -20,6 +19,9 @@ struct BakeryListView: View {
                             .frame(height: 126)
                             .task {
                                 await viewModel.loadMoreIfNeeded(currentItem: bakery)
+                            }
+                            .onTapGesture {
+                                viewModel.didTapBakery(bakery)
                             }
                     }
                 }
@@ -36,7 +38,7 @@ struct BakeryListView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    dismiss()
+                    viewModel.didTapBackButton()
                 } label: {
                     Image("arrowLeft")
                         .resizable()

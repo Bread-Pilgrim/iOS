@@ -13,11 +13,13 @@ final class APIService {
     
     private let baseURL = "https://fastapi-1015297428835.asia-northeast3.run.app"
     private let session: Session
+    private let sessionWithoutAuth: Session
     private let tokenStore: TokenStore
     
     private init(tokenStore: TokenStore = UserDefaultsTokenStore()) {
         let interceptor = AuthInterceptor(tokenStore: tokenStore)
         self.session = Session(interceptor: interceptor)
+        self.sessionWithoutAuth = Session()
         self.tokenStore = tokenStore
     }
     
@@ -28,6 +30,7 @@ final class APIService {
         let url = baseURL + request.path
         let method = HTTPMethod(rawValue: request.method.rawValue)
         let parameters = try request.parameters?.asDictionary()
+        let session = request.customHeaders == nil ? self.session : self.sessionWithoutAuth
         
         var headers: HTTPHeaders = ["Content-Type": "application/json"]
         

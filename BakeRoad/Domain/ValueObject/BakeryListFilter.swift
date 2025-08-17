@@ -10,4 +10,5 @@ import Foundation
 struct BakeryListFilter: Hashable {
     let type: BakeryType
     let areaCodes: Set<Int>
+    let tourCatCodes: Set<String>
 }

@@ -11,7 +11,7 @@ struct BakeryDetailResponseDTO: Decodable {
     let bakeryId: Int
     let bakeryName: String
     let address: String
-    let phone: String?
+    let phone: String
     let openStatus: String
     let operatingHours: [OperatingHour]?
     let isLike: Bool
@@ -36,13 +36,13 @@ struct BakeryDetailResponseDTO: Decodable {
         let name: String
         let price: Int
         let isSignature: Bool
-        let imageUrl: String?
+        let imgUrl: String?
         
         private enum CodingKeys: String, CodingKey {
-            case name
+            case name = "menu_name"
             case price
             case isSignature = "is_signature"
-            case imageUrl = "image_url"
+            case imgUrl = "img_url"
         }
     }
     
@@ -82,7 +82,7 @@ extension BakeryDetailResponseDTO {
                     name: $0.name,
                     price: $0.price,
                     isSignature: $0.isSignature,
-                    imageUrl: $0.imageUrl
+                    imageUrl: $0.imgUrl
                 )
             }
         )

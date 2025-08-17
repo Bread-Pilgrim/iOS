@@ -20,34 +20,74 @@ struct MainView: View {
                 case .my:        myTab
                 }
             }
-            .padding(.bottom, 72)
+            .padding(.bottom, coordinator.isTabBarHidden ? 0 : 72)
         }
         .overlay(alignment: .bottom) {
-            CustomTabBar(
-                selected: coordinator.selectedTab,
-                onSelect: { coordinator.selectedTab = $0 }
-            )
-            .ignoresSafeArea(edges: .bottom)
+            if !coordinator.isTabBarHidden {
+                CustomTabBar(
+                    selected: coordinator.selectedTab,
+                    onSelect: { coordinator.selectedTab = $0 }
+                )
+                .ignoresSafeArea(edges: .bottom)
+            }
         }
     }
     
     private var homeTab: some View {
         NavigationStack(path: $coordinator.homePath) {
-            HomeView(viewModel: HomeViewModel(
-                getAreaListUseCase: coordinator.dependency.getAreaListUseCase,
-                getBakeriesUseCase: coordinator.dependency.getBakeriesUseCase,
-                getTourListUseCase: coordinator.dependency.getTourListUseCase
-            ))
-            .environmentObject(coordinator)
+            HomeView(viewModel: {
+                let viewModel = HomeViewModel(
+                    getAreaListUseCase: coordinator.dependency.getAreaListUseCase,
+                    getBakeriesUseCase: coordinator.dependency.getBakeriesUseCase,
+                    getTourListUseCase: coordinator.dependency.getTourListUseCase
+                )
+                viewModel.onNavigateToBakeryList = { filter in
+                    coordinator.push(.list(filter))
+                }
+                viewModel.onNavigateToBakeryDetail = { filter in
+                    coordinator.push(.bakeryDetail(filter))
+                }
+                return viewModel
+            }())
             .navigationDestination(for: MainCoordinator.HomeScreen.self) { screen in
                 switch screen {
                 case .list(let filter):
-                    BakeryListView(viewModel: BakeryListViewModel(
-                        filter: filter,
-                        getBakeryListUseCase: coordinator.dependency.getBakeryListUseCase
-                    ))
-                case .bakeryDetail(let id):
-                    
+                    BakeryListView(viewModel: {
+                        let viewModel = BakeryListViewModel(
+                            filter: filter,
+                            getBakeryListUseCase: coordinator.dependency.getBakeryListUseCase
+                        )
+                        viewModel.onNavigateToBakeryDetail = { bakery in
+                            coordinator.push(.bakeryDetail(
+                                BakeryDetailFilter(
+                                    bakeryId: bakery.id,
+                                    areaCodes: filter.areaCodes,
+                                    tourCatCodes: []
+                                )
+                            ))
+                        }
+                        viewModel.onNavigateBack = {
+                            coordinator.popHome()
+                        }
+                        return viewModel
+                    }())
+                case .bakeryDetail(let filter):
+                    BakeryDetailView(viewModel: {
+                        let viewModel = BakeryDetailViewModel(
+                            filter: filter,
+                            getBakeryDetailUseCase: coordinator.dependency.getBakeryDetailUseCase,
+                            getTourListUseCase: coordinator.dependency.getTourListUseCase,
+                            getBakeryReviewsUseCase: coordinator.dependency.getBakeryReviewsUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popHome()
+                        }
+                        return viewModel
+                    }())
+                    .navigationBarBackButtonHidden(true)
+                    .navigationBarHidden(true)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .toolbar(.hidden, for: .automatic)
                 }
             }
         }

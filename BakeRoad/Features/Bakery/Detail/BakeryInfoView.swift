@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BakeryInfoView: View {
     let bakery: BakeryDetail
+    let reviewData: BakeryReviewData
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -20,10 +21,10 @@ struct BakeryInfoView: View {
                     Image("fillStar")
                         .resizable()
                         .frame(width: 16, height: 16)
-                    Text("\(String(format: "%.1f", bakery.rating))")
+                    Text("\(String(format: "%.1f", reviewData.avgRating))")
                         .font(.bodySmallSemibold)
                         .foregroundColor(.gray950)
-                    Text("(\(bakery.reviewCount.formattedWithSeparator)개)")
+                    Text("(\(reviewData.reviewCount.formattedWithSeparator)개)")
                         .font(.bodySmallSemibold)
                         .foregroundColor(.gray950)
                 }
@@ -144,8 +145,4 @@ struct OperatingHoursView: View {
             }
         }
     }
-}
-
-#Preview {
-    BakeryInfoView(bakery: BakeryDetail.mockData)
 }

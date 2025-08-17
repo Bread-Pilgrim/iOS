@@ -51,17 +51,18 @@ struct BakeryDetailReviewCard: View {
                     Image("fillStar")
                         .resizable()
                         .frame(width: 16, height: 16)
-                    Text(String(format: "%.1f", review.averageRating))
+                    Text(String(format: "%.1f", review.rating))
                         .font(.bodyXsmallMedium)
                         .foregroundColor(.gray950)
                 }
                 
-                if !review.photoURLs.isEmpty {
+                if !review.photos.isEmpty {
                     HStack(spacing: 7) {
-                        ForEach(review.photoURLs, id: \.self) { url in
+                        ForEach(review.photos, id: \.self) { url in
                             BakeryImageView(imageUrl: url, placeholder: .ratio3_2)
                                 .cornerRadius(8)
-                                .frame(width: .infinity, height: 104)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 104)
                         }
                     }
                 }
@@ -82,7 +83,7 @@ struct BakeryDetailReviewCard: View {
                 }
                 
                 HStack(spacing: 4) {
-                    let isLikedColor = review.isLiked ? Color.primary500 : Color.gray300
+                    let isLikedColor = review.isLike ? Color.primary500 : Color.gray300
                     
                     Image(systemName: "heart.fill")
                         .foregroundColor(isLikedColor)
@@ -98,8 +99,4 @@ struct BakeryDetailReviewCard: View {
         .cornerRadius(12)
         .padding(.horizontal, 12)
     }
-}
-
-#Preview {
-    BakeryDetailReviewCard(review: BakeryReview.mock)
 }

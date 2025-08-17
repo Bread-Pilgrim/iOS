@@ -22,6 +22,9 @@ final class HomeViewModel: ObservableObject {
     private let getTourListUseCase: GetTourListUseCase
     private var cancellables = Set<AnyCancellable>()
     
+    var onNavigateToBakeryList: ((BakeryListFilter) -> Void)?
+    var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
+    
     private var areaCodes: String { selectedAreaCodes.map(String.init).joined(separator: ",") }
     private var tourCatCodes: String { selectedCategoryCodes.joined(separator: ",") }
     
@@ -109,5 +112,32 @@ final class HomeViewModel: ObservableObject {
         } else {
             selectedCategoryCodes.insert(id)
         }
+    }
+    
+    func didTapPreferenceViewAll() {
+        let filter = BakeryListFilter(
+            type: .preference,
+            areaCodes: selectedAreaCodes,
+            tourCatCodes: selectedCategoryCodes
+        )
+        onNavigateToBakeryList?(filter)
+    }
+    
+    func didTapHotViewAll() {
+        let filter = BakeryListFilter(
+            type: .hot,
+            areaCodes: selectedAreaCodes,
+            tourCatCodes: selectedCategoryCodes
+        )
+        onNavigateToBakeryList?(filter)
+    }
+    
+    func didTapBakery(_ bakery: RecommendBakery) {
+        let filter = BakeryDetailFilter(
+            bakeryId: bakery.id,
+            areaCodes: selectedAreaCodes,
+            tourCatCodes: selectedCategoryCodes
+        )
+        onNavigateToBakeryDetail?(filter)
     }
 }

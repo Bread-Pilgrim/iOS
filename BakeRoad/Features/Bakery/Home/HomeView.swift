@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
-    @EnvironmentObject var coordinator: MainCoordinator
     
     var body: some View {
         HeaderView {
@@ -44,12 +43,7 @@ struct HomeView: View {
                         type: .assistive,
                         size: .small
                     ) {
-                        coordinator.push(.list(
-                            BakeryListFilter(
-                                type: .preference,
-                                areaCodes: viewModel.selectedAreaCodes
-                            )
-                        ))
+                        viewModel.didTapPreferenceViewAll()
                     }
                 }
                 .padding(.horizontal, 16)
@@ -60,7 +54,7 @@ struct HomeView: View {
                         ForEach(viewModel.preferenceBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
                                 .onTapGesture {
-                                    coordinator.push(.bakeryDetail(recommendBakery.id))
+                                    viewModel.didTapBakery(recommendBakery)
                                 }
                         }
                     }
@@ -77,12 +71,7 @@ struct HomeView: View {
                         type: .assistive,
                         size: .small
                     ) {
-                        coordinator.push(.list(
-                            BakeryListFilter(
-                                type: .hot,
-                                areaCodes: viewModel.selectedAreaCodes
-                            )
-                        ))
+                        viewModel.didTapHotViewAll()
                     }
                 }
                 .padding(.horizontal, 16)
@@ -93,7 +82,7 @@ struct HomeView: View {
                         ForEach(viewModel.hotBakeries) { recommendBakery in
                             RecommendBakeryCard(recommendBakery: recommendBakery)
                                 .onTapGesture {
-                                    coordinator.push(.bakeryDetail(recommendBakery.id))
+                                    viewModel.didTapBakery(recommendBakery)
                                 }
                         }
                     }
