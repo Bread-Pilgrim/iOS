@@ -9,7 +9,7 @@ import Foundation
 
 struct BakeryLikeResponseDTO: Decodable {
     let isLike: Bool
-    let bakeryId: String
+    let bakeryId: Int
     
     enum CodingKeys: String, CodingKey {
         case isLike = "is_like"

@@ -160,11 +160,10 @@ final class BakeryDetailViewModel: ObservableObject {
             do {
                 if bakeryDetail?.isLike ?? true {
                     try await bakeryDislikeUseCase.execute(filter.bakeryId)
-                    self.bakeryDetail = bakeryDetail?.toggleLike()
                 } else {
                     try await bakeryLikeUseCase.execute(filter.bakeryId)
-                    self.bakeryDetail = bakeryDetail?.toggleLike()
                 }
+                self.bakeryDetail = bakeryDetail?.toggleLike()
             } catch let APIError.serverError(_, message) {
                 errorMessage = message
             } catch {

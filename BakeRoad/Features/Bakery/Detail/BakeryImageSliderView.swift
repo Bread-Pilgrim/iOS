@@ -42,7 +42,6 @@ struct BakeryImageSliderView: View {
                         BakeRoadCircleButton(icon: bakeryDetail.isLike ? "favorites_fill" : "heart") {
                             if !isLoadingLike {
                                 onLikeButtonTap()
-                                ToastManager.show(message: bakeryDetail.isLike ? "내 빵집에 저장했어요." : "내 빵집에서 제거했어요.")
                             }
                         }
                         .disabled(isLoadingLike)
@@ -55,6 +54,9 @@ struct BakeryImageSliderView: View {
                             ProgressView()
                                 .scaleEffect(0.8)
                         }
+                    }
+                    .onChange(of: bakeryDetail.isLike) { oldValue, newValue in
+                        ToastManager.show(message: newValue ? "내 빵집에 저장했어요." : "내 빵집에서 제거했어요.")
                     }
                 }
                 .padding(.top, 15)
