@@ -18,8 +18,8 @@ final class APIService {
     
     private init(tokenStore: TokenStore = UserDefaultsTokenStore()) {
         let interceptor = AuthInterceptor(tokenStore: tokenStore)
-        self.session = Session(interceptor: interceptor)
-        self.sessionWithoutAuth = Session()
+        self.session = Session(interceptor: interceptor, eventMonitors: [CURLLogger()])
+        self.sessionWithoutAuth = Session(eventMonitors: [CURLLogger()])
         self.tokenStore = tokenStore
     }
     

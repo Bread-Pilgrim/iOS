@@ -20,8 +20,8 @@ struct BakeryDetailResponseDTO: Decodable {
     
     struct OperatingHour: Decodable {
         let dayOfWeek: Int
-        let openTime: String
-        let closeTime: String
+        let openTime: String?
+        let closeTime: String?
         let isOpened: Bool
         
         private enum CodingKeys: String, CodingKey {
@@ -70,8 +70,8 @@ extension BakeryDetailResponseDTO {
             operatingHours: (operatingHours ?? []).map {
                 BakeryDetail.OperatingHour(
                     dayOfWeek: $0.dayOfWeek,
-                    openTime: $0.openTime,
-                    closeTime: $0.closeTime,
+                    openTime: $0.openTime ?? "",
+                    closeTime: $0.closeTime ?? "",
                     isOpened: $0.isOpened
                 )
             }.sortedByWeekday(),
