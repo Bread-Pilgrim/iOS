@@ -10,7 +10,6 @@ import SwiftUI
 struct DetailInfoSection: View {
     let bakeryDetail: BakeryDetail
     let reviewData: BakeryReviewData
-    let isLoadingLike: Bool
     let onBackButtonTap: () -> Void
     let onLikeButtonTap: () -> Void
     let onWriteButtonTap: () -> Void
@@ -19,7 +18,6 @@ struct DetailInfoSection: View {
         Section {
             BakeryImageSliderView(
                 bakeryDetail: bakeryDetail,
-                isLoadingLike: isLoadingLike,
                 onBackButtonTap: onBackButtonTap,
                 onLikeButtonTap: onLikeButtonTap
             )

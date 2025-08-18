@@ -81,6 +81,8 @@ struct MainView: View {
                             getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
                             bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
                             bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase,
+                            reviewLikeUseCase: coordinator.dependency.reviewlikeUseCase,
+                            reviewDislikeUseCase: coordinator.dependency.reviewDislikeUseCase,
                             getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase,
                             getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
                             writeReviewUseCase: coordinator.dependency.writeReviewUseCase

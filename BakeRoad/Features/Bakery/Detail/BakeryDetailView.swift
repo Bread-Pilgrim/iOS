@@ -43,13 +43,12 @@ struct BakeryDetailView: View {
                     LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
                         DetailInfoSection(
                             bakeryDetail: bakeryDetail,
-                            reviewData: reviewData,
-                            isLoadingLike: viewModel.isLoadingLike) {
+                            reviewData: reviewData) {
                                 viewModel.didTapBackButton()
                             } onLikeButtonTap: {
-                                viewModel.didTapLikeButton()
+                                viewModel.didTapBakeryLikeButton()
                             } onWriteButtonTap: {
-                                viewModel.didTapWriteButton()
+                                viewModel.didTapReviewWriteButton()
                             }
                         
                         Section(header: detailTabBar) {
@@ -82,6 +81,13 @@ struct BakeryDetailView: View {
                 ProgressView()
             }
         }
+        .disabled(viewModel.isLoading)
+        .overlay {
+            if viewModel.isLoading {
+                Color.black.opacity(0.1).ignoresSafeArea()
+                ProgressView()
+            }
+        }
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         .toolbar(.hidden, for: .navigationBar)
@@ -94,21 +100,21 @@ struct BakeryDetailView: View {
                 }
             }
         }
-          .onChange(of: viewModel.toastMessage) { _, message in
-              if let message = message {
-                  ToastManager.show(message: message, type: .error)
-                  viewModel.toastMessage = nil
-              }
-          }
-          .fullScreenCover(isPresented: $viewModel.showMenuSelection) {
-              NavigationStack {
-                  MenuSelectionView(viewModel: WriteReviewViewModel(
+        .onChange(of: viewModel.errorMessage) { _, message in
+            if let message = message {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
+            }
+        }
+        .fullScreenCover(isPresented: $viewModel.showMenuSelection) {
+            NavigationStack {
+                MenuSelectionView(viewModel: WriteReviewViewModel(
                     bakeryId: viewModel.filter.bakeryId,
                     getBakeryMenuUseCase: viewModel.getBakeryMenuUseCase,
                     writeReviewUseCase: viewModel.writeReviewUseCase
-                  ))
-              }
-          }
+                ))
+            }
+        }
     }
     
     private var detailTabBar: some View {

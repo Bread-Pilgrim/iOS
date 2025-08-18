@@ -18,6 +18,21 @@ struct BakeryReview: Identifiable, Equatable {
     let createdAt: String
     let menus: [String]
     let photos: [String]
+    
+    func toggleLike() -> BakeryReview {
+        return BakeryReview(
+            id: id,
+            userName: userName,
+            profileImageURL: profileImageURL,
+            isLike: !isLike,
+            content: content,
+            rating: rating,
+            likeCount: isLike ? likeCount - 1 : likeCount + 1,
+            createdAt: createdAt,
+            menus: menus,
+            photos: photos
+        )
+    }
 }
 
 struct BakeryReviewData: Equatable {

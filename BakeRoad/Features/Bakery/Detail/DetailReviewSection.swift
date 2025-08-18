@@ -62,7 +62,7 @@ struct DetailReviewSection: View {
                         style: .assistive,
                         size: .small
                     ) {
-                        viewModel.didTapWriteButton()
+                        viewModel.didTapReviewWriteButton()
                     }
                     .frame(width: 95)
                 }
@@ -122,13 +122,14 @@ struct DetailReviewSection: View {
                 .padding(.horizontal, 16)
             } else {
                 ForEach(viewModel.reviews) { review in
-                    BakeryDetailReviewCard(review: review)
-                        .task {
-                            // 리뷰 탭에서만 페이징 처리
-                            if selectedTab == .review {
-                                await viewModel.loadMoreReviews(currentReview: review)
-                            }
+                    BakeryDetailReviewCard(review: review) { reviewId in
+                        viewModel.didTapReviewLikeButton(reviewId)
+                    }
+                    .task {
+                        if selectedTab == .review {
+                            await viewModel.loadMoreReviews(currentReview: review)
                         }
+                    }
                 }
                 
                 if selectedTab == .home {
@@ -144,13 +145,6 @@ struct DetailReviewSection: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 16)
-                }
-                
-                // 리뷰 탭에서 로딩 인디케이터
-                if selectedTab == .review && viewModel.isLoadingReviews {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                        .padding()
                 }
             }
         }

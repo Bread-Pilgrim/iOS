@@ -23,6 +23,7 @@ final class AppDependency {
     let areasRepository: AreasRepository
     let bakeryRepository: BakeryRepository
     let tourRepository: TourRepository
+    let reviewRepository: ReviewRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
@@ -41,6 +42,8 @@ final class AppDependency {
     let getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
     let writeReviewUseCase: WriteReviewUseCase
     let getBakeryMenuUseCase: GetBakeryMenuUseCase
+    let reviewlikeUseCase: ReviewLikeUseCase
+    let reviewDislikeUseCase: ReviewDislikeUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -63,6 +66,7 @@ final class AppDependency {
         self.areasRepository = AreasRepositoryImpl(apiClient: authenticatedClient)
         self.bakeryRepository = BakeryRepositoryImpl(apiClient: authenticatedClient)
         self.tourRepository = TourRepositoryImpl(apiClient: authenticatedClient)
+        self.reviewRepository = ReviewRepositoryImpl(apiClient: authenticatedClient)
         
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
@@ -81,5 +85,7 @@ final class AppDependency {
         self.getBakeryReviewEligibilityUseCase = GetBakeryReviewEligibilityUseCaseImpl(repository: bakeryRepository)
         self.writeReviewUseCase = WriteReviewUseCaseImpl(repository: bakeryRepository)
         self.getBakeryMenuUseCase = GetBakeryMenuUseCaseImpl(repository: bakeryRepository)
+        self.reviewlikeUseCase = ReviewLikeUseCaseImpl(repository: reviewRepository)
+        self.reviewDislikeUseCase = ReviewDislikeUseCaseImpl(repository: reviewRepository)
     }
 }

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct BakeryImageSliderView: View {
     var bakeryDetail: BakeryDetail
-    let isLoadingLike: Bool
     let onBackButtonTap: () -> Void
     let onLikeButtonTap: () -> Void
     
@@ -38,22 +37,8 @@ struct BakeryImageSliderView: View {
                     
                     Spacer()
                     
-                    ZStack {
-                        BakeRoadCircleButton(icon: bakeryDetail.isLike ? "favorites_fill" : "heart") {
-                            if !isLoadingLike {
-                                onLikeButtonTap()
-                            }
-                        }
-                        .disabled(isLoadingLike)
-                        
-                        if isLoadingLike {
-                            Circle()
-                                .fill(Color.white.opacity(0.8))
-                                .frame(width: 32, height: 32)
-                            
-                            ProgressView()
-                                .scaleEffect(0.8)
-                        }
+                    BakeRoadCircleButton(icon: bakeryDetail.isLike ? "favorites_fill" : "heart") {
+                        onLikeButtonTap()
                     }
                     .onChange(of: bakeryDetail.isLike) { oldValue, newValue in
                         ToastManager.show(message: newValue ? "내 빵집에 저장했어요." : "내 빵집에서 제거했어요.")

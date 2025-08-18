@@ -19,9 +19,7 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var reviews: [BakeryReview] = []
     @Published var reviewData: BakeryReviewData?
     @Published var hasNextReviews = false
-    @Published var isLoadingReviews = false
-    @Published var isLoadingLike = false
-    @Published var toastMessage: String?
+    @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var showMenuSelection = false
     
@@ -36,6 +34,8 @@ final class BakeryDetailViewModel: ObservableObject {
     private let getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase
     private let bakeryLikeUseCase: BakeryLikeUseCase
     private let bakeryDislikeUseCase: BakeryDislikeUseCase
+    private let reviewLikeUseCase: ReviewLikeUseCase
+    private let reviewDislikeUseCase: ReviewDislikeUseCase
     private let getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase
     
     let getBakeryMenuUseCase: GetBakeryMenuUseCase
@@ -51,6 +51,8 @@ final class BakeryDetailViewModel: ObservableObject {
         getBakeryMyReviewsUseCase: GetBakeryMyReviewsUseCase,
         bakeryLikeUseCase: BakeryLikeUseCase,
         bakeryDislikeUseCase: BakeryDislikeUseCase,
+        reviewLikeUseCase: ReviewLikeUseCase,
+        reviewDislikeUseCase: ReviewDislikeUseCase,
         getBakeryReviewEligibilityUseCase: GetBakeryReviewEligibilityUseCase,
         getBakeryMenuUseCase: GetBakeryMenuUseCase,
         writeReviewUseCase: WriteReviewUseCase
@@ -62,6 +64,8 @@ final class BakeryDetailViewModel: ObservableObject {
         self.getBakeryMyReviewsUseCase = getBakeryMyReviewsUseCase
         self.bakeryLikeUseCase = bakeryLikeUseCase
         self.bakeryDislikeUseCase = bakeryDislikeUseCase
+        self.reviewLikeUseCase = reviewLikeUseCase
+        self.reviewDislikeUseCase = reviewDislikeUseCase
         self.getBakeryReviewEligibilityUseCase = getBakeryReviewEligibilityUseCase
         self.getBakeryMenuUseCase = getBakeryMenuUseCase
         self.writeReviewUseCase = writeReviewUseCase
@@ -133,7 +137,11 @@ final class BakeryDetailViewModel: ObservableObject {
         onNavigateBack?()
     }
     
-    func didTapWriteButton() {
+    func didTapReviewWriteButton() {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        
         Task {
             do {
                 let isEligible = try await getBakeryReviewEligibilityUseCase.execute(filter.bakeryId)
@@ -141,36 +149,61 @@ final class BakeryDetailViewModel: ObservableObject {
                 if isEligible.isEligible {
                     showMenuSelection = true
                 } else {
-                    toastMessage = "오늘 이미 리뷰를 남겼어요!\n리뷰는 하루에 하나만 작성할 수 있습니다 :)"
+                    errorMessage = "오늘 이미 리뷰를 남겼어요!\n리뷰는 하루에 하나만 작성할 수 있습니다 :)"
                 }
-            } catch let APIError.serverError(_, message) {
-                errorMessage = message
-            } catch {
-                errorMessage = "잠시 후 다시 시도해주세요."
-            }
-        }
-    }
-    
-    func didTapLikeButton() {
-        guard !isLoadingLike else { return }
-        
-        isLoadingLike = true
-        
-        Task {
-            do {
-                if bakeryDetail?.isLike ?? true {
-                    try await bakeryDislikeUseCase.execute(filter.bakeryId)
-                } else {
-                    try await bakeryLikeUseCase.execute(filter.bakeryId)
-                }
-                self.bakeryDetail = bakeryDetail?.toggleLike()
             } catch let APIError.serverError(_, message) {
                 errorMessage = message
             } catch {
                 errorMessage = "잠시 후 다시 시도해주세요."
             }
             
-            isLoadingLike = false
+            isLoading = false
+        }
+    }
+    
+    func didTapBakeryLikeButton() {
+        guard let originalDetail = bakeryDetail else { return }
+        
+        bakeryDetail = originalDetail.toggleLike()
+        
+        Task {
+            do {
+                if originalDetail.isLike {
+                    try await bakeryDislikeUseCase.execute(filter.bakeryId)
+                } else {
+                    try await bakeryLikeUseCase.execute(filter.bakeryId)
+                }
+            } catch let APIError.serverError(_, message) {
+                bakeryDetail = originalDetail
+                errorMessage = message
+            } catch {
+                bakeryDetail = originalDetail
+                errorMessage = "잠시 후 다시 시도해주세요."
+            }
+        }
+    }
+    
+    func didTapReviewLikeButton(_ reviewId: Int) {
+        guard let reviewIndex = reviews.firstIndex(where: { $0.id == reviewId }) else { return }
+        
+        let originReivew = reviews[reviewIndex]
+        reviews[reviewIndex] = originReivew.toggleLike()
+        
+        Task {
+            do {
+                if originReivew.isLike {
+                    try await reviewDislikeUseCase.execute(reviewId)
+                } else {
+                    try await reviewLikeUseCase.execute(reviewId)
+                }
+                
+            } catch let APIError.serverError(_, message) {
+                reviews[reviewIndex] = originReivew
+                errorMessage = message
+            } catch {
+                reviews[reviewIndex] = originReivew
+                errorMessage = "잠시 후 다시 시도해주세요."
+            }
         }
     }
 }
@@ -186,9 +219,9 @@ extension BakeryDetailViewModel {
     
     // 리뷰 로드
     func loadReviews(type: ReviewType, sortOption: SortOption = .like, pageSize: Int = 5) async {
-        guard !isLoadingReviews else { return }
+        guard !isLoading else { return }
         
-        isLoadingReviews = true
+        isLoading = true
         currentReviewType = type
         currentSortOption = sortOption
         
@@ -214,7 +247,7 @@ extension BakeryDetailViewModel {
             errorMessage = "리뷰를 불러오는데 실패했습니다."
         }
         
-        isLoadingReviews = false
+        isLoading = false
     }
     
     // 리뷰 페이징

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BakeryDetailReviewCard: View {
     let review: BakeryReview
+    let onLikeTapped: (Int) -> Void
     let reviewBaseURL = "https://rmpwbqnjauejvolxmamj.supabase.co/storage/v1/object/public/bread-bucket/images/"
     
     var body: some View {
@@ -83,15 +84,19 @@ struct BakeryDetailReviewCard: View {
                     }
                 }
                 
-                HStack(spacing: 4) {
-                    let isLikedColor = review.isLike ? Color.primary500 : Color.gray300
-                    
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(isLikedColor)
-                    
-                    Text(review.likeCount > 0 ? "\(review.likeCount)" : "좋아요")
-                        .font(.bodyXsmallRegular)
-                        .foregroundColor(isLikedColor)
+                Button(action: {
+                    onLikeTapped(review.id)
+                }) {
+                    HStack(spacing: 4) {
+                        let isLikedColor = review.isLike ? Color.primary500 : Color.gray300
+                        
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(isLikedColor)
+                        
+                        Text(review.likeCount > 0 ? "\(review.likeCount)" : "좋아요")
+                            .font(.bodyXsmallRegular)
+                            .foregroundColor(isLikedColor)
+                    }
                 }
             }
             .padding(12)
