@@ -30,15 +30,10 @@ final class SplashViewModel: ObservableObject {
     
     func onAppear() {
         Task {
-            async let wait: Void = Task.sleep(nanoseconds: 1_000_000_000)
-            async let verify: Void = verifyTokenUseCase.verifyToken()
-            
             do {
-                try await verify
-                try await wait
+                try await verifyTokenUseCase.verifyToken()
                 route = tokenStore.onboardingCompleted ? .main : .onboarding
             } catch {
-                try? await wait
                 route = .login
             }
         }
