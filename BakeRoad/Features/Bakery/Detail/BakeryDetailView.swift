@@ -34,6 +34,7 @@ struct BakeryDetailView: View {
     @StateObject var viewModel: BakeryDetailViewModel
     
     @State private var selectedTab: DetailTab = .home
+    @State private var showReviewComplete = false
     
     var body: some View {
         Group {
@@ -108,13 +109,41 @@ struct BakeryDetailView: View {
         }
         .fullScreenCover(isPresented: $viewModel.showMenuSelection) {
             NavigationStack {
-                MenuSelectionView(viewModel: WriteReviewViewModel(
-                    bakeryId: viewModel.filter.bakeryId,
-                    getBakeryMenuUseCase: viewModel.getBakeryMenuUseCase,
-                    writeReviewUseCase: viewModel.writeReviewUseCase
-                ))
+                MenuSelectionView(viewModel: {
+                    let writeReviewViewModel = WriteReviewViewModel(
+                        bakeryId: viewModel.filter.bakeryId,
+                        getBakeryMenuUseCase: viewModel.getBakeryMenuUseCase,
+                        writeReviewUseCase: viewModel.writeReviewUseCase
+                    )
+                    writeReviewViewModel.onReviewSubmitted = {
+                        viewModel.showMenuSelection = false
+                        showReviewComplete = true
+                    }
+                    return writeReviewViewModel
+                }())
             }
         }
+        .onChange(of: showReviewComplete) { oldValue, newValue in
+            if newValue {
+                ToastManager.show(message: "리뷰가 성공적으로 작성되었습니다.", type: .success)
+            }
+        }
+//        .fullScreenCover(isPresented: $showReviewComplete) {
+//            ReviewCompleteView(
+//                bakeryId: viewModel.filter.bakeryId,
+//                onGoHome: {
+//                    showReviewComplete = false
+//                    viewModel.onNavigateBack?()
+//                },
+//                onGoToReview: {
+//                    showReviewComplete = false
+//                    selectedTab = .review
+//                    Task {
+//                        await viewModel.loadReviews(type: .visitor)
+//                    }
+//                }
+//            )
+//        }
     }
     
     private var detailTabBar: some View {

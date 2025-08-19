@@ -135,12 +135,6 @@ struct WriteReviewView: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
-        .onChange(of: viewModel.isSubmitSuccessful) { _, isSuccessful in
-            if isSuccessful {
-                ToastManager.show(message: "리뷰가 성공적으로 작성되었습니다", type: .success)
-                dismiss()
-            }
-        }
         .onChange(of: viewModel.errorMessage) { _, errorMessage in
             if let errorMessage = errorMessage {
                 ToastManager.show(message: errorMessage, type: .error)

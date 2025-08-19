@@ -25,11 +25,12 @@ final class WriteReviewViewModel: ObservableObject {
     @Published var isPrivate: Bool = true
     @Published var selectedImages: [UIImage] = []
     @Published var isLoading = false
-    @Published var isSubmitSuccessful = false
     
     private let bakeryId: Int
     private let getBakeryMenuUseCase: GetBakeryMenuUseCase
     private let writeReviewUseCase: WriteReviewUseCase
+    
+    var onReviewSubmitted: (() -> Void)?
     
     init(
         bakeryId: Int,
@@ -103,7 +104,7 @@ final class WriteReviewViewModel: ObservableObject {
                     imageData: imageData
                 )
                 
-                isSubmitSuccessful = true
+                onReviewSubmitted?()
             } catch let APIError.serverError(_, message) {
                 errorMessage = message
             } catch {

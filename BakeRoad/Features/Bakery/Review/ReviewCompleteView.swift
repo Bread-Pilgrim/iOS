@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct ReviewCompleteView: View {
+    let bakeryId: Int
+    let onGoHome: () -> Void
+    let onGoToReview: () -> Void
+    
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
@@ -27,19 +31,17 @@ struct ReviewCompleteView: View {
             
             HStack(spacing: 8) {
                 BakeRoadSolidButton(title: "홈으로", style: .secondary, size: .large) {
-                    print("홈탭")
+                    onGoHome()
                 }
                 
                 BakeRoadSolidButton(title: "리뷰 보기", style: .primary, size: .large) {
-                    print("홈탭")
+                    onGoToReview()
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
-}
-
-#Preview {
-    ReviewCompleteView()
 }
