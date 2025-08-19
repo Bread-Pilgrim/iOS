@@ -26,6 +26,7 @@ final class BakeryDetailViewModel: ObservableObject {
     private var currentReviewType: ReviewType = .visitor
     private var currentSortOption: SortOption = .like
     private var reviewFetcher: PageFetcher<BakeryReview>?
+    private var isLoadingMore = false
     
     let filter: BakeryDetailFilter
     private let getBakeryDetailUseCase: GetBakeryDetailUseCase
@@ -252,10 +253,30 @@ extension BakeryDetailViewModel {
         isLoading = false
     }
     
-    // 리뷰 페이징
+    // 리뷰 페이징 (기존 방식)
     func loadMoreReviews(currentReview: BakeryReview) async {
         do {
             try await reviewFetcher?.loadMoreIfNeeded(currentItem: currentReview)
+            syncReviewState()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
+    }
+    
+    // 스크롤 기반 페이징 (새로운 방식) - 중복 호출 방지
+    func loadMoreReviewsOnScroll() async {
+        guard let fetcher = reviewFetcher, 
+              !isLoading, 
+              !isLoadingMore, 
+              hasNextReviews else { return }
+        
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+        
+        do {
+            try await fetcher.loadMoreIfScrolledToEnd()
             syncReviewState()
         } catch let APIError.serverError(_, message) {
             errorMessage = message

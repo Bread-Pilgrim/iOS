@@ -14,14 +14,31 @@ struct BakeryListView: View {
         VStack {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 16) {
-                    ForEach(viewModel.bakeries) { bakery in
+                    ForEach(viewModel.bakeries.indices, id: \.self) { index in
+                        let bakery = viewModel.bakeries[index]
                         BakeryCard(bakery: bakery)
                             .frame(height: 126)
-                            .task {
-                                await viewModel.loadMoreIfNeeded(currentItem: bakery)
+                            .onAppear {
+                                // 마지막 2개 아이템에서만 페이징 트리거
+                                if index >= max(0, viewModel.bakeries.count - 2) && viewModel.hasNext {
+                                    Task {
+                                        await viewModel.loadMoreOnScroll()
+                                    }
+                                }
                             }
                             .onTapGesture {
                                 viewModel.didTapBakery(bakery)
+                            }
+                    }
+                    
+                    // 로딩 인디케이터
+                    if viewModel.hasNext {
+                        ProgressView()
+                            .frame(height: 50)
+                            .onAppear {
+                                Task {
+                                    await viewModel.loadMoreOnScroll()
+                                }
                             }
                     }
                 }

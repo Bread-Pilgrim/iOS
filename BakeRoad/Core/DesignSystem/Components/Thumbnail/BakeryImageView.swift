@@ -22,17 +22,13 @@ struct BakeryImageView: View {
     }
     
     var body: some View {
-        if let img = imageUrl,
-           let url = URL(string: img) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                default:
-                    Image(placeholder)
-                        .resizable()
-                }
+        if let img = imageUrl {
+            CachedAsyncImage(url: img) { image in
+                image
+                    .resizable()
+            } placeholder: {
+                Image(placeholder)
+                    .resizable()
             }
         } else {
             Image(placeholder)

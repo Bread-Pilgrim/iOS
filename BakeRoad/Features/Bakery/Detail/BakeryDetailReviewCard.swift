@@ -17,18 +17,14 @@ struct BakeryDetailReviewCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Group {
-                        if let img = review.profileImageURL,
-                           let url = URL(string: img) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                default:
-                                    Image("person")
-                                        .resizable()
-                                        .padding(7)
-                                }
+                        if let img = review.profileImageURL {
+                            CachedAsyncImage(url: img) { image in
+                                image
+                                    .resizable()
+                            } placeholder: {
+                                Image("person")
+                                    .resizable()
+                                    .padding(7)
                             }
                         } else {
                             Image("person")

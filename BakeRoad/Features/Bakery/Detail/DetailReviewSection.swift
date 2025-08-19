@@ -121,14 +121,33 @@ struct DetailReviewSection: View {
                 }
                 .padding(.horizontal, 16)
             } else {
-                ForEach(viewModel.reviews) { review in
-                    BakeryDetailReviewCard(review: review) { reviewId in
-                        viewModel.didTapReviewLikeButton(reviewId)
-                    }
-                    .task {
-                        if selectedTab == .review {
-                            await viewModel.loadMoreReviews(currentReview: review)
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.reviews.indices, id: \.self) { index in
+                        let review = viewModel.reviews[index]
+                        BakeryDetailReviewCard(review: review) { reviewId in
+                            viewModel.didTapReviewLikeButton(reviewId)
                         }
+                        .onAppear {
+                            // 리뷰탭에서만 페이징 트리거 (마지막 2개 아이템에서)
+                            if selectedTab == .review && 
+                               index >= max(0, viewModel.reviews.count - 2) &&
+                               viewModel.hasNextReviews {
+                                Task {
+                                    await viewModel.loadMoreReviewsOnScroll()
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 로딩 인디케이터
+                    if viewModel.hasNextReviews && selectedTab == .review {
+                        ProgressView()
+                            .frame(height: 50)
+                            .onAppear {
+                                Task {
+                                    await viewModel.loadMoreReviewsOnScroll()
+                                }
+                            }
                     }
                 }
                 
