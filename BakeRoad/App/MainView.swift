@@ -62,7 +62,7 @@ struct MainView: View {
                                 BakeryDetailFilter(
                                     bakeryId: bakery.id,
                                     areaCodes: filter.areaCodes,
-                                    tourCatCodes: []
+                                    tourCatCodes: filter.tourCatCodes
                                 )
                             ))
                         }
