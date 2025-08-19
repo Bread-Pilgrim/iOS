@@ -243,8 +243,10 @@ extension BakeryDetailViewModel {
         do {
             try await reviewFetcher?.loadInitial()
             syncReviewState()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
         } catch {
-            errorMessage = "리뷰를 불러오는데 실패했습니다."
+            errorMessage = "잠시 후 다시 시도해주세요."
         }
         
         isLoading = false
@@ -255,8 +257,10 @@ extension BakeryDetailViewModel {
         do {
             try await reviewFetcher?.loadMoreIfNeeded(currentItem: currentReview)
             syncReviewState()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
         } catch {
-            errorMessage = "리뷰를 더 불러오는데 실패했습니다."
+            errorMessage = "잠시 후 다시 시도해주세요."
         }
     }
     

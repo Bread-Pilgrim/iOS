@@ -20,8 +20,6 @@ final class WriteReviewViewModel: ObservableObject {
     @Published var selectedMenus: [Int: SelectedMenu] = [:]
     @Published var navigateToWriteReview = false
     @Published var errorMessage: String?
-    
-    // 리뷰 작성 관련
     @Published var rating: Double = 2.5
     @Published var reviewContent: String = ""
     @Published var isPrivate: Bool = true
@@ -81,7 +79,6 @@ final class WriteReviewViewModel: ObservableObject {
         guard !isLoading else { return }
         
         isLoading = true
-        errorMessage = nil
         
         Task {
             do {
@@ -90,8 +87,8 @@ final class WriteReviewViewModel: ObservableObject {
                     ConsumedMenu(menuId: selectedMenu.menu.id, quantity: selectedMenu.quantity)
                 }
                 
-                // 이미지 업로드 (구현 필요)
-                let imageUrls = try await uploadImages(selectedImages)
+                // 이미지를 Data로 변환
+                let imageData = selectedImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
                 
                 // 리뷰 작성 API 호출
                 try await writeReviewUseCase.execute(
@@ -101,12 +98,12 @@ final class WriteReviewViewModel: ObservableObject {
                         content: reviewContent,
                         isPrivate: isPrivate,
                         menus: consumedMenus,
-                        imageUrls: imageUrls
-                    )
+                        imageUrls: nil
+                    ),
+                    imageData: imageData
                 )
                 
                 isSubmitSuccessful = true
-                
             } catch let APIError.serverError(_, message) {
                 errorMessage = message
             } catch {
@@ -115,13 +112,5 @@ final class WriteReviewViewModel: ObservableObject {
             
             isLoading = false
         }
-    }
-    
-    private func uploadImages(_ images: [UIImage]) async throws -> [String]? {
-        guard !images.isEmpty else { return nil }
-        
-        // TODO: 이미지 업로드 로직 구현
-        // 현재는 빈 배열 반환
-        return []
     }
 }

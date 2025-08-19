@@ -15,7 +15,7 @@ struct BakeryReview: Identifiable, Equatable {
     let content: String
     let rating: Double
     let likeCount: Int
-    let createdAt: String
+    let createdAt: String?
     let menus: [String]
     let photos: [String]
     

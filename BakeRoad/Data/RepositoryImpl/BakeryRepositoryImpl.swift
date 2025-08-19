@@ -132,13 +132,13 @@ final class BakeryRepositoryImpl: BakeryRepository {
         return dto
     }
     
-    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO) async throws {
+    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO, imageData: [Data]) async throws {
         let request = APIRequest(
             path: BakeryEndPoint.writeReview(id),
             method: .post,
             parameters: requestDTO
         )
         
-        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+        let _ = try await apiClient.requestMultipart(request, imageData: imageData, responseType: EmptyDTO.self)
     }
 }

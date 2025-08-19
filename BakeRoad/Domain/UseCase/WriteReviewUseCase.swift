@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WriteReviewUseCase {
-    func execute(_ id: Int, request: WriteReviewRequestDTO) async throws
+    func execute(_ id: Int, request: WriteReviewRequestDTO, imageData: [Data]) async throws
 }
 
 final class WriteReviewUseCaseImpl: WriteReviewUseCase {
@@ -18,7 +18,7 @@ final class WriteReviewUseCaseImpl: WriteReviewUseCase {
         self.repository = repository
     }
     
-    func execute(_ id: Int, request: WriteReviewRequestDTO) async throws {
-        try await repository.writeReview(id, requestDTO: request)
+    func execute(_ id: Int, request: WriteReviewRequestDTO, imageData: [Data]) async throws {
+        try await repository.writeReview(id, requestDTO: request, imageData: imageData)
     }
 }

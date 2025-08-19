@@ -81,6 +81,87 @@ final class APIService {
         }
         
         guard let data = baseResponse.data else {
+            if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
+                return emptyResult
+            }
+            throw APIError.emptyData
+        }
+        
+        return data
+    }
+    
+    func requestMultipart<T: Decodable>(
+        _ request: APIRequest,
+        imageData: [Data],
+        responseType: T.Type
+    ) async throws -> T {
+        let url = baseURL + request.path
+        let method = HTTPMethod(rawValue: request.method.rawValue)
+        let parameters = try request.parameters?.asDictionary()
+        let session = request.customHeaders == nil ? self.session : self.sessionWithoutAuth
+        
+        var headers: HTTPHeaders = [:]
+        
+        if let customHeaders = request.customHeaders {
+            customHeaders.forEach { key, value in
+                headers.add(name: key, value: value)
+            }
+        }
+        
+        let baseResponse: BaseResponse<T> = try await withCheckedThrowingContinuation { continuation in
+            session.upload(multipartFormData: { multipartFormData in
+                if let parameters = parameters {
+                    for (key, value) in parameters {
+                        if let stringValue = String(describing: value).data(using: .utf8) {
+                            multipartFormData.append(stringValue, withName: key)
+                        }
+                    }
+                }
+                
+                for (index, data) in imageData.enumerated() {
+                    multipartFormData.append(
+                        data,
+                        withName: "review_imgs",
+                        fileName: "image_\(index).jpg",
+                        mimeType: "image/jpeg"
+                    )
+                }
+                
+            }, to: url, method: method, headers: headers).responseData { response in
+                switch response.result {
+                case .success(let data):
+                    do {
+                        let decoded = try JSONDecoder().decode(BaseResponse<T>.self, from: data)
+                        continuation.resume(returning: decoded)
+                    } catch {
+                        continuation.resume(throwing: APIError.decoding)
+                    }
+                case .failure(let afError):
+                    if let data = response.data,
+                       let decoded = try? JSONDecoder().decode(BaseResponse<T>.self, from: data) {
+                        continuation.resume(
+                            throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
+                        )
+                    } else {
+                        continuation.resume(throwing: APIError.network(afError))
+                    }
+                }
+            }
+        }
+        
+        if let token = baseResponse.token {
+            tokenStore.accessToken = token.accessToken
+            tokenStore.refreshToken = token.refreshToken
+        }
+        
+        guard baseResponse.statusCode == 200 else {
+            throw APIError.serverError(code: baseResponse.statusCode, message: baseResponse.message)
+        }
+        
+        guard let data = baseResponse.data else {
+            if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
+                return emptyResult
+            }
             throw APIError.emptyData
         }
         

@@ -60,7 +60,6 @@ struct ToastView: View {
             Text(message)
                 .font(.bodyXsmallMedium)
                 .foregroundColor(style.textColor)
-                .lineLimit(1)
 
             Spacer()
         }

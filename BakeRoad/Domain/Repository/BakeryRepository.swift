@@ -17,5 +17,5 @@ protocol BakeryRepository {
     func postBakeryLike(_ id: Int) async throws
     func deleteBakeryLike(_ id: Int) async throws
     func getBakeryReviewEligibility(_ id: Int) async throws -> BakeryReviewEligibilityResponseDTO
-    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO) async throws
+    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO, imageData: [Data]) async throws
 }

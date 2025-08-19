@@ -17,7 +17,6 @@ struct WriteReviewView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 헤더는 키보드와 상관없이 고정
             HeaderView {
                 BakeRoadTextButton(title: "이전", type: .assistive, size: .medium) {
                     dismiss()
@@ -39,7 +38,6 @@ struct WriteReviewView: View {
             }
             .padding(.horizontal, 16)
             
-            // 스크롤 가능한 콘텐츠 영역
             ScrollView {
                 VStack(spacing: 0) {
                     ReviewStarRatingView(rating: $viewModel.rating)
@@ -119,15 +117,21 @@ struct WriteReviewView: View {
                 }
             }
             
-            // 하단 버튼은 키보드 위에 고정
-            BakeRoadSolidButton(title: viewModel.isLoading ? "작성 중..." : "작성 완료",
+            BakeRoadSolidButton(title: "작성 완료",
                                 style: .primary,
                                 size: .xlarge,
-                                isDisabled: viewModel.reviewContent.count < 10 || viewModel.isLoading) {
+                                isDisabled: viewModel.reviewContent.count < 10) {
                 viewModel.submitReview()
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 24)
+        }
+        .disabled(viewModel.isLoading)
+        .overlay {
+            if viewModel.isLoading {
+                Color.black.opacity(0.2).ignoresSafeArea()
+                ProgressView()
+            }
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -140,6 +144,7 @@ struct WriteReviewView: View {
         .onChange(of: viewModel.errorMessage) { _, errorMessage in
             if let errorMessage = errorMessage {
                 ToastManager.show(message: errorMessage, type: .error)
+                viewModel.errorMessage = nil
             }
         }
         .alert("사진 접근 권한", isPresented: $showPermissionAlert) {

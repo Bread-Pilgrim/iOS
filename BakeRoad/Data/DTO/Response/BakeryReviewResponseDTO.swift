@@ -29,7 +29,7 @@ struct BakeryReviewDTO: Decodable {
     let reviewContent: String
     let reviewRating: Double
     let reviewLikeCount: Int
-    let reviewCreatedAt: String
+    let reviewCreatedAt: String?
     let reviewMenus: [MenuDTO]?
     let reviewPhotos: [PhotoDTO]?
     
