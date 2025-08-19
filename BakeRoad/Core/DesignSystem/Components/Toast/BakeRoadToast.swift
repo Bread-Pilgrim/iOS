@@ -59,7 +59,7 @@ struct ToastView: View {
 
             Text(message)
                 .font(.bodyXsmallMedium)
-                .foregroundColor(style.textColor)
+                .foregroundColor(type == .error ? .error500 : style.textColor)
 
             Spacer()
         }
