@@ -12,40 +12,45 @@ struct BakeryListView: View {
     
     var body: some View {
         VStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 16) {
-                    ForEach(viewModel.bakeries.indices, id: \.self) { index in
-                        let bakery = viewModel.bakeries[index]
-                        BakeryCard(bakery: bakery)
-                            .frame(height: 126)
-                            .onAppear {
-                                // 마지막 2개 아이템에서만 페이징 트리거
-                                if index >= max(0, viewModel.bakeries.count - 2) && viewModel.hasNext {
+            if viewModel.isLoading {
+                SkeletonListView()
+                    .padding(.top, 16)
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.bakeries.indices, id: \.self) { index in
+                            let bakery = viewModel.bakeries[index]
+                            BakeryCard(bakery: bakery)
+                                .frame(height: 126)
+                                .onAppear {
+                                    // 마지막 2개 아이템에서만 페이징 트리거
+                                    if index >= max(0, viewModel.bakeries.count - 2) && viewModel.hasNext {
+                                        Task {
+                                            await viewModel.loadMoreOnScroll()
+                                        }
+                                    }
+                                }
+                                .onTapGesture {
+                                    viewModel.didTapBakery(bakery)
+                                }
+                        }
+                        
+                        // 로딩 인디케이터
+                        if viewModel.hasNext {
+                            ProgressView()
+                                .frame(height: 50)
+                                .onAppear {
                                     Task {
                                         await viewModel.loadMoreOnScroll()
                                     }
                                 }
-                            }
-                            .onTapGesture {
-                                viewModel.didTapBakery(bakery)
-                            }
+                        }
                     }
-                    
-                    // 로딩 인디케이터
-                    if viewModel.hasNext {
-                        ProgressView()
-                            .frame(height: 50)
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreOnScroll()
-                                }
-                            }
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 20)
+                .padding(.top, 16)
             }
-            .padding(.top, 16)
         }
         .background(Color.white)
         .task {

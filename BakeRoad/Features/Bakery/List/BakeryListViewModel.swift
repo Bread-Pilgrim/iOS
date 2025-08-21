@@ -13,6 +13,7 @@ final class BakeryListViewModel: ObservableObject {
     @Published var hasNext: Bool = false
     @Published var errorMessage: String?
     @Published var isLoadingMore = false
+    @Published var isLoading = false
 
     private let fetcher: PageFetcher<Bakery>
     
@@ -36,6 +37,9 @@ final class BakeryListViewModel: ObservableObject {
     }
 
     func loadInitial() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await fetcher.loadInitial()
             syncState()
@@ -57,7 +61,7 @@ final class BakeryListViewModel: ObservableObject {
         }
     }
     
-    // 스크롤 기반 페이징 (중복 호출 방지)
+    // 스크롤 기반 페이징
     func loadMoreOnScroll() async {
         guard !isLoadingMore, hasNext else { return }
         
