@@ -52,8 +52,8 @@ struct OnboardingView: View {
                 .padding(.top, 25)
                 .padding(.leading, 16)
             
-            if viewModel.isLoading {
-                // 취향 선택 화면 스켈레톤
+            if viewModel.allOptions[viewModel.currentStep]?.isEmpty ?? true {
+                SkeletonPreferenceView(step: viewModel.currentStep)
             } else {
                 PreferenceSelectionView(step: viewModel.currentStep,
                                         viewModel: viewModel)
