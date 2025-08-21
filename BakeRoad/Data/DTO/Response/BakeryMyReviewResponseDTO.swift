@@ -9,10 +9,10 @@ import Foundation
 
 struct BakeryMyReviewResponseDTO: Decodable {
     let reviews: [BakeryReviewDTO]
-    let hasNext: Bool
+    let nextCursor: String?
     
     private enum CodingKeys: String, CodingKey {
         case reviews = "items"
-        case hasNext = "has_next"
+        case nextCursor = "next_cursor"
     }
 }

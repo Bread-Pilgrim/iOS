@@ -8,11 +8,11 @@
 import Foundation
 
 struct BakeryMyReviewRequestDTO: Encodable {
-    var pageNo: Int
+    var cursorValue: String
     var pageSize: Int
 
     private enum CodingKeys: String, CodingKey {
-        case pageNo     = "page_no"
-        case pageSize   = "page_size"
+        case cursorValue = "cursor_value"
+        case pageSize    = "page_size"
     }
 }

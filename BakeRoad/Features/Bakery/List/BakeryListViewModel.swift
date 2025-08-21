@@ -24,10 +24,10 @@ final class BakeryListViewModel: ObservableObject {
         filter: BakeryListFilter,
         getBakeryListUseCase: GetBakeryListUseCase
     ) {
-        self.fetcher = PageFetcher<Bakery>(pageSize: 15) { page, size in
+        self.fetcher = PageFetcher<Bakery>(pageSize: 15) { cursor, size in
             let request = BakeryListRequestDTO(
                 area_code: filter.areaCodes.map(String.init).joined(separator: ","),
-                page_no: page,
+                cursor_value: cursor,
                 page_size: size
             )
             return try await getBakeryListUseCase.execute(filter.type, request: request)

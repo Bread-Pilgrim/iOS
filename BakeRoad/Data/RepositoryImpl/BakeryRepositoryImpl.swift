@@ -81,7 +81,7 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         let entity = BakeryReviewPage(
             page: Page(items: reviews,
-                       hasNext: dto.hasNext),
+                       nextCursor: dto.nextCursor),
             data: BakeryReviewData(avgRating: dto.avgRating,
                                    reviewCount: dto.reviewCount)
         )
@@ -100,7 +100,7 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         let items = dto.reviews.map { $0.toEntity() }
         
-        return Page(items: items, hasNext: dto.hasNext)
+        return Page(items: items, nextCursor: dto.nextCursor)
     }
     
     func postBakeryLike(_ id: Int) async throws {

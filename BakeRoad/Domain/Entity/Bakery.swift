@@ -9,9 +9,13 @@ import Foundation
 
 struct Page<T> {
     var items: [T]
-    var hasNext: Bool
+    var nextCursor: String?
     
-    static var empty: Page<T> { Page(items: [], hasNext: false) }
+    var hasNext: Bool {
+        return nextCursor != nil
+    }
+    
+    static var empty: Page<T> { Page(items: [], nextCursor: nil) }
 }
 
 struct Bakery: Identifiable {

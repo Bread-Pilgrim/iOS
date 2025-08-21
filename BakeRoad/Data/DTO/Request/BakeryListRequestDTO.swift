@@ -9,6 +9,6 @@ import Foundation
 
 struct BakeryListRequestDTO: Encodable {
     let area_code: String
-    let page_no: Int
+    let cursor_value: String
     let page_size: Int
 }

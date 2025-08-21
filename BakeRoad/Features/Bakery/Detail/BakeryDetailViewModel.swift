@@ -80,7 +80,7 @@ final class BakeryDetailViewModel: ObservableObject {
     private func loadInitial(_ id: Int, areaCodes: String, tourCatCodes: String) async {
         async let detail = getBakeryDetail(id)
         async let tourList = getTourList(areaCodes: areaCodes, tourCatCodes: tourCatCodes)
-        async let reviewResult = getBakeryReviews(id, requestDTO: BakeryReviewRequestDTO(pageNo: 1, pageSize: 3, sortClause: .like))
+        async let reviewResult = getBakeryReviews(id, requestDTO: BakeryReviewRequestDTO(cursorValue: "0", pageSize: 3, sortClause: .like))
         
         bakeryDetail = await detail
         recommendTourList = await tourList
@@ -227,16 +227,16 @@ extension BakeryDetailViewModel {
         currentSortOption = sortOption
         
         // PageFetcher 초기화
-        reviewFetcher = PageFetcher<BakeryReview>(pageSize: pageSize) { [weak self] page, size in
+        reviewFetcher = PageFetcher<BakeryReview>(pageSize: pageSize) { [weak self] cursor, size in
             guard let self = self else { throw APIError.emptyData }
             
             switch type {
             case .visitor:
-                let request = BakeryReviewRequestDTO(pageNo: page, pageSize: size, sortClause: sortOption)
+                let request = BakeryReviewRequestDTO(cursorValue: cursor, pageSize: size, sortClause: sortOption)
                 let result = try await self.getBakeryReviewsUseCase.execute(self.filter.bakeryId, requestDTO: request)
                 return result.page
             case .my:
-                let request = BakeryMyReviewRequestDTO(pageNo: page, pageSize: size)
+                let request = BakeryMyReviewRequestDTO(cursorValue: cursor, pageSize: size)
                 return try await self.getBakeryMyReviewsUseCase.execute(self.filter.bakeryId, requestDTO: request)
             }
         }

@@ -9,11 +9,11 @@ import Foundation
 
 struct BakeryListResponseDTO: Decodable {
     let items: [BakeryItemDTO]
-    let hasNext: Bool
+    let nextCursor: String?
 
     enum CodingKeys: String, CodingKey {
         case items
-        case hasNext = "has_next"
+        case nextCursor = "next_cursor"
     }
 }
 
@@ -68,6 +68,6 @@ extension BakeryItemDTO {
 extension BakeryListResponseDTO {
     func toEntity() -> Page<Bakery> {
         let items = items.map { $0.toEntity() }
-        return Page(items: items, hasNext: hasNext)
+        return Page(items: items, nextCursor: nextCursor)
     }
 }

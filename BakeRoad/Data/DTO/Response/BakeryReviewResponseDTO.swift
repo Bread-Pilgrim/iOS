@@ -11,13 +11,13 @@ struct BakeryReviewResponseDTO: Decodable {
     let avgRating: Double
     let reviewCount: Int
     let reviews: [BakeryReviewDTO]
-    let hasNext: Bool
+    let nextCursor: String?
     
     private enum CodingKeys: String, CodingKey {
         case avgRating = "avg_rating"
         case reviewCount = "review_count"
         case reviews = "items"
-        case hasNext = "has_next"
+        case nextCursor = "next_cursor"
     }
 }
 

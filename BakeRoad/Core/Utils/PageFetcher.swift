@@ -10,23 +10,21 @@ import Foundation
 @MainActor
 final class PageFetcher<T: Identifiable>: ObservableObject where T.ID: Hashable {
     @Published private(set) var page: Page<T> = .empty
-    private var currentPage = 1
     private let pageSize: Int
     private var isLoading = false
     private var lastTriggeredID: T.ID?
 
-    private let fetchHandler: (_ page: Int, _ size: Int) async throws -> Page<T>
+    private let fetchHandler: (_ cursor: String, _ size: Int) async throws -> Page<T>
 
     init(
         pageSize: Int = 15,
-        fetchHandler: @escaping (_ page: Int, _ size: Int) async throws -> Page<T>
+        fetchHandler: @escaping (_ cursor: String, _ size: Int) async throws -> Page<T>
     ) {
         self.pageSize = pageSize
         self.fetchHandler = fetchHandler
     }
 
     func loadInitial() async throws {
-        currentPage = 1
         lastTriggeredID = nil
         try await fetchPage(append: false)
     }
@@ -52,16 +50,14 @@ final class PageFetcher<T: Identifiable>: ObservableObject where T.ID: Hashable 
         isLoading = true
         defer { isLoading = false }
 
-        let nextPage = append ? currentPage + 1 : 1
-        let result = try await fetchHandler(nextPage, pageSize)
+        let cursor = append ? (page.nextCursor ?? "0") : "0"  // 최초 요청 시 "0" 사용
+        let result = try await fetchHandler(cursor, pageSize)
 
         if append {
             page.items += result.items
-            page.hasNext = result.hasNext
-            currentPage = nextPage
+            page.nextCursor = result.nextCursor
         } else {
             page = result
-            currentPage = 1
         }
     }
 }
