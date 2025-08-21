@@ -11,12 +11,14 @@ struct BaseResponse<T: Decodable>: Decodable {
     let statusCode: Int
     let message: String
     let data: T?
+    let errorUseCase: String?
     let token: TokenDTO?
 
     enum CodingKeys: String, CodingKey {
         case statusCode = "status_code"
         case message
         case data
+        case errorUseCase = "error_usecase"
         case token
     }
 }
