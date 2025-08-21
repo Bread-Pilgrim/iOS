@@ -10,6 +10,8 @@ import SwiftUI
 struct OnboardingView: View {
     @StateObject private var viewModel: OnboardingViewModel
     var onFinish: () -> Void
+    @State private var showDismissAlert = false
+    @Environment(\.dismiss) private var dismiss
     
     init(
         viewModel: OnboardingViewModel,
@@ -21,6 +23,20 @@ struct OnboardingView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            HStack {
+                Button {
+                    showDismissAlert = true
+                } label: {
+                    Image("arrowLeft")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+                .opacity(viewModel.isPreferenceEdit && viewModel.currentStep == OnboardingStep.allCases.first ? 1 : 0)
+                
+                Spacer()
+            }
+            .padding(16)
+            
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.currentStep.titleText)
                     .font(.headingLargeBold)
@@ -29,16 +45,20 @@ struct OnboardingView: View {
                     .font(.bodySmallRegular)
                     .foregroundColor(.gray800)
             }
-            .padding(.top, 67)
+            .padding(.top, 11)
             .padding(.leading, 16)
             
             StepIndicatorView(currentStep: viewModel.currentStep)
                 .padding(.top, 25)
                 .padding(.leading, 16)
             
-            PreferenceSelectionView(step: viewModel.currentStep,
-                                    viewModel: viewModel)
-            .padding(.top, 42)
+            if viewModel.isLoading {
+                // 취향 선택 화면 스켈레톤
+            } else {
+                PreferenceSelectionView(step: viewModel.currentStep,
+                                        viewModel: viewModel)
+                .padding(.top, 42)
+            }
             
             Spacer()
             
@@ -56,11 +76,16 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                BakeRoadSolidButton(title: "다음",
+                BakeRoadSolidButton(title: viewModel.isPreferenceEdit && viewModel.currentStep == OnboardingStep.allCases.last ? "저장" : "다음",
                                     style: .primary,
                                     size: .large,
                                     isDisabled: !viewModel.canProceed) {
-                    if let nextStep = OnboardingStep(rawValue: viewModel.currentStep.rawValue + 1) {
+                    if viewModel.isPreferenceEdit && viewModel.currentStep == OnboardingStep.allCases.last {
+                        Task {
+                            await viewModel.updatePreferences()
+                            onFinish()
+                        }
+                    } else if let nextStep = OnboardingStep(rawValue: viewModel.currentStep.rawValue + 1) {
                         viewModel.currentStep = nextStep
                     } else {
                         onFinish()
@@ -70,6 +95,38 @@ struct OnboardingView: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
+        }
+        .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+            if let message = newValue {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
+            }
+        }
+        .overlay {
+            if showDismissAlert {
+                Color.black.opacity(0.8)
+                    .ignoresSafeArea()
+                    .overlay {
+                        BakeRoadAlert(
+                            title: "취향을 저장하지 않고 나가시나요?",
+                            message: "변경한 취향은 모두 저장되지 않아요😂",
+                            primaryAction: AlertAction(title: "나가기") {
+                                showDismissAlert = false
+                                dismiss()
+                            },
+                            secondaryAction: AlertAction(title: "취소") {
+                                showDismissAlert = false
+                            },
+                            layout: .horizontal
+                        )
+                    }
+            }
+        }
+        .overlay {
+            ToastOverlayView()
+                .environmentObject(ToastManager.shared)
+                .padding(.horizontal, 28)
+                .padding(.bottom, 16)
         }
     }
 }

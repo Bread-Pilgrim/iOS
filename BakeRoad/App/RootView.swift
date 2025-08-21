@@ -44,7 +44,9 @@ extension RootView {
     private var onboarding: some View {
         OnboardingFlowView(viewModel: OnboardingViewModel(
             getPreferenceOptionsUseCase: AppDependency.shared.getPreferenceOptionsUseCase,
-            userOnboardUseCase: AppDependency.shared.userOnboardUseCase
+            userOnboardUseCase: AppDependency.shared.userOnboardUseCase,
+            getUserPreferenceUseCase: AppDependency.shared.getUserPreferenceUseCase,
+            updateUserPreferenceUseCase: AppDependency.shared.updateUserPreferenceUseCase
         ))
     }
     

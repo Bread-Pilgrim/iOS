@@ -11,4 +11,5 @@ enum UserEndpoint {
     static let onboarding = "/users/me/onboarding"
     static let userInfo = "/users/info"
     static let getMyReviews = "/users/me/reviews"
+    static let userPreference = "/users/preferences"
 }

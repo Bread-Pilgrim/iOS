@@ -16,10 +16,15 @@ final class HomeViewModel: ObservableObject {
     @Published var preferenceBakeries: [RecommendBakery] = []
     @Published var hotBakeries: [RecommendBakery] = []
     @Published var tourInfoList: [TourInfo] = []
+    @Published var isLoading = false
     
     private let getAreaListUseCase: GetAreaListUseCase
     private let getBakeriesUseCase: GetBakeriesUseCase
     private let getTourListUseCase: GetTourListUseCase
+    private let getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase
+    private let userOnboardUseCase: UserOnboardUseCase
+    private let getUserPreferenceUseCase: GetUserPreferenceUseCase
+    private let updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
     private var cancellables = Set<AnyCancellable>()
     
     var onNavigateToBakeryList: ((BakeryListFilter) -> Void)?
@@ -31,11 +36,19 @@ final class HomeViewModel: ObservableObject {
     init(
         getAreaListUseCase: GetAreaListUseCase,
         getBakeriesUseCase: GetBakeriesUseCase,
-        getTourListUseCase: GetTourListUseCase
+        getTourListUseCase: GetTourListUseCase,
+        getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase,
+        userOnboardUseCase: UserOnboardUseCase,
+        getUserPreferenceUseCase: GetUserPreferenceUseCase,
+        updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
     ) {
         self.getAreaListUseCase = getAreaListUseCase
         self.getBakeriesUseCase = getBakeriesUseCase
         self.getTourListUseCase = getTourListUseCase
+        self.getPreferenceOptionsUseCase = getPreferenceOptionsUseCase
+        self.userOnboardUseCase = userOnboardUseCase
+        self.getUserPreferenceUseCase = getUserPreferenceUseCase
+        self.updateUserPreferenceUseCase = updateUserPreferenceUseCase
         
         Task { await loadInitial() }
         
@@ -71,7 +84,10 @@ final class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func loadInitial() async {
+    func loadInitial() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         async let areas = getAreaList()
         async let pref  = getBakeries(.preference)
         async let hot   = getBakeries(.hot)
@@ -139,5 +155,15 @@ final class HomeViewModel: ObservableObject {
             tourCatCodes: selectedCategoryCodes
         )
         onNavigateToBakeryDetail?(filter)
+    }
+    
+    func createOnboardingViewModel(isPreferenceEdit: Bool) -> OnboardingViewModel {
+        return OnboardingViewModel(
+            getPreferenceOptionsUseCase: getPreferenceOptionsUseCase,
+            userOnboardUseCase: userOnboardUseCase,
+            getUserPreferenceUseCase: getUserPreferenceUseCase,
+            updateUserPreferenceUseCase: updateUserPreferenceUseCase,
+            isPreferenceEdit: isPreferenceEdit
+        )
     }
 }

@@ -39,7 +39,11 @@ struct MainView: View {
                 let viewModel = HomeViewModel(
                     getAreaListUseCase: coordinator.dependency.getAreaListUseCase,
                     getBakeriesUseCase: coordinator.dependency.getBakeriesUseCase,
-                    getTourListUseCase: coordinator.dependency.getTourListUseCase
+                    getTourListUseCase: coordinator.dependency.getTourListUseCase,
+                    getPreferenceOptionsUseCase: coordinator.dependency.getPreferenceOptionsUseCase,
+                    userOnboardUseCase: coordinator.dependency.userOnboardUseCase,
+                    getUserPreferenceUseCase: coordinator.dependency.getUserPreferenceUseCase,
+                    updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase
                 )
                 viewModel.onNavigateToBakeryList = { filter in
                     coordinator.push(.list(filter))

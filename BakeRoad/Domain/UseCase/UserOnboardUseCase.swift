@@ -12,9 +12,9 @@ protocol UserOnboardUseCase {
 }
 
 final class UserOnboardUseCaseImpl: UserOnboardUseCase {
-    private let repository: UserOnboardRepository
+    private let repository: UserRepository
     
-    init(repository: UserOnboardRepository) {
+    init(repository: UserRepository) {
         self.repository = repository
     }
     

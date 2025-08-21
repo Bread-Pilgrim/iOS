@@ -65,7 +65,7 @@ struct NickNameView: View {
                     if success {
                         onComplete()
                     } else {
-                        isCheckMsg = viewModel.errorMessage
+                        isCheckMsg = viewModel.errorMessage ?? ""
                         isTextFieldFocused = true
                     }
                 }
