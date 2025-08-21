@@ -28,6 +28,7 @@ struct HomeView: View {
         
         if viewModel.isLoading {
             SkeletonHomeView()
+                .padding(.bottom, 28)
         } else {
             AreaSelectionView(
                 areas: viewModel.allAreas,
