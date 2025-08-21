@@ -15,6 +15,8 @@ struct BakeRoadOutlinedButton: View {
     let leadingIcon: Image?
     let trailingIcon: Image?
     let action: () -> Void
+    let leadingIconAction: (() -> Void)?
+    let trailingIconAction: (() -> Void)?
     
     init(
         title: String,
@@ -23,7 +25,9 @@ struct BakeRoadOutlinedButton: View {
         isDisabled: Bool = false,
         leadingIcon: Image? = nil,
         trailingIcon: Image? = nil,
-        action: @escaping () -> Void
+        action: @escaping () -> Void,
+        leadingIconAction: (() -> Void)? = nil,
+        trailingIconAction: (() -> Void)? = nil
     ) {
         self.title = title
         self.style = style
@@ -32,20 +36,40 @@ struct BakeRoadOutlinedButton: View {
         self.leadingIcon = leadingIcon
         self.trailingIcon = trailingIcon
         self.action = action
+        self.leadingIconAction = leadingIconAction
+        self.trailingIconAction = trailingIconAction
     }
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: size.spacing) {
                 if let leadingIcon = leadingIcon {
-                    leadingIcon.resizable()
-                        .frame(width: size.iconSize, height: size.iconSize)
+                    if let leadingIconAction = leadingIconAction {
+                        Button(action: leadingIconAction) {
+                            leadingIcon.resizable()
+                                .frame(width: size.iconSize, height: size.iconSize)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    } else {
+                        leadingIcon.resizable()
+                            .frame(width: size.iconSize, height: size.iconSize)
+                    }
                 }
+                
                 Text(title)
                     .font(size.font)
+                
                 if let trailingIcon = trailingIcon {
-                    trailingIcon.resizable()
-                        .frame(width: size.iconSize, height: size.iconSize)
+                    if let trailingIconAction = trailingIconAction {
+                        Button(action: trailingIconAction) {
+                            trailingIcon.resizable()
+                                .frame(width: size.iconSize, height: size.iconSize)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    } else {
+                        trailingIcon.resizable()
+                            .frame(width: size.iconSize, height: size.iconSize)
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
