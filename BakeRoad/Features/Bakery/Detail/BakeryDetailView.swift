@@ -79,7 +79,7 @@ struct BakeryDetailView: View {
                 }
                 .clipped()
             } else {
-                ProgressView()
+                SkeletonDetailView()
             }
         }
         .disabled(viewModel.isLoading)
