@@ -90,6 +90,10 @@ class SearchViewModel: ObservableObject {
         currentSearchText = ""
         hasPerformedSearch = false
         isSearchFocused = false
+     }
+    
+    func clearAllRecentBakeries() {
+        recentBakeries.removeAll()
     }
     
     func didTapBakery(_ bakery: Bakery) {

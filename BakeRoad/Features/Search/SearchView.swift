@@ -37,8 +37,6 @@ struct SearchView: View {
                     }
                 }
             )
-            
-            Spacer()
         }
         .background(Color.white)
         .navigationBarHidden(true)

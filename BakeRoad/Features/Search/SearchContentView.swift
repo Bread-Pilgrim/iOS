@@ -25,8 +25,6 @@ struct SearchContentView: View {
                         viewModel.clearAllRecentSearches()
                     }
                 )
-                
-                Spacer()
             } else if viewModel.hasPerformedSearch {
                 SearchResultView(
                     searchResults: viewModel.searchResults,
@@ -37,15 +35,15 @@ struct SearchContentView: View {
                     }
                 )
             }
-//            else {
-//                RecentBakeryView(
-//                    recentBakeries: viewModel.recentBakeries,
-//                    isLoading: viewModel.isLoadingRecentBakeries,
-//                    onTapBakery: { bakery in
-//                        viewModel.didTapBakery(bakery)
-//                    }
-//                )
-//            }
+            else {
+                RecentBakeryView(recentBakeries: viewModel.recentBakeries, isLoading: viewModel.isLoadingRecentBakeries) {
+                    viewModel.clearAllRecentBakeries()
+                } onTapBakery: { bakery in
+                    viewModel.didTapBakery(bakery)
+                }
+            }
+            
+            Spacer()
         }
         .onChange(of: viewModel.errorMessage) { oldValue, newValue in
             if let message = newValue {

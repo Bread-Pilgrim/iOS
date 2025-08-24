@@ -41,8 +41,7 @@ struct SearchResultView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 16) {
-                        ForEach(searchResults.indices, id: \.self) { index in
-                            let bakery = searchResults[index]
+                        ForEach(searchResults) { bakery in
                             BakeryCard(bakery: bakery)
                                 .frame(height: 126)
                                 .onTapGesture {
