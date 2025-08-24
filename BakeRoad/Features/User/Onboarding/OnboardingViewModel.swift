@@ -121,8 +121,8 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
     
-    func updatePreferences() async {
-        guard !isLoading else { return }
+    func updatePreferences() async -> Bool {
+        guard !isLoading else { return false }
         isLoading = true
         defer { isLoading = false }
         
@@ -142,10 +142,13 @@ final class OnboardingViewModel: ObservableObject {
                 delete: Array(deletedIds)
             )
             try await updateUserPreferenceUseCase.execute(request)
+            return true
         } catch let APIError.serverError(_, message) {
             errorMessage = message
+            return false
         } catch {
             errorMessage = "잠시 후 다시 시도해주세요."
+            return false
         }
     }
     

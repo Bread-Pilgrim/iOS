@@ -82,8 +82,10 @@ struct OnboardingView: View {
                                     isDisabled: !viewModel.canProceed) {
                     if viewModel.isPreferenceEdit && viewModel.currentStep == OnboardingStep.allCases.last {
                         Task {
-                            await viewModel.updatePreferences()
-                            onFinish()
+                            let success = await viewModel.updatePreferences()
+                            if success {
+                                onFinish()
+                            }
                         }
                     } else if let nextStep = OnboardingStep(rawValue: viewModel.currentStep.rawValue + 1) {
                         viewModel.currentStep = nextStep
