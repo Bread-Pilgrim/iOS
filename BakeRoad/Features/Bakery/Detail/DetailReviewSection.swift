@@ -83,7 +83,7 @@ struct DetailReviewSection: View {
                     Spacer()
                     
                     BakeRoadTextButton(
-                        title: selectedSortOption.displayTitle,
+                        title: selectedSortOption.displayTitle(),
                         type: .assistive,
                         size: .small) {
                             isShowingSortSheet = true
@@ -91,6 +91,8 @@ struct DetailReviewSection: View {
                         .sheet(isPresented: $isShowingSortSheet) {
                             SortOptionSheet(
                                 selectedOption: $selectedSortOption,
+                                options: [.like, .newest, .ratingHigh, .ratingLow],
+                                isMyBakery: false,
                                 onConfirm: {
                                     isShowingSortSheet = false
                                     // 정렬 옵션 변경 시 API 재호출
