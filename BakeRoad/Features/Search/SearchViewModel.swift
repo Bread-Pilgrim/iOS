@@ -9,80 +9,75 @@ import Foundation
 
 @MainActor
 class SearchViewModel: ObservableObject {
-    @Published var recentSearches: [String] = []
+    @Published var recentSearches: [RecentSearch] = []
     @Published var recentBakeries: [Bakery] = []
     @Published var searchResults: [Bakery] = []
     @Published var isLoadingRecentBakeries = false
     @Published var isLoadingSearch = false
     @Published var errorMessage: String?
     
+    // 검색 상태 관리
+    @Published var currentSearchText: String = ""
+    @Published var hasPerformedSearch: Bool = false
+    @Published var isSearchFocused: Bool = false
+    
     private let recentSearchManager = RecentSearchManager()
-    private let getBakeryListUseCase: GetBakeryListUseCase
+    private let searchBakeryUseCase: SearchBakeryUseCase
     
-    var onNavigateToBakeryDetail: ((Bakery) -> Void)?
+    var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
     
-    init(getBakeryListUseCase: GetBakeryListUseCase) {
-        self.getBakeryListUseCase = getBakeryListUseCase
-        loadRecentSearches()
+    init(searchBakeryUseCase: SearchBakeryUseCase) {
+        self.searchBakeryUseCase = searchBakeryUseCase
+        
+        Task { await loadInitial() }
+    }
+    
+    private func loadInitial() async {
+        recentSearches = recentSearchManager.getRecentSearches()
     }
     
     func loadRecentSearches() {
         recentSearches = recentSearchManager.getRecentSearches()
     }
     
-    func loadRecentBakeries() async {
-        isLoadingRecentBakeries = true
-        errorMessage = nil
-        
-        do {
-            // TODO: 최근 조회한 빵집 API 호출
-            // 임시로 빈 배열 설정
-            recentBakeries = []
-        } catch let APIError.serverError(_, message) {
-            errorMessage = message
-        } catch {
-            errorMessage = "최근 조회한 빵집을 불러올 수 없습니다."
-        }
-        
-        isLoadingRecentBakeries = false
-    }
-    
     func search(_ searchText: String) async {
         let trimmedText = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty else { return }
+        
+        // 검색 상태 업데이트
+        currentSearchText = trimmedText
+        hasPerformedSearch = true
+        isSearchFocused = false
         
         // 최근 검색어에 추가
         recentSearchManager.addRecentSearch(trimmedText)
         loadRecentSearches()
         
         isLoadingSearch = true
-        errorMessage = nil
+        defer { isLoadingSearch = false }
         
-//        do {
-//            let request = BakeryListRequestDTO(
-//                area_code: "",
-//                page_no: 1,
-//                page_size: 20,
-//                search: trimmedText
-//            )
-//            
-//            let response = try await getBakeryListUseCase.execute(.all, request: request)
-//            searchResults = response.items
-//        } catch let APIError.serverError(_, message) {
-//            errorMessage = message
-//        } catch {
-//            errorMessage = "검색 결과를 불러올 수 없습니다."
-//        }
-//        
-        isLoadingSearch = false
+        do {
+            let request = SearchBakeryRequestDTO(
+                keyword: trimmedText,
+                cursor: "0",
+                pageSize: 20
+            )
+            
+            let response = try await searchBakeryUseCase.execute(request)
+            searchResults = response.items
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "검색 결과를 불러올 수 없습니다."
+        }
     }
     
     func selectRecentSearch(_ searchText: String) async {
         await search(searchText)
     }
     
-    func removeRecentSearch(_ searchText: String) {
-        recentSearchManager.removeRecentSearch(searchText)
+    func removeRecentSearch(_ searchId: UUID) {
+        recentSearchManager.removeRecentSearch(searchId)
         loadRecentSearches()
     }
     
@@ -91,7 +86,18 @@ class SearchViewModel: ObservableObject {
         loadRecentSearches()
     }
     
+    func cancelSearch() {
+        currentSearchText = ""
+        hasPerformedSearch = false
+        isSearchFocused = false
+    }
+    
     func didTapBakery(_ bakery: Bakery) {
-        onNavigateToBakeryDetail?(bakery)
+        let filter = BakeryDetailFilter(
+            bakeryId: bakery.id,
+            areaCodes: [bakery.areaID],
+            tourCatCodes: CategoryManager.shared.selectedCategoryCodes
+        )
+        onNavigateToBakeryDetail?(filter)
     }
 }

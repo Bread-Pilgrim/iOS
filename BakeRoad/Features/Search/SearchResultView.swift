@@ -16,47 +16,29 @@ struct SearchResultView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if isLoading {
-                // 스켈레톤 로딩
-                VStack(spacing: 16) {
-                    ForEach(0..<8, id: \.self) { _ in
-                        SkeletonListCard()
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        ForEach(0..<10, id: \.self) { _ in
+                            SkeletonListCard()
+                        }
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
             } else if searchResults.isEmpty {
-                // 검색 결과 없음
-                VStack(spacing: 16) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 48))
-                        .foregroundColor(.gray300)
-                    
-                    VStack(spacing: 8) {
-                        Text("'\(searchText)' 검색 결과가 없습니다")
-                            .font(.bodyMediumMedium)
-                            .foregroundColor(.gray900)
-                        
-                        Text("다른 키워드로 검색해보세요")
-                            .font(.body2xsmallMedium)
-                            .foregroundColor(.gray500)
-                    }
+                VStack(alignment: .center, spacing: 4) {
+                    Text("검색 결과가 없습니다.")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                    Text("다른 키워드로 다시 입력해주세요.")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.top, 100)
-            } else {
-                // 검색 결과 헤더
-                HStack {
-                    Text("'\(searchText)' 검색결과 \(searchResults.count)개")
-                        .font(.headingSmallBold)
-                        .foregroundColor(.gray990)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+                .frame(height: 120)
+                .frame(maxWidth: .infinity)
+                .background(Color.gray40)
+                .cornerRadius(12)
                 
-                // 검색 결과 목록
+                Spacer()
+            } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 16) {
                         ForEach(searchResults.indices, id: \.self) { index in
@@ -68,11 +50,10 @@ struct SearchResultView: View {
                                 }
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 20)
                 }
             }
         }
-        .background(Color.white)
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
     }
 }

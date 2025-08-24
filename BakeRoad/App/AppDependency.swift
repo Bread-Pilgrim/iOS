@@ -24,6 +24,7 @@ final class AppDependency {
     let bakeryRepository: BakeryRepository
     let tourRepository: TourRepository
     let reviewRepository: ReviewRepository
+    let searchRepository: SearchRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
@@ -46,6 +47,7 @@ final class AppDependency {
     let reviewDislikeUseCase: ReviewDislikeUseCase
     let getUserPreferenceUseCase: GetUserPreferenceUseCase
     let updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
+    let searchBakeyUseCase: SearchBakeryUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -69,6 +71,7 @@ final class AppDependency {
         self.bakeryRepository = BakeryRepositoryImpl(apiClient: authenticatedClient)
         self.tourRepository = TourRepositoryImpl(apiClient: authenticatedClient)
         self.reviewRepository = ReviewRepositoryImpl(apiClient: authenticatedClient)
+        self.searchRepository = SearchRepositoryImpl(apiClient: authenticatedClient)
         
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
@@ -91,5 +94,6 @@ final class AppDependency {
         self.reviewDislikeUseCase = ReviewDislikeUseCaseImpl(repository: reviewRepository)
         self.getUserPreferenceUseCase = GetUserPreferenceUseCaseImpl(repository: userRepository)
         self.updateUserPreferenceUseCase = UpdateUserPreferenceUseCaseImpl(repository: userRepository)
+        self.searchBakeyUseCase = SearchBakeryUseCaseImpl(repository: searchRepository)
     }
 }

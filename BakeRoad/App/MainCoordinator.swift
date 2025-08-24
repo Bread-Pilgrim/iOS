@@ -18,43 +18,71 @@ final class MainCoordinator: ObservableObject {
     
     // 탭별 화면 enum
     enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(_ filter: BakeryDetailFilter) }
-    enum SearchScreen: Hashable { case search, bakeryDetail(id: Int) }
+    enum SearchScreen: Hashable { case searchDetail(_ filter: BakeryDetailFilter) }
     enum FavoritesScreen: Hashable { case favorites, bakeryDetail(id: Int) }
     enum MyScreen: Hashable { case my, settings }
     
     @Published var selectedTab: Tab = .home
     @Published var isTabBarHidden = false
+    @Published var isKeyboardVisible = false
     @Published var homePath = NavigationPath()
     @Published var searchPath = NavigationPath()
     @Published var favoritesPath = NavigationPath()
     @Published var myPath = NavigationPath()
     
     let dependency: AppDependency
-    init(dependency: AppDependency) { self.dependency = dependency }
+    init(dependency: AppDependency) {
+        self.dependency = dependency
+        setupKeyboardObservers()
+    }
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.isKeyboardVisible = true
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.isKeyboardVisible = false
+            }
+        }
+    }
     
     // 이동 API
     func switchTab(_ tab: Tab) { selectedTab = tab }
     
     func push(_ screen: HomeScreen) {
         isTabBarHidden = true
-        homePath.append(screen) 
+        homePath.append(screen)
     }
-    func push(_ screen: SearchScreen)    { searchPath.append(screen) }
+    func push(_ screen: SearchScreen) {
+        isTabBarHidden = true
+        searchPath.append(screen)
+    }
     func push(_ screen: FavoritesScreen) { favoritesPath.append(screen) }
     func push(_ screen: MyScreen)        { myPath.append(screen) }
     
-    func popHome() { 
-        if !homePath.isEmpty { 
-            homePath.removeLast() 
-            // homePath가 비어있으면 홈 화면이므로 탭바 표시, 아니면 리스트 화면이므로 탭바 숨김
+    func popHome() {
+        if !homePath.isEmpty {
+            homePath.removeLast()
             isTabBarHidden = !homePath.isEmpty
-        } 
+        }
     }
     
-    // 탭 교차 이동(예: 홈에서 검색 상세로 직행)
-    func goToSearchDetail(id: Int) {
-        selectedTab = .search
-        searchPath = NavigationPath()
-        searchPath.append(SearchScreen.bakeryDetail(id: id))
+    func popSearch() {
+        if !searchPath.isEmpty {
+            searchPath.removeLast()
+            isTabBarHidden = !searchPath.isEmpty
+        }
     }
 }

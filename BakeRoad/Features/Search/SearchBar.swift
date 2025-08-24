@@ -21,7 +21,7 @@ struct SearchBar: View {
                     .renderingMode(.template)
                     .frame(width: 20, height: 20)
                     .tint(.black)
-                    
+                
                 
                 TextField("빵집이나 메뉴를 검색해보세요.", text: $text)
                     .focused(isSearchFocused)
@@ -49,8 +49,11 @@ struct SearchBar: View {
             .frame(height: 44)
             .background(Color.primary50)
             .cornerRadius(10)
+            .onTapGesture {
+                isSearchFocused.wrappedValue = true
+            }
             
-            if isSearchFocused.wrappedValue {
+            if isSearchFocused.wrappedValue || !text.isEmpty {
                 Button("취소") {
                     onCancel()
                 }

@@ -11,7 +11,7 @@ import Foundation
 @MainActor
 final class HomeViewModel: ObservableObject {
     @Published var selectedAreaCodes: Set<Int> = [14]
-    @Published var selectedCategoryCodes: Set<String> = ["A01"]
+    private let categoryManager = CategoryManager.shared
     @Published var allAreas: [Area] = []
     @Published var preferenceBakeries: [RecommendBakery] = []
     @Published var hotBakeries: [RecommendBakery] = []
@@ -31,7 +31,7 @@ final class HomeViewModel: ObservableObject {
     var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
     
     private var areaCodes: String { selectedAreaCodes.map(String.init).joined(separator: ",") }
-    private var tourCatCodes: String { selectedCategoryCodes.joined(separator: ",") }
+    private var tourCatCodes: String { categoryManager.tourCatCodes }
     
     init(
         getAreaListUseCase: GetAreaListUseCase,
@@ -73,7 +73,7 @@ final class HomeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        $selectedCategoryCodes
+        categoryManager.$selectedCategoryCodes
             .removeDuplicates()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .receive(on: DispatchQueue.main)
@@ -123,18 +123,14 @@ final class HomeViewModel: ObservableObject {
         }
     }
     func toggleCategory(_ id: String) {
-        if selectedCategoryCodes.contains(id) {
-            if selectedCategoryCodes.count > 1 { selectedCategoryCodes.remove(id) }
-        } else {
-            selectedCategoryCodes.insert(id)
-        }
+        categoryManager.toggleCategory(id)
     }
     
     func didTapPreferenceViewAll() {
         let filter = BakeryListFilter(
             type: .preference,
             areaCodes: selectedAreaCodes,
-            tourCatCodes: selectedCategoryCodes
+            tourCatCodes: categoryManager.selectedCategoryCodes
         )
         onNavigateToBakeryList?(filter)
     }
@@ -143,7 +139,7 @@ final class HomeViewModel: ObservableObject {
         let filter = BakeryListFilter(
             type: .hot,
             areaCodes: selectedAreaCodes,
-            tourCatCodes: selectedCategoryCodes
+            tourCatCodes: categoryManager.selectedCategoryCodes
         )
         onNavigateToBakeryList?(filter)
     }
@@ -152,7 +148,7 @@ final class HomeViewModel: ObservableObject {
         let filter = BakeryDetailFilter(
             bakeryId: bakery.id,
             areaCodes: selectedAreaCodes,
-            tourCatCodes: selectedCategoryCodes
+            tourCatCodes: categoryManager.selectedCategoryCodes
         )
         onNavigateToBakeryDetail?(filter)
     }

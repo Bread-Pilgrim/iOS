@@ -16,8 +16,8 @@ struct NickNameView: View {
     @FocusState private var isTextFieldFocused: Bool
     
     private var isValid: Bool {
-        nickname.trimmingCharacters(in: .whitespaces).isEmpty ||
-        nickname.trimmingCharacters(in: .whitespaces).count > 8
+        nickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+        nickname.trimmingCharacters(in: .whitespacesAndNewlines).count > 8
     }
     
     var body: some View {

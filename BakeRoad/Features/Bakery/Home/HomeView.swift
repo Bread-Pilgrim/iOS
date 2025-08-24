@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    @ObservedObject private var categoryManager = CategoryManager.shared
     @State private var showPreferenceEdit = false
     
     var body: some View {
@@ -103,7 +104,7 @@ struct HomeView: View {
                     .padding(.top, 40)
                     
                     TourCategorySelectionView(
-                        selectedIDs: viewModel.selectedCategoryCodes,
+                        selectedIDs: categoryManager.selectedCategoryCodes,
                         onToggle: viewModel.toggleCategory
                     )
                     .padding(.bottom, 12)

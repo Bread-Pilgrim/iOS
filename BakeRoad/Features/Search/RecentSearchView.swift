@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct RecentSearchView: View {
-    let recentSearches: [String]
+    let recentSearches: [RecentSearch]
     let onSelectSearch: (String) -> Void
-    let onRemoveSearch: (String) -> Void
+    let onRemoveSearch: (UUID) -> Void
     let onClearAll: () -> Void
     
     var body: some View {
@@ -26,35 +26,44 @@ struct RecentSearchView: View {
                     onClearAll()
                 }
                 .font(.bodyXsmallSemibold)
-                .foregroundColor(.gray200)
+                .foregroundColor(recentSearches.isEmpty ? .gray200 : .gray800)
+                .disabled(recentSearches.isEmpty)
             }
-            .padding(.horizontal, 16)
             .padding(.top, 20)
             .padding(.bottom, 16)
             
             if recentSearches.isEmpty {
-                VStack(alignment: .center, spacing: 0) {
-                    Text("아직 검색하신 내역이 없어요.\n원하는 매장을 검색해보세요!")
+                VStack(alignment: .center, spacing: 4) {
+                    Text("아직 검색하신 내역이 없어요.")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                    Text("원하는 매장을 검색해보세요!")
                         .font(.bodyXsmallRegular)
                         .foregroundColor(.gray600)
                 }
                 .frame(height: 120)
+                .frame(maxWidth: .infinity)
+                .background(Color.gray40)
                 .cornerRadius(12)
-                .padding(.horizontal, 16)
             } else {
-                LazyHStack(spacing: 8) {
-                    ForEach(recentSearches, id: \.self) { searchText in
-                        RecentSearchItem(
-                            searchText: searchText,
-                            onSelect: { onSelectSearch(searchText) },
-                            onRemove: { onRemoveSearch(searchText) }
-                        )
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 8) {
+                        ForEach(recentSearches) { search in
+                            RecentSearchItem(
+                                searchText: search.text,
+                                onSelect: { onSelectSearch(search.text) },
+                                onRemove: { onRemoveSearch(search.id) }
+                            )
+                        }
                     }
                 }
+                .frame(height: 32)
+                .frame(maxWidth: .infinity)
             }
             
             Spacer()
         }
+        .padding(.horizontal, 16)
     }
 }
 
@@ -64,43 +73,30 @@ struct RecentSearchItem: View {
     let onRemove: () -> Void
     
     var body: some View {
-        BakeRoadOutlinedButton(
-            title: searchText,
-            style: .assistive,
-            size: .small,
-            trailingIcon: Image(systemName: "xmark")
-        ) {
-            onSelect()
+        HStack(spacing: 4) {
+            Button {
+                onSelect()
+            } label: {
+                Text(searchText)
+                    .font(.body2xsmallMedium)
+                    .foregroundColor(.gray990)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            
+            Button {
+                onRemove()
+            } label: {
+                Image(systemName: "xmark")
+                    .resizable()
+                    .frame(width: 10, height: 10)
+                    .tint(Color.gray990)
+            }
         }
-        trailingIconAction: {
-            onRemove()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .overlay {
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(Color.gray200, lineWidth: 1)
         }
-        
-//        HStack(spacing: 12) {
-//            Button {
-//                onSelect()
-//            } label: {
-//                HStack(spacing: 12) {
-//                    Image(systemName: "clock")
-//                        .font(.system(size: 16))
-//                        .foregroundColor(.gray400)
-//                    
-//                    Text(searchText)
-//                        .font(.body2xsmallMedium)
-//                        .foregroundColor(.gray990)
-//                        .frame(maxWidth: .infinity, alignment: .leading)
-//                }
-//            }
-//            
-//            Button {
-//                onRemove()
-//            } label: {
-//                Image(systemName: "xmark")
-//                    .font(.system(size: 14))
-//                    .foregroundColor(.gray400)
-//            }
-//        }
-//        .padding(.horizontal, 16)
-//        .padding(.vertical, 12)
     }
 }

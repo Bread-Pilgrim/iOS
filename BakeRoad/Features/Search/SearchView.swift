@@ -8,64 +8,44 @@
 import SwiftUI
 
 struct SearchView: View {
-//    @StateObject private var viewModel: SearchViewModel
-    @State private var searchText = ""
-    @State private var hasSearched = false
+    @StateObject var viewModel: SearchViewModel
     @FocusState private var isSearchFocused: Bool
-    
-//    init(getBakeryListUseCase: GetBakeryListUseCase) {
-//        self._viewModel = StateObject(wrappedValue: SearchViewModel(getBakeryListUseCase: getBakeryListUseCase))
-//    }
     
     var body: some View {
         VStack(spacing: 0) {
             SearchBar(
-                text: $searchText,
+                text: $viewModel.currentSearchText,
                 isSearchFocused: $isSearchFocused,
                 onSearchSubmit: {
-//                    performSearch()
+                    Task {
+                        await viewModel.search(viewModel.currentSearchText)
+                    }
                 },
                 onCancel: {
-                    searchText = ""
-                    hasSearched = false
+                    viewModel.cancelSearch()
                     isSearchFocused = false
                 }
             )
             
-            // 콘텐츠
-//            SearchContentView(
-//                searchText: searchText,
-//                isSearchFocused: isSearchFocused,
-//                hasSearched: hasSearched,
-//                viewModel: viewModel
-//            )
+            SearchContentView(
+                isSearchFocused: isSearchFocused,
+                viewModel: viewModel,
+                onRecentSearchSelected: { selectedText in
+                    Task {
+                        await viewModel.selectRecentSearch(selectedText)
+                        isSearchFocused = false
+                    }
+                }
+            )
+            
+            Spacer()
         }
         .background(Color.white)
         .navigationBarHidden(true)
-//        .task {
-//            await viewModel.loadRecentBakeries()
-//        }
-        .onChange(of: isSearchFocused) { focused in
-            if !focused && searchText.isEmpty {
-                hasSearched = false
+        .onChange(of: viewModel.isSearchFocused) { oldValue, newValue in
+            if !newValue && viewModel.currentSearchText.isEmpty {
+                viewModel.hasPerformedSearch = false
             }
         }
     }
-    
-//    private func performSearch() {
-//        guard !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-//            return
-//        }
-//        
-//        isSearchFocused = false
-//        hasSearched = true
-//        
-//        Task {
-//            await viewModel.search(searchText)
-//        }
-//    }
-}
-
-#Preview {
-    SearchView()
 }

@@ -7,13 +7,23 @@
 
 import Foundation
 
+struct RecentSearch: Codable, Identifiable {
+    var id = UUID()
+    let text: String
+    let timestamp: Date
+}
+
 final class RecentSearchManager {
     private let userDefaults = UserDefaults.standard
     private let recentSearchKey = "recent_searches"
     private let maxRecentSearches = 10
     
-    func getRecentSearches() -> [String] {
-        return userDefaults.stringArray(forKey: recentSearchKey) ?? []
+    func getRecentSearches() -> [RecentSearch] {
+        guard let data = userDefaults.data(forKey: recentSearchKey),
+              let searches = try? JSONDecoder().decode([RecentSearch].self, from: data) else {
+            return []
+        }
+        return searches.sorted { $0.timestamp > $1.timestamp }
     }
     
     func addRecentSearch(_ searchText: String) {
@@ -22,27 +32,33 @@ final class RecentSearchManager {
         
         var recentSearches = getRecentSearches()
         
-        // 중복 제거
-        recentSearches.removeAll { $0 == trimmedText }
+        // 중복 제거 코드 삭제 - 중복 허용
+        let newSearch = RecentSearch(text: trimmedText, timestamp: Date())
         
         // 맨 앞에 추가
-        recentSearches.insert(trimmedText, at: 0)
+        recentSearches.insert(newSearch, at: 0)
         
         // 최대 개수 제한
         if recentSearches.count > maxRecentSearches {
             recentSearches = Array(recentSearches.prefix(maxRecentSearches))
         }
         
-        userDefaults.set(recentSearches, forKey: recentSearchKey)
+        saveRecentSearches(recentSearches)
     }
     
-    func removeRecentSearch(_ searchText: String) {
+    func removeRecentSearch(_ searchId: UUID) {
         var recentSearches = getRecentSearches()
-        recentSearches.removeAll { $0 == searchText }
-        userDefaults.set(recentSearches, forKey: recentSearchKey)
+        recentSearches.removeAll { $0.id == searchId }
+        saveRecentSearches(recentSearches)
     }
     
     func clearAllRecentSearches() {
         userDefaults.removeObject(forKey: recentSearchKey)
+    }
+    
+    private func saveRecentSearches(_ searches: [RecentSearch]) {
+        if let data = try? JSONEncoder().encode(searches) {
+            userDefaults.set(data, forKey: recentSearchKey)
+        }
     }
 }

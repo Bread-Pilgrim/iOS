@@ -29,6 +29,7 @@ struct MainView: View {
                     onSelect: { coordinator.selectedTab = $0 }
                 )
                 .ignoresSafeArea(edges: .bottom)
+                .opacity(coordinator.isKeyboardVisible ? 0 : 1)
             }
         }
     }
@@ -107,15 +108,44 @@ struct MainView: View {
     
     private var searchTab: some View {
         NavigationStack(path: $coordinator.searchPath) {
-            EmptyView()
-                .navigationDestination(for: MainCoordinator.SearchScreen.self) { screen in
-                    switch screen {
-                    case .search:
-                        EmptyView()
-                    case .bakeryDetail(_):
-                        EmptyView()
-                    }
+            SearchView(viewModel: {
+                let viewModel = SearchViewModel(
+                    searchBakeryUseCase: coordinator.dependency.searchBakeyUseCase
+                )
+                viewModel.onNavigateToBakeryDetail = { filter in
+                    coordinator.push(.searchDetail(filter))
                 }
+                return viewModel
+            }())
+            .navigationDestination(for: MainCoordinator.SearchScreen.self) { screen in
+                switch screen {
+                case .searchDetail(let filter):
+                    BakeryDetailView(viewModel: {
+                        let viewModel = BakeryDetailViewModel(
+                            filter: filter,
+                            getBakeryDetailUseCase: coordinator.dependency.getBakeryDetailUseCase,
+                            getTourListUseCase: coordinator.dependency.getTourListUseCase,
+                            getBakeryReviewsUseCase: coordinator.dependency.getBakeryReviewsUseCase,
+                            getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
+                            bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
+                            bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase,
+                            reviewLikeUseCase: coordinator.dependency.reviewlikeUseCase,
+                            reviewDislikeUseCase: coordinator.dependency.reviewDislikeUseCase,
+                            getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase,
+                            getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
+                            writeReviewUseCase: coordinator.dependency.writeReviewUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popSearch()
+                        }
+                        return viewModel
+                    }())
+                    .navigationBarBackButtonHidden(true)
+                    .navigationBarHidden(true)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .toolbar(.hidden, for: .automatic)
+                }
+            }
         }
     }
     

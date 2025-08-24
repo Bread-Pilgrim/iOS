@@ -16,7 +16,7 @@ final class SearchRepositoryImpl: SearchRepository {
     
     func getSerachBakeries(_ requestDTO: SearchBakeryRequestDTO) async throws -> Page<Bakery> {
         let request = APIRequest(
-            path: TourEndPoint.getTourList,
+            path: SearchEndPoint.searchBakeries,
             method: .get,
             parameters: requestDTO
         )
