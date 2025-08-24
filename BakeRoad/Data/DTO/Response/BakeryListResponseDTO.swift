@@ -26,7 +26,7 @@ struct BakeryItemDTO: Decodable {
     let reviewCount: Int
     let gu: String
     let dong: String
-    let commercialAreaID: Int
+    let commercialAreaID: Int?
     let signatureMenus: [SignatureMenuDTO]
 
     enum CodingKeys: String, CodingKey {
@@ -60,7 +60,7 @@ extension BakeryItemDTO {
                reviewCount: reviewCount,
                gu: gu,
                dong: dong,
-               areaID: commercialAreaID,
+               areaID: commercialAreaID ?? 14,
                signatureMenus: signatureMenus.map { $0.menuName })
     }
 }

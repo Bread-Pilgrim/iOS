@@ -141,4 +141,15 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         let _ = try await apiClient.requestMultipart(request, imageData: imageData, responseType: EmptyDTO.self)
     }
+    
+    func getMyBakeryList(_ type: MyBakeryType, requestDTO: BakeryMyListRequestDTO) async throws -> Page<Bakery> {
+        let request = APIRequest(
+            path: type.listEndPoint,
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BakeryListResponseDTO.self)
+        
+        return dto.toEntity()
+    }
 }

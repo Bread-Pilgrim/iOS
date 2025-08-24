@@ -19,7 +19,7 @@ final class MainCoordinator: ObservableObject {
     // 탭별 화면 enum
     enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(_ filter: BakeryDetailFilter) }
     enum SearchScreen: Hashable { case searchDetail(_ filter: BakeryDetailFilter) }
-    enum FavoritesScreen: Hashable { case favorites, bakeryDetail(id: Int) }
+    enum FavoritesScreen: Hashable { case favoritesDetail(_ filter: BakeryDetailFilter) }
     enum MyScreen: Hashable { case my, settings }
     
     @Published var selectedTab: Tab = .home
@@ -69,7 +69,10 @@ final class MainCoordinator: ObservableObject {
         isTabBarHidden = true
         searchPath.append(screen)
     }
-    func push(_ screen: FavoritesScreen) { favoritesPath.append(screen) }
+    func push(_ screen: FavoritesScreen) {
+        isTabBarHidden = true
+        favoritesPath.append(screen)
+    }
     func push(_ screen: MyScreen)        { myPath.append(screen) }
     
     func popHome() {
@@ -83,6 +86,13 @@ final class MainCoordinator: ObservableObject {
         if !searchPath.isEmpty {
             searchPath.removeLast()
             isTabBarHidden = !searchPath.isEmpty
+        }
+    }
+    
+    func popFavorites() {
+        if !favoritesPath.isEmpty {
+            favoritesPath.removeLast()
+            isTabBarHidden = !favoritesPath.isEmpty
         }
     }
 }

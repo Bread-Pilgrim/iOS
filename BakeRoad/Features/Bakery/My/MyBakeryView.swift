@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct MyBakeryView: View {
-    @State private var selectedTab: MyBakeryTab = .visited
-    @State private var visitedSortOption: SortOption = .newest
-    @State private var favoriteSortOption: SortOption = .newest
+    @StateObject var viewModel: MyBakeryViewModel
+    @State private var selectedTab: MyBakeryType = .visited
     @State private var showVisitedSortSheet = false
-    @State private var showFavoriteSortSheet = false
+    @State private var showLikeSortSheet = false
     
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -30,7 +29,6 @@ struct MyBakeryView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
-                .padding(.bottom, 20)
         }
         .background(Color.white)
     }
@@ -40,29 +38,44 @@ struct MyBakeryView: View {
         switch selectedTab {
         case .visited:
             VisitedBakeryView(
-                selectedSortOption: $visitedSortOption,
+                viewModel: viewModel,
                 isShowingSortSheet: $showVisitedSortSheet
             )
-        case .favorites:
-            FavoriteBakeryView(
-                selectedSortOption: $favoriteSortOption,
-                isShowingSortSheet: $showFavoriteSortSheet
+            .onAppear {
+                Task { await viewModel.loadBakeries(tab: .visited) }
+            }
+        case .like:
+            LikeBakeryView(
+                viewModel: viewModel,
+                isShowingSortSheet: $showLikeSortSheet
             )
+            .onAppear {
+                Task { await viewModel.loadBakeries(tab: .like) }
+            }
         }
     }
 }
 
-enum MyBakeryTab: String, CaseIterable {
+enum MyBakeryType: String, CaseIterable {
     case visited = "다녀온 빵집"
-    case favorites = "찜한 빵집"
+    case like = "찜한 빵집"
+    
+    var listEndPoint: String {
+        switch self {
+        case .visited:
+            return BakeryEndPoint.listVisited
+        case .like:
+            return BakeryEndPoint.listLike
+        }
+    }
 }
 
 struct MyBakerySegmentedControl: View {
-    @Binding var selectedTab: MyBakeryTab
+    @Binding var selectedTab: MyBakeryType
     
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(MyBakeryTab.allCases, id: \.self) { tab in
+            ForEach(MyBakeryType.allCases, id: \.self) { tab in
                 Button(action: {
                     selectedTab = tab
                 }) {
@@ -83,105 +96,137 @@ struct MyBakerySegmentedControl: View {
 }
 
 struct VisitedBakeryView: View {
-    @Binding var selectedSortOption: SortOption
+    @ObservedObject var viewModel: MyBakeryViewModel
     @Binding var isShowingSortSheet: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Spacer()
-                
                 BakeRoadTextButton(
-                    title: selectedSortOption.displayTitle(),
+                    title: viewModel.visitedSortOption.displayTitle(isMyBakery: true),
                     type: .assistive,
-                    size: .small) {
-                        isShowingSortSheet = true
-                    }
-                    .sheet(isPresented: $isShowingSortSheet) {
-                        SortOptionSheet(
-                            selectedOption: $selectedSortOption,
-                            options: [.newest, .reviewCountHigh, .avgRatingHigh, .avgRatingLow, .name],
-                            isMyBakery: false,
-                            onConfirm: {
-                                isShowingSortSheet = false
-                            },
-                            onCancel: {
-                                isShowingSortSheet = false
-                            }
-                        )
-                        .presentationDetents([.fraction(0.47)])
-                    }
+                    size: .small
+                ) {
+                    isShowingSortSheet = true
+                }
+                .sheet(isPresented: $isShowingSortSheet) {
+                    SortOptionSheet(
+                        selectedOption: $viewModel.visitedSortOption,
+                        options: [.newest, .reviewCountHigh, .avgRatingHigh, .avgRatingLow, .name],
+                        isMyBakery: true,
+                        onConfirm: {
+                            isShowingSortSheet = false
+                            Task { await viewModel.loadBakeries(tab: .visited) }
+                        },
+                        onCancel: { isShowingSortSheet = false }
+                    )
+                    .presentationDetents([.fraction(0.47)])
+                }
             }
             .frame(height: 28)
             
-            VStack(alignment: .center, spacing: 4) {
-                Text("아직 다녀온 빵집이 없어요 🥲")
-                    .font(.bodyXsmallRegular)
-                    .foregroundColor(.gray600)
-                Text("방문 후 리뷰를 남겨주시면 다녀온 빵집에 추가돼요!")
-                    .font(.bodyXsmallRegular)
-                    .foregroundColor(.gray600)
+            if viewModel.isLoading {
+                SkeletonListView()
+            } else if viewModel.bakeries.isEmpty {
+                VStack(alignment: .center, spacing: 4) {
+                    Text("아직 다녀온 빵집이 없어요 🥲")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                    Text("방문 후 리뷰를 남겨주시면 다녀온 빵집에 추가돼요!")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                }
+                .frame(height: 120)
+                .frame(maxWidth: .infinity)
+                .background(Color.gray40)
+                .cornerRadius(12)
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.bakeries) { bakery in
+                            BakeryCard(bakery: bakery)
+                                .frame(height: 126)
+                                .onAppear {
+                                    Task { await viewModel.loadMore() }
+                                }
+                                .onTapGesture {
+                                    viewModel.onTapBakery(bakery)
+                                }
+                        }
+                    }
+                }
             }
-            .frame(height: 120)
-            .frame(maxWidth: .infinity)
-            .background(Color.gray40)
-            .cornerRadius(12)
             
             Spacer()
         }
     }
 }
 
-struct FavoriteBakeryView: View {
-    @Binding var selectedSortOption: SortOption
+struct LikeBakeryView: View {
+    @ObservedObject var viewModel: MyBakeryViewModel
     @Binding var isShowingSortSheet: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Spacer()
-                
                 BakeRoadTextButton(
-                    title: selectedSortOption.displayTitle(),
+                    title: viewModel.likeSortOption.displayTitle(isMyBakery: true),
                     type: .assistive,
-                    size: .small) {
-                        isShowingSortSheet = true
-                    }
-                    .sheet(isPresented: $isShowingSortSheet) {
-                        SortOptionSheet(
-                            selectedOption: $selectedSortOption,
-                            options: [.newest, .reviewCountHigh, .avgRatingHigh, .avgRatingLow, .name],
-                            isMyBakery: false,
-                            onConfirm: {
-                                isShowingSortSheet = false
-                            },
-                            onCancel: {
-                                isShowingSortSheet = false
-                            }
-                        )
-                        .presentationDetents([.fraction(0.47)])
-                    }
+                    size: .small
+                ) {
+                    isShowingSortSheet = true
+                }
+                .sheet(isPresented: $isShowingSortSheet) {
+                    SortOptionSheet(
+                        selectedOption: $viewModel.likeSortOption,
+                        options: [.newest, .reviewCountHigh, .avgRatingHigh, .avgRatingLow, .name],
+                        isMyBakery: true,
+                        onConfirm: {
+                            isShowingSortSheet = false
+                            Task { await viewModel.loadBakeries(tab: .like) }
+                        },
+                        onCancel: { isShowingSortSheet = false }
+                    )
+                    .presentationDetents([.fraction(0.47)])
+                }
             }
             .frame(height: 28)
             
-            VStack(alignment: .center, spacing: 4) {
-                Text("아직 찜한 빵집이 없어요 🥲")
-                    .font(.bodyXsmallRegular)
-                    .foregroundColor(.gray600)
-                Text("가고 싶은 빵집을 추가해봐요!")
-                    .font(.bodyXsmallRegular)
-                    .foregroundColor(.gray600)
+            if viewModel.isLoading {
+                SkeletonListView()
+            } else if viewModel.bakeries.isEmpty {
+                VStack(alignment: .center, spacing: 4) {
+                    Text("아직 찜한 빵집이 없어요 🥲")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                    Text("가고 싶은 빵집을 추가해봐요!")
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray600)
+                }
+                .frame(height: 120)
+                .frame(maxWidth: .infinity)
+                .background(Color.gray40)
+                .cornerRadius(12)
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.bakeries) { bakery in
+                            BakeryCard(bakery: bakery)
+                                .frame(height: 126)
+                                .onAppear {
+                                    Task { await viewModel.loadMore() }
+                                }
+                                .onTapGesture {
+                                    viewModel.onTapBakery(bakery)
+                                }
+                        }
+                    }
+                }
             }
-            .frame(height: 120)
-            .frame(maxWidth: .infinity)
-            .background(Color.gray40)
-            .cornerRadius(12)
             
             Spacer()
         }
     }
-}
-
-#Preview {
-    MyBakeryView()
 }

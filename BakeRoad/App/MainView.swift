@@ -151,15 +151,44 @@ struct MainView: View {
     
     private var favoritesTab: some View {
         NavigationStack(path: $coordinator.favoritesPath) {
-            EmptyView()
-                .navigationDestination(for: MainCoordinator.FavoritesScreen.self) { screen in
-                    switch screen {
-                    case .favorites:
-                        EmptyView()
-                    case .bakeryDetail(_):
-                        EmptyView()
-                    }
+            MyBakeryView(viewModel: {
+                let viewModel = MyBakeryViewModel(
+                    getMyBakeryListUseCase: coordinator.dependency.getMyBakeryListUseCase
+                )
+                viewModel.onNavigateToBakeryDetail = { filter in
+                    coordinator.push(.favoritesDetail(filter))
                 }
+                return viewModel
+            }())
+            .navigationDestination(for: MainCoordinator.FavoritesScreen.self) { screen in
+                switch screen {
+                case .favoritesDetail(let filter):
+                    BakeryDetailView(viewModel: {
+                        let viewModel = BakeryDetailViewModel(
+                            filter: filter,
+                            getBakeryDetailUseCase: coordinator.dependency.getBakeryDetailUseCase,
+                            getTourListUseCase: coordinator.dependency.getTourListUseCase,
+                            getBakeryReviewsUseCase: coordinator.dependency.getBakeryReviewsUseCase,
+                            getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
+                            bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
+                            bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase,
+                            reviewLikeUseCase: coordinator.dependency.reviewlikeUseCase,
+                            reviewDislikeUseCase: coordinator.dependency.reviewDislikeUseCase,
+                            getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase,
+                            getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
+                            writeReviewUseCase: coordinator.dependency.writeReviewUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popFavorites()
+                        }
+                        return viewModel
+                    }())
+                    .navigationBarBackButtonHidden(true)
+                    .navigationBarHidden(true)
+                    .toolbar(.hidden, for: .navigationBar)
+                    .toolbar(.hidden, for: .automatic)
+                }
+            }
         }
     }
     
