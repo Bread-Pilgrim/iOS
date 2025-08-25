@@ -97,10 +97,7 @@ struct MainView: View {
                         }
                         return viewModel
                     }())
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarHidden(true)
-                    .toolbar(.hidden, for: .navigationBar)
-                    .toolbar(.hidden, for: .automatic)
+                    .hideNavigationBar()
                 }
             }
         }
@@ -140,10 +137,7 @@ struct MainView: View {
                         }
                         return viewModel
                     }())
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarHidden(true)
-                    .toolbar(.hidden, for: .navigationBar)
-                    .toolbar(.hidden, for: .automatic)
+                    .hideNavigationBar()
                 }
             }
         }
@@ -183,10 +177,7 @@ struct MainView: View {
                         }
                         return viewModel
                     }())
-                    .navigationBarBackButtonHidden(true)
-                    .navigationBarHidden(true)
-                    .toolbar(.hidden, for: .navigationBar)
-                    .toolbar(.hidden, for: .automatic)
+                    .hideNavigationBar()
                 }
             }
         }
@@ -199,7 +190,7 @@ struct MainView: View {
                     userProfileUseCase: coordinator.dependency.userProfileUseCase
                 )
                 viewModel.onNavigateToSettings = {
-                    coordinator.push(.settings)
+                    coordinator.push(.setting)
                 }
                 viewModel.onNavigateToPreferenceChange = {
                     // 취향 변경 화면으로 이동 (나중에 추가)
@@ -222,8 +213,34 @@ struct MainView: View {
                 switch screen {
                 case .my:
                     EmptyView()
-                case .settings:
-                    EmptyView()
+                case .setting:
+                    SettingView(viewModel: {
+                        let viewModel = SettingViewModel()
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        viewModel.onNavigateToNotifications = {
+                            coordinator.push(.notification)
+                        }
+                        viewModel.onNavigateToAppInfo = {
+                            coordinator.push(.appInfo)
+                        }
+                        viewModel.onLogout = {
+                            // 로그아웃 처리 로직 (나중에 추가)
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
+                case .notification:
+                    NotificationView(viewModel: NotificationViewModel(), onNavigateBack: {
+                        coordinator.popMy()
+                    })
+                    .hideNavigationBar()
+                case .appInfo:
+                    AppInfoView {
+                        coordinator.popMy()
+                    }
+                    .hideNavigationBar()
                 }
             }
         }

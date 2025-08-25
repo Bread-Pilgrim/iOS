@@ -18,25 +18,35 @@ struct AlertAction {
 }
 
 struct BakeRoadAlert: View {
-    let title: String
-    let message: String
+    let title: String?
+    let message: String?
     let primaryAction: AlertAction
     let secondaryAction: AlertAction?
     let layout: AlertButtonLayout
     
+    init(title: String? = nil, message: String? = nil, primaryAction: AlertAction, secondaryAction: AlertAction? = nil, layout: AlertButtonLayout) {
+        self.title = title
+        self.message = message
+        self.primaryAction = primaryAction
+        self.secondaryAction = secondaryAction
+        self.layout = layout
+    }
+    
     var body: some View {
-        VStack {
-            Text(title)
-                .font(.headingSmallBold)
-                .foregroundColor(.gray990)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 8)
-            
-            Text(message)
-                .font(.bodyXsmallMedium)
-                .foregroundColor(.gray800)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 16)
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 8) {
+                if let title = title {
+                    Text(title)
+                        .font(.headingSmallBold)
+                        .foregroundColor(.gray990)
+                }
+                if let message = message {
+                    Text(message)
+                        .font(.bodyXsmallMedium)
+                        .foregroundColor(.gray800)
+                }
+            }
+            .padding(.vertical, 20)
             
             if layout == .horizontal {
                 HStack(spacing: 8) {
@@ -45,6 +55,7 @@ struct BakeRoadAlert: View {
                     }
                     button(for: primaryAction, style: .primary, layout: .horizontal)
                 }
+                .padding(.bottom, 16)
             } else {
                 VStack(spacing: 8) {
                     button(for: primaryAction, style: .primary, layout: .vertical)
@@ -52,9 +63,10 @@ struct BakeRoadAlert: View {
                         button(for: secondary, style: .secondary, layout: .vertical)
                     }
                 }
+                .padding(.bottom, 16)
             }
         }
-        .padding(16)
+        .padding(.horizontal, 16)
         .background(Color.white)
         .cornerRadius(20)
         .padding(.horizontal, 20)
