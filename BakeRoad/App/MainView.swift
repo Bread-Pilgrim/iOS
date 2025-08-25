@@ -232,9 +232,13 @@ struct MainView: View {
                     }())
                     .hideNavigationBar()
                 case .notification:
-                    NotificationView(viewModel: NotificationViewModel(), onNavigateBack: {
-                        coordinator.popMy()
-                    })
+                    NotificationView(viewModel: {
+                        let viewModel = NotificationViewModel()
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        return viewModel
+                    }())
                     .hideNavigationBar()
                 case .appInfo:
                     AppInfoView {

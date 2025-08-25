@@ -36,10 +36,10 @@ struct AppInfoView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("장치 정보")
                         .font(.bodyMediumSemibold)
-                        .tint(.gray900)
+                        .foregroundColor(.gray900)
                     Text("iPhone (\(UIDevice.current.systemVersion))")
                         .font(.bodyXsmallRegular)
-                        .tint(.gray800)
+                        .foregroundColor(.gray800)
                 }
                 .padding(.horizontal, 16)
                 
@@ -50,10 +50,10 @@ struct AppInfoView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("앱 버전")
                         .font(.bodyMediumSemibold)
-                        .tint(.gray900)
+                        .foregroundColor(.gray900)
                     Text("버전 \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
                         .font(.bodyXsmallRegular)
-                        .tint(.gray800)
+                        .foregroundColor(.gray800)
                 }
                 .padding(.horizontal, 16)
                 
@@ -64,13 +64,13 @@ struct AppInfoView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("사용자 정보")
                         .font(.bodyMediumSemibold)
-                        .tint(.gray900)
+                        .foregroundColor(.gray900)
                     Text("ID : ho971122@naver.com")
                         .font(.bodyXsmallRegular)
                         .tint(.gray800)
                     Text("이름 : 이현호")
                         .font(.bodyXsmallRegular)
-                        .tint(.gray800)
+                        .foregroundColor(.gray800)
                     Text("이메일 : ho971122@naver.com")
                         .font(.bodyXsmallRegular)
                         .tint(.gray800)

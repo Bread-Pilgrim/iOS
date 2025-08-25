@@ -9,94 +9,79 @@ import SwiftUI
 
 struct NotificationView: View {
     @StateObject var viewModel: NotificationViewModel
-    let onNavigateBack: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            // 네비게이션 헤더
-            HStack {
-                Button(action: onNavigateBack) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.black)
-                        .font(.system(size: 18, weight: .medium))
+            ZStack {
+                HStack {
+                    Button {
+                        viewModel.navigateBack()
+                    } label: {
+                        Image("arrowLeft")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.black)
+                    }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding(16)
                 
                 Text("공지사항")
-                    .font(.bodyLargeSemibold)
+                    .font(.headingSmallBold)
                     .foregroundColor(.black)
-                
-                Spacer()
-                
-                // 균형을 위한 투명 버튼
-                Button(action: {}) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.clear)
-                        .font(.system(size: 18, weight: .medium))
+            }
+            
+            VStack(spacing: 0) {
+                ForEach(Array(viewModel.notifications.enumerated()), id: \.element.id) { index, notification in
+                    expandableNotificationItem(
+                        notification: notification,
+                        onToggle: {
+                            viewModel.toggleExpanded(for: notification.id)
+                        }
+                    )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            
-            // 알림 설정 옵션들
-            VStack(spacing: 0) {
-                notificationToggleItem(
-                    title: "실수록 안기 딱딱한 정보 업데이트 안내",
-                    isOn: $viewModel.isServiceUpdateEnabled
-                )
-                
-                notificationToggleItem(
-                    title: "리뷰 작성 이벤트 안내",
-                    isOn: $viewModel.isReviewEventEnabled
-                )
-                
-                notificationToggleItem(
-                    title: "일부 배정 운영시간 변경 안내",
-                    isOn: $viewModel.isOperationTimeEnabled,
-                    showDivider: false
-                )
-            }
-            .background(Color.gray40)
-            .cornerRadius(20)
-            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
             
             Spacer()
         }
-        .background(Color.white)
         .navigationBarHidden(true)
     }
     
-    private func notificationToggleItem(title: String, isOn: Binding<Bool>, showDivider: Bool = true) -> some View {
-        VStack(spacing: 0) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
+    private func expandableNotificationItem(notification: NotificationItem, showDivider: Bool = true, onToggle: @escaping () -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    onToggle()
+                }
+            } label: {
+                HStack {
+                    Text(notification.title)
                         .font(.bodyMediumSemibold)
                         .foregroundColor(.gray900)
                         .multilineTextAlignment(.leading)
                     
-                    if title.contains("실수록") {
-                        Text("실수록 안기 딱딱한 정보에 대한 새로운 내용을 10일마다 알려드립니다.")
-                            .font(.bodyXsmallRegular)
-                            .foregroundColor(.gray600)
-                            .multilineTextAlignment(.leading)
-                    }
+                    Spacer()
                     
-                    if title.contains("운영시간") {
-                        Text("우리 빵집 중 일부 운영시간이 변경 중일때, 정보를 미리 주시겠습니다.")
-                            .font(.bodyXsmallRegular)
-                            .foregroundColor(.gray600)
-                            .multilineTextAlignment(.leading)
-                    }
+                    Image(systemName: notification.isExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundColor(.gray500)
+                        .frame(width: 16, height: 16)
                 }
-                
-                Spacer()
-                
-                Toggle("", isOn: isOn)
-                    .toggleStyle(SwitchToggleStyle())
+                .padding(16)
             }
-            .padding(20)
+            
+            if notification.isExpanded,
+               let description = notification.description {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(description)
+                        .font(.bodyXsmallRegular)
+                        .foregroundColor(.gray800)
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 20)
+                }
+            }
             
             if showDivider {
                 Rectangle()
@@ -108,5 +93,5 @@ struct NotificationView: View {
 }
 
 #Preview {
-    NotificationView(viewModel: NotificationViewModel(), onNavigateBack: {})
+    NotificationView(viewModel: NotificationViewModel())
 }
