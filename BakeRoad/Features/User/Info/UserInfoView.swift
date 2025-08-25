@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct UserInfoView: View {
-    @State private var showSettings = false
+    @StateObject var viewModel: UserInfoViewModel
     
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Spacer()
                 Button(action: {
-                    showSettings = true
+                    viewModel.navigateToSettings()
                 }) {
                     Image("setting")
                         .resizable()
@@ -37,40 +37,81 @@ struct UserInfoView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+            if let message = newValue {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
+            }
+        }
     }
     
     private var profileSection: some View {
-        HStack(spacing: 12) {
-            Circle()
-                .fill(Color.primary100)
-                .frame(width: 56, height: 56)
-                .overlay(
-                    Image("person")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                )
-            
-            VStack(alignment: .leading, spacing: 10) {
-                Text("김빵글")
-                    .font(.bodyLargeSemibold)
-                    .foregroundColor(.black)
-                
-                HStack {
-                    Text("대표뱃지 없음")
-                        .font(.bodyXsmallMedium)
-                        .foregroundColor(.gray600)
+        Group {
+            if let userProfile = viewModel.userProfile {
+                HStack(spacing: 12) {
+                    if let url = userProfile.profileImg {
+                        CachedAsyncImage(url: url) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Circle()
+                                .fill(Color.primary100)
+                                .frame(width: 56, height: 56)
+                                .overlay(
+                                    Image("person")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                )
+                        }
+                        .frame(width: 56, height: 56)
+                        .clipShape(Circle())
+                    } else {
+                        Circle()
+                            .fill(Color.primary100)
+                            .frame(width: 56, height: 56)
+                            .overlay(
+                                Image("person")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                            )
+                    }
                     
-                    Spacer()
-                    
-                    Button {
-                        print("뱃지설정")
-                    } label: {
-                        Text("뱃지설정")
-                            .underline()
-                            .font(.bodyXsmallMedium)
-                            .foregroundColor(.gray800)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(userProfile.nickname)
+                            .font(.bodyLargeSemibold)
+                            .foregroundColor(.black)
+                        
+                        HStack {
+                            if userProfile.isRepresentative {
+                                Text(userProfile.badgeName)
+                                    .font(.bodyXsmallMedium)
+                                    .foregroundColor(.gray600)
+                                
+                                Spacer()
+                            } else {
+                                Text("대표뱃지 없음")
+                                    .font(.bodyXsmallMedium)
+                                    .foregroundColor(.gray600)
+                                
+                                Spacer()
+                                
+                                Button {
+                                    viewModel.navigateToBadgeSettings()
+                                } label: {
+                                    Text("뱃지설정")
+                                        .underline()
+                                        .font(.bodyXsmallMedium)
+                                        .foregroundColor(.gray800)
+                                }
+                            }
+                        }
                     }
                 }
+            } else {
+                SkeletonProfileView()
+                    .background(Color.gray40)
+                    .cornerRadius(20)
             }
         }
         .padding(.horizontal, 16)
@@ -80,19 +121,19 @@ struct UserInfoView: View {
     private var menuList: some View {
         VStack(spacing: 0) {
             menuItem(title: "빵말정산") {
-                // 빵말정산 action
+                viewModel.navigateToEarnings()
             }
             
             menuItem(title: "받은 빵지") {
-                // 받은 빵지 action
+                viewModel.navigateToReceivedBreadges()
             }
             
             menuItem(title: "내가 쓴 리뷰") {
-                // 내가 쓴 리뷰 action
+                viewModel.navigateToMyReviews()
             }
             
             menuItem(title: "취향 변경", showDivider: false) {
-                // 취향 변경 action
+                viewModel.navigateToPreferenceChange()
             }
         }
     }
@@ -120,8 +161,4 @@ struct UserInfoView: View {
             }
         }
     }
-}
-
-#Preview {
-    UserInfoView()
 }

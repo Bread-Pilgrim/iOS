@@ -7,17 +7,6 @@
 
 import Foundation
 
-struct Page<T> {
-    var items: [T]
-    var nextCursor: String?
-    
-    var hasNext: Bool {
-        return nextCursor != nil
-    }
-    
-    static var empty: Page<T> { Page(items: [], nextCursor: nil) }
-}
-
 struct Bakery: Identifiable, Equatable {
     let id: Int
     let name: String

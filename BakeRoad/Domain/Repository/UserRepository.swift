@@ -11,4 +11,5 @@ protocol UserRepository {
     func postUserOnboard(_ dto: UserOnboardRequestDTO) async throws
     func getUserPreference() async throws -> [OnboardingStep: [Preference]]
     func updateUserPreference(_ dto: UpdateUserPreferenceRequestDTO) async throws
+    func getUserProfile() async throws -> UserProfile
 }

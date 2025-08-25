@@ -39,6 +39,10 @@
         <dict>
           <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
         </dict>
+        <key>img1.kakaocdn.net</key>
+        <dict>
+          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
+        </dict>
       </dict>
     </dict>
 </dict>

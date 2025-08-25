@@ -44,4 +44,15 @@ final class UserRepositoryImpl: UserRepository {
         
         let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
     }
+    
+    func getUserProfile() async throws -> UserProfile {
+        let request = APIRequest(
+            path: UserEndpoint.userProfile,
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: UserProfileResponseDTO.self)
+        
+        return dto.toEntity()
+    }
 }

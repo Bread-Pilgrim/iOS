@@ -49,6 +49,7 @@ final class AppDependency {
     let updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
     let searchBakeyUseCase: SearchBakeryUseCase
     let getMyBakeryListUseCase: GetMyBakeryListUseCase
+    let userProfileUseCase: UserProfileUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -97,5 +98,6 @@ final class AppDependency {
         self.updateUserPreferenceUseCase = UpdateUserPreferenceUseCaseImpl(repository: userRepository)
         self.searchBakeyUseCase = SearchBakeryUseCaseImpl(repository: searchRepository)
         self.getMyBakeryListUseCase = GetMyBakeryListUseCaseImpl(repository: bakeryRepository)
+        self.userProfileUseCase = UserProfileUseCaseImpl(repository: userRepository)
     }
 }
