@@ -12,86 +12,78 @@ struct AppInfoView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 네비게이션 헤더
-            HStack {
-                Button(action: onNavigateBack) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.black)
-                        .font(.system(size: 18, weight: .medium))
+            ZStack {
+                HStack {
+                    Button {
+                        onNavigateBack()
+                    } label: {
+                        Image("arrowLeft")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.black)
+                    }
+                    
+                    Spacer()
                 }
-                
-                Spacer()
+                .padding(16)
                 
                 Text("앱 정보")
-                    .font(.bodyLargeSemibold)
+                    .font(.headingSmallBold)
                     .foregroundColor(.black)
-                
-                Spacer()
-                
-                // 균형을 위한 투명 버튼
-                Button(action: {}) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(.clear)
-                        .font(.system(size: 18, weight: .medium))
-                }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
             
-            // 앱 정보 내용
-            VStack(spacing: 20) {
-                // 앱 기본 정보
-                VStack(spacing: 0) {
-                    appInfoItem(title: "현재 절번", value: "iPhone (iOS \(UIDevice.current.systemVersion))")
-                    appInfoItem(title: "앱 버전", value: "버전 \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")", showDivider: false)
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("장치 정보")
+                        .font(.bodyMediumSemibold)
+                        .tint(.gray900)
+                    Text("iPhone (\(UIDevice.current.systemVersion))")
+                        .font(.bodyXsmallRegular)
+                        .tint(.gray800)
                 }
-                .background(Color.gray40)
-                .cornerRadius(20)
+                .padding(.horizontal, 16)
                 
-                // 사용자 정보
-                VStack(spacing: 0) {
-                    appInfoItem(
-                        title: "사용자 정보",
-                        value: "ID : bbanggj@kakao.com\n이름 : 이경희\n이메일 : bbanggj@kakao.com",
-                        showDivider: false
-                    )
+                Rectangle()
+                    .fill(Color.gray50)
+                    .frame(height: 1)
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("앱 버전")
+                        .font(.bodyMediumSemibold)
+                        .tint(.gray900)
+                    Text("버전 \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
+                        .font(.bodyXsmallRegular)
+                        .tint(.gray800)
                 }
-                .background(Color.gray40)
-                .cornerRadius(20)
-            }
-            .padding(.horizontal, 16)
-            
-            Spacer()
-        }
-        .background(Color.white)
-        .navigationBarHidden(true)
-    }
-    
-    private func appInfoItem(title: String, value: String, showDivider: Bool = true) -> some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .top) {
-                Text(title)
-                    .font(.bodyMediumSemibold)
-                    .foregroundColor(.gray900)
+                .padding(.horizontal, 16)
                 
-                Spacer()
+                Rectangle()
+                    .fill(Color.gray50)
+                    .frame(height: 1)
                 
-                Text(value)
-                    .font(.bodyMediumRegular)
-                    .foregroundColor(.gray700)
-                    .multilineTextAlignment(.trailing)
-            }
-            .padding(20)
-            
-            if showDivider {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("사용자 정보")
+                        .font(.bodyMediumSemibold)
+                        .tint(.gray900)
+                    Text("ID : ho971122@naver.com")
+                        .font(.bodyXsmallRegular)
+                        .tint(.gray800)
+                    Text("이름 : 이현호")
+                        .font(.bodyXsmallRegular)
+                        .tint(.gray800)
+                    Text("이메일 : ho971122@naver.com")
+                        .font(.bodyXsmallRegular)
+                        .tint(.gray800)
+                }
+                .padding(.horizontal, 16)
+                
                 Rectangle()
                     .fill(Color.gray50)
                     .frame(height: 1)
             }
+            .padding(.vertical, 20)
+            
+            Spacer()
         }
     }
-}
-
-#Preview {
-    AppInfoView(onNavigateBack: {})
 }
