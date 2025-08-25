@@ -30,8 +30,15 @@ struct SearchContentView: View {
                     searchResults: viewModel.searchResults,
                     isLoading: viewModel.isLoadingSearch,
                     searchText: viewModel.currentSearchText,
+                    isLoadingMore: viewModel.isLoadingMore,
+                    hasMoreResults: viewModel.hasMoreResults,
                     onTapBakery: { bakery in
                         viewModel.didTapBakery(bakery)
+                    },
+                    onLoadMore: {
+                        Task {
+                            await viewModel.loadMoreResults()
+                        }
                     }
                 )
             }

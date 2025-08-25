@@ -11,7 +11,10 @@ struct SearchResultView: View {
     let searchResults: [Bakery]
     let isLoading: Bool
     let searchText: String
+    let isLoadingMore: Bool
+    let hasMoreResults: Bool
     let onTapBakery: (Bakery) -> Void
+    let onLoadMore: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -47,6 +50,17 @@ struct SearchResultView: View {
                                 .onTapGesture {
                                     onTapBakery(bakery)
                                 }
+                                .onAppear {
+                                    if bakery == searchResults.last && hasMoreResults && !isLoadingMore {
+                                        onLoadMore()
+                                    }
+                                }
+                        }
+                        
+                        if isLoadingMore {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 16)
                         }
                     }
                 }

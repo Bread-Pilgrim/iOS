@@ -18,7 +18,7 @@ struct Page<T> {
     static var empty: Page<T> { Page(items: [], nextCursor: nil) }
 }
 
-struct Bakery: Identifiable {
+struct Bakery: Identifiable, Equatable {
     let id: Int
     let name: String
     let openStatus: BakeryOpenStatus

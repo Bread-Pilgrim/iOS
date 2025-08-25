@@ -21,6 +21,12 @@ class SearchViewModel: ObservableObject {
     @Published var hasPerformedSearch: Bool = false
     @Published var isSearchFocused: Bool = false
     
+    // 페이징 관련 상태
+    @Published var isLoadingMore = false
+    @Published var hasMoreResults = true
+    private var nextCursor: String? = "0"
+    private let pageSize = 20
+    
     private let recentSearchManager = RecentSearchManager()
     private let searchBakeryUseCase: SearchBakeryUseCase
     
@@ -49,6 +55,11 @@ class SearchViewModel: ObservableObject {
         hasPerformedSearch = true
         isSearchFocused = false
         
+        // 페이징 상태 초기화
+        nextCursor = "0"
+        hasMoreResults = true
+        searchResults = []
+        
         // 최근 검색어에 추가
         recentSearchManager.addRecentSearch(trimmedText)
         loadRecentSearches()
@@ -60,11 +71,13 @@ class SearchViewModel: ObservableObject {
             let request = SearchBakeryRequestDTO(
                 keyword: trimmedText,
                 cursor: "0",
-                pageSize: 20
+                pageSize: pageSize
             )
             
             let response = try await searchBakeryUseCase.execute(request)
             searchResults = response.items
+            nextCursor = response.nextCursor
+            hasMoreResults = response.hasNext
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
@@ -74,6 +87,31 @@ class SearchViewModel: ObservableObject {
     
     func selectRecentSearch(_ searchText: String) async {
         await search(searchText)
+    }
+    
+    func loadMoreResults() async {
+        guard hasMoreResults && !isLoadingMore && !isLoadingSearch && !currentSearchText.isEmpty else { return }
+        guard let cursor = nextCursor else { return }
+        
+        isLoadingMore = true
+        defer { isLoadingMore = false }
+        
+        do {
+            let request = SearchBakeryRequestDTO(
+                keyword: currentSearchText,
+                cursor: cursor,
+                pageSize: pageSize
+            )
+            
+            let response = try await searchBakeryUseCase.execute(request)
+            searchResults.append(contentsOf: response.items)
+            nextCursor = response.nextCursor
+            hasMoreResults = response.hasNext
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "검색 결과를 불러올 수 없습니다."
+        }
     }
     
     func removeRecentSearch(_ searchId: UUID) {
