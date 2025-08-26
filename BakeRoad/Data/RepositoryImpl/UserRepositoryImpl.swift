@@ -55,4 +55,16 @@ final class UserRepositoryImpl: UserRepository {
         
         return dto.toEntity()
     }
+    
+    func getUserReview(_ requestDTO: UserReviewRequestDTO) async throws -> Page<UserReview> {
+        let request = APIRequest(
+            path: UserEndpoint.getMyReviews,
+            method: .get,
+            parameters: requestDTO
+        )
+        
+        let dto = try await apiClient.request(request, responseType: UserReviewResponseDTO.self)
+        
+        return Page(items: dto.reviews.map { $0.toEntity() }, nextCursor: dto.nextCursor)
+    }
 }

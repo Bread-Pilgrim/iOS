@@ -124,7 +124,7 @@ struct UserInfoView: View {
                 viewModel.navigateToEarnings()
             }
             
-            menuItem(title: "받은 빵지") {
+            menuItem(title: "받은 뱃지") {
                 viewModel.navigateToReceivedBreadges()
             }
             

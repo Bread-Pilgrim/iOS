@@ -205,14 +205,50 @@ struct MainView: View {
                     // 받은 빵지 화면으로 이동 (나중에 추가)
                 }
                 viewModel.onNavigateToReviews = {
-                    // 내가 쓴 리뷰 화면으로 이동 (나중에 추가)
+                    coordinator.push(.myReview)
                 }
                 return viewModel
             }())
             .navigationDestination(for: MainCoordinator.MyScreen.self) { screen in
                 switch screen {
-                case .my:
-                    EmptyView()
+                case .myReview:
+                    UserReviewListView(viewModel: {
+                        let viewModel = UserReviewListViewModel(
+                            userReviewUseCase: coordinator.dependency.userReviewUseCase,
+                            reviewLikeUseCase: coordinator.dependency.reviewlikeUseCase,
+                            reviewDislikeUseCase: coordinator.dependency.reviewDislikeUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        viewModel.onNavigateToDetail = { filter in
+                            coordinator.push(.myReviewDetail(filter))
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
+                case .myReviewDetail(let filter):
+                    BakeryDetailView(viewModel: {
+                        let viewModel = BakeryDetailViewModel(
+                            filter: filter,
+                            getBakeryDetailUseCase: coordinator.dependency.getBakeryDetailUseCase,
+                            getTourListUseCase: coordinator.dependency.getTourListUseCase,
+                            getBakeryReviewsUseCase: coordinator.dependency.getBakeryReviewsUseCase,
+                            getBakeryMyReviewsUseCase: coordinator.dependency.getBakeryMyReviewsUseCase,
+                            bakeryLikeUseCase: coordinator.dependency.bakeryLikeUseCase,
+                            bakeryDislikeUseCase: coordinator.dependency.bakeryDislikeUseCase,
+                            reviewLikeUseCase: coordinator.dependency.reviewlikeUseCase,
+                            reviewDislikeUseCase: coordinator.dependency.reviewDislikeUseCase,
+                            getBakeryReviewEligibilityUseCase: coordinator.dependency.getBakeryReviewEligibilityUseCase,
+                            getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
+                            writeReviewUseCase: coordinator.dependency.writeReviewUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
                 case .setting:
                     SettingView(viewModel: {
                         let viewModel = SettingViewModel()

@@ -20,7 +20,7 @@ final class MainCoordinator: ObservableObject {
     enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(_ filter: BakeryDetailFilter) }
     enum SearchScreen: Hashable { case searchDetail(_ filter: BakeryDetailFilter) }
     enum FavoritesScreen: Hashable { case favoritesDetail(_ filter: BakeryDetailFilter) }
-    enum MyScreen: Hashable { case my, setting, notification, appInfo }
+    enum MyScreen: Hashable { case myReview, myReviewDetail(_ filter: BakeryDetailFilter), setting, notification, appInfo }
     
     @Published var selectedTab: Tab = .home
     @Published var isTabBarHidden = false
