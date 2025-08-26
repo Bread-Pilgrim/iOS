@@ -260,6 +260,7 @@ struct MainView: View {
                         )
                     ) {
                         coordinator.popMy()
+                        ToastManager.show(message: "내 빵 취향이 변경되었습니다!")
                     }
                     .hideNavigationBar()
                 case .setting:
