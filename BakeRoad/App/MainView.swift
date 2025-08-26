@@ -193,7 +193,7 @@ struct MainView: View {
                     coordinator.push(.setting)
                 }
                 viewModel.onNavigateToPreferenceChange = {
-                    // 취향 변경 화면으로 이동 (나중에 추가)
+                    coordinator.push(.preference)
                 }
                 viewModel.onNavigateToBadgeSettings = {
                     // 뱃지 설정 화면으로 이동 (나중에 추가)
@@ -248,6 +248,19 @@ struct MainView: View {
                         }
                         return viewModel
                     }())
+                    .hideNavigationBar()
+                case .preference:
+                    OnboardingView(
+                        viewModel: OnboardingViewModel(
+                            getPreferenceOptionsUseCase: coordinator.dependency.getPreferenceOptionsUseCase,
+                            userOnboardUseCase: coordinator.dependency.userOnboardUseCase,
+                            getUserPreferenceUseCase: coordinator.dependency.getUserPreferenceUseCase,
+                            updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase,
+                            isPreferenceEdit: true
+                        )
+                    ) {
+                        coordinator.popMy()
+                    }
                     .hideNavigationBar()
                 case .setting:
                     SettingView(viewModel: {
