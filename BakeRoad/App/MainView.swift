@@ -199,7 +199,7 @@ struct MainView: View {
                     // 뱃지 설정 화면으로 이동 (나중에 추가)
                 }
                 viewModel.onNavigateToBreadReport = {
-                    coordinator.push(.breadReport)
+                    coordinator.push(.breadReportList)
                 }
                 viewModel.onNavigateToReceivedBreadges = {
                     // 받은 빵지 화면으로 이동 (나중에 추가)
@@ -211,16 +211,28 @@ struct MainView: View {
             }())
             .navigationDestination(for: MainCoordinator.MyScreen.self) { screen in
                 switch screen {
-                case .breadReport:
-                    BreadReportListView(viewModel: {
+                case .breadReport(let year, let month):
+                    BreadReportView(viewModel: {
                         let viewModel = BreadReportViewModel(
+                            request: BreadReportRequestDTO(year: year, month: month),
+                            getBreadReportUseCase: coordinator.dependency.getBreadReportUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
+                case .breadReportList:
+                    BreadReportListView(viewModel: {
+                        let viewModel = BreadReportListViewModel(
                             getBreadReportListUseCase: coordinator.dependency.getBreadReportListUseCase
                         )
                         viewModel.onNavigateBack = {
                             coordinator.popMy()
                         }
-                        viewModel.onNavigateToReport = { breadReport in
-                            print(breadReport)
+                        viewModel.onNavigateToReport = { item in
+                            coordinator.push(.breadReport(year: item.year, month: item.month))
                         }
                         return viewModel
                     }())

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BreadReportListView: View {
-    @StateObject var viewModel: BreadReportViewModel
+    @StateObject var viewModel: BreadReportListViewModel
     
     var body: some View {
         VStack(spacing: 0) {

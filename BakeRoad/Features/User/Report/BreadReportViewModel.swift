@@ -9,52 +9,30 @@ import Foundation
 
 @MainActor
 final class BreadReportViewModel: ObservableObject {
-    @Published var breadReportList: [BreadReportListItem] = []
-    @Published var nextCursor: String?
+    @Published var breadReport: BreadReport?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
-    private let getBreadReportListUseCase: GetBreadReportListUseCase
+    private let getBreadReportUseCase: GetBreadReportUseCase
     
     var onNavigateBack: (() -> Void)?
-    var onNavigateToReport: ((BreadReportListItem) -> Void)?
     
     init(
-        getBreadReportListUseCase: GetBreadReportListUseCase
+        request: BreadReportRequestDTO,
+        getBreadReportUseCase: GetBreadReportUseCase
     ) {
-        self.getBreadReportListUseCase = getBreadReportListUseCase
+        self.getBreadReportUseCase = getBreadReportUseCase
         
-        Task { await loadBreadReportList() }
+        Task { await loadBreadReport(request) }
     }
     
-    private func loadBreadReportList() async {
+    func loadBreadReport(_ request: BreadReportRequestDTO) async {
         isLoading = true
         defer { isLoading = false }
         
         do {
-            let request = BreadReportListRequestDTO(cursorValue: "0", pageSize: 15)
-            let response = try await getBreadReportListUseCase.execute(request)
-            self.breadReportList = response.items
-            self.nextCursor = response.nextCursor
-        } catch let APIError.serverError(_, message) {
-            errorMessage = message
-        } catch {
-            errorMessage = "잠시 후 다시 시도해주세요."
-        }
-    }
-    
-    func loadMoreBreadReportList() async {
-        guard !isLoading,
-              let nextCursor = nextCursor else { return }
-        
-        isLoading = true
-        defer { isLoading = false }
-        
-        do {
-            let request = BreadReportListRequestDTO(cursorValue: nextCursor, pageSize: 15)
-            let response = try await getBreadReportListUseCase.execute(request)
-            self.breadReportList.append(contentsOf: response.items)
-            self.nextCursor = response.nextCursor
+            breadReport = try await getBreadReportUseCase.execute(request)
+            print(breadReport)
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
@@ -64,9 +42,5 @@ final class BreadReportViewModel: ObservableObject {
     
     func navigateBack() {
         onNavigateBack?()
-    }
-    
-    func navigateToReport(_ item: BreadReportListItem) {
-        onNavigateToReport?(item)
     }
 }

@@ -8,8 +8,8 @@
 import Foundation
 
 struct BreadReportListRequestDTO: Encodable {
-    var cursorValue: String
-    var pageSize: Int
+    let cursorValue: String
+    let pageSize: Int
     
     private enum CodingKeys: String, CodingKey {
         case cursorValue = "cursor_value"

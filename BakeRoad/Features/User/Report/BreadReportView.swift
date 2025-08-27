@@ -8,31 +8,92 @@
 import SwiftUI
 
 struct BreadReportView: View {
+    @StateObject var viewModel: BreadReportViewModel
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 32) {
-                // 지주간 부산 지역 Top3
-                RegionTopSection()
+        if let breadReport = viewModel.breadReport {
+            VStack(spacing: 20) {
+                ZStack {
+                    HStack {
+                        Button {
+                            viewModel.navigateBack()
+                        } label: {
+                            Image("arrowLeft")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundColor(.black)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(16)
+                    
+                    HStack(spacing: 10) {
+                        Button {
+                            let request = BreadReportRequestDTO(
+                                year: breadReport.month == 1 ? breadReport.year-1 : breadReport.year,
+                                month: breadReport.month == 1 ? 12 : breadReport.month-1
+                            )
+                            Task {
+                                await viewModel.loadBreadReport(request)
+                            }
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.gray600)
+                                .frame(width: 20, height: 20)
+                        }
+                        
+                        Text(String(format: "%d년 %d월", breadReport.year, breadReport.month))
+                            .font(.bodyLargeSemibold)
+                            .foregroundColor(.black)
+                        
+                        Button {
+                            let request = BreadReportRequestDTO(
+                                year: breadReport.month == 12 ? breadReport.year+1 : breadReport.year,
+                                month: breadReport.month == 12 ? 1 : breadReport.month+1
+                            )
+                            Task {
+                                await viewModel.loadBreadReport(request)
+                            }
+                        } label: {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray600)
+                                .frame(width: 20, height: 20)
+                        }
+                    }
+                }
                 
-                // 가장 많이 먹은 빵 종류 Top3
-                BreadTypeTopSection()
-                
-                // 하루 평균 빵 구매량
-                DailyAveragePurchaseSection()
-                
-                // 이번 달 빵 소비 금액
-                MonthlySpendingSection()
-                
-                // 요일별 빵 섭취 패턴
-                WeeklyPatternSection()
-                
-                // 이번 달 내 빵굴 활동 총정리
-                MonthlySummarySection()
+                ScrollView {
+                    VStack(spacing: 32) {
+                        // 지주간 부산 지역 Top3
+                        RegionTopSection()
+                        
+                        // 가장 많이 먹은 빵 종류 Top3
+                        BreadTypeTopSection()
+                        
+                        // 하루 평균 빵 구매량
+                        DailyAveragePurchaseSection()
+                        
+                        // 이번 달 빵 소비 금액
+                        MonthlySpendingSection()
+                        
+                        // 요일별 빵 섭취 패턴
+                        WeeklyPatternSection()
+                        
+                        // 이번 달 내 빵굴 활동 총정리
+                        MonthlySummarySection()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+                if let message = newValue {
+                    ToastManager.show(message: message, type: .error)
+                    viewModel.errorMessage = nil
+                }
+            }
         }
-        .background(Color(.systemGroupedBackground))
     }
 }
 
@@ -390,8 +451,3 @@ struct SummaryCard: View {
         .padding(.vertical, 16)
     }
 }
-
-#Preview {
-    BreadReportView()
-}
-

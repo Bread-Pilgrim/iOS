@@ -8,9 +8,9 @@
 import Foundation
 
 struct BakeryReviewRequestDTO: Encodable {
-    var cursorValue: String
-    var pageSize: Int
-    var sortClause: SortOption
+    let cursorValue: String
+    let pageSize: Int
+    let sortClause: SortOption
 
     private enum CodingKeys: String, CodingKey {
         case cursorValue = "cursor_value"
