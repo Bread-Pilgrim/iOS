@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct UserInfoView: View {
     @StateObject var viewModel: UserInfoViewModel
     
@@ -50,22 +52,23 @@ struct UserInfoView: View {
             if let userProfile = viewModel.userProfile {
                 HStack(spacing: 12) {
                     if let url = userProfile.profileImg {
-                        CachedAsyncImage(url: url) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } placeholder: {
-                            Circle()
-                                .fill(Color.primary100)
-                                .frame(width: 56, height: 56)
-                                .overlay(
-                                    Image("person")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                )
-                        }
-                        .frame(width: 56, height: 56)
-                        .clipShape(Circle())
+                        KFImage(URL(string: url))
+                            .placeholder {
+                                Circle()
+                                    .fill(Color.primary100)
+                                    .frame(width: 56, height: 56)
+                                    .overlay(
+                                        Image("person")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                    )
+                            }
+                            .resizable()
+                            .cacheMemoryOnly()
+                            .fade(duration: 0.25)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 56, height: 56)
+                            .clipShape(Circle())
                     } else {
                         Circle()
                             .fill(Color.primary100)

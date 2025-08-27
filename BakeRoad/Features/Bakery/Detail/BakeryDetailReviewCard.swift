@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct BakeryDetailReviewCard: View {
     let review: BakeryReview
     let onLikeTapped: (Int) -> Void
@@ -18,14 +20,15 @@ struct BakeryDetailReviewCard: View {
                 HStack {
                     Group {
                         if let img = review.profileImageURL {
-                            CachedAsyncImage(url: img) { image in
-                                image
-                                    .resizable()
-                            } placeholder: {
-                                Image("person")
-                                    .resizable()
-                                    .padding(7)
-                            }
+                            KFImage(URL(string: img))
+                                .placeholder {
+                                    Image("person")
+                                        .resizable()
+                                        .padding(7)
+                                }
+                                .resizable()
+                                .cacheMemoryOnly()
+                                .fade(duration: 0.25)
                         } else {
                             Image("person")
                                 .resizable()
