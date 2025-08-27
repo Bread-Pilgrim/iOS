@@ -41,19 +41,17 @@ struct UserReviewListView: View {
                             viewModel.didTapReviewLikeButton(reviewId)
                         }
                         .onAppear {
-                            if viewModel.userReviews.last == review &&
-                                viewModel.nextCursor != nil {
-                                Task {
-                                    await viewModel.loadMoreUserReviews()
-                                }
-                            }
+                            guard viewModel.userReviews.last == review,
+                                  !viewModel.isLoading,
+                                  viewModel.nextCursor != nil else { return }
+                            Task { await viewModel.loadMoreUserReviews() }
                         }
                     }
-                    
-                    if viewModel.isLoading && !viewModel.userReviews.isEmpty {
-                        ProgressView()
-                            .frame(height: 50)
-                    }
+                }
+                
+                if viewModel.isLoading && !viewModel.userReviews.isEmpty {
+                    ProgressView()
+                        .frame(height: 50)
                 }
             }
         }

@@ -13,4 +13,6 @@ enum UserEndpoint {
     static let getMyReviews = "/users/me/reviews"
     static let userPreference = "/users/preferences"
     static let userProfile = "/users/me"
+    static let breadReportList = "/users/me/bread-report/monthly"
+    static let breadReport = "/users/me/bread-report"
 }

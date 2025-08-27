@@ -67,4 +67,16 @@ final class UserRepositoryImpl: UserRepository {
         
         return Page(items: dto.reviews.map { $0.toEntity() }, nextCursor: dto.nextCursor)
     }
+    
+    func getBreadReportList(_ requestDTO: BreadReportListRequestDTO) async throws -> Page<BreadReportListItem> {
+        let request = APIRequest(
+            path: UserEndpoint.breadReportList,
+            method: .get,
+            parameters: requestDTO
+        )
+        
+        let dto = try await apiClient.request(request, responseType: BreadReportListResponseDTO.self)
+        
+        return Page(items: dto.items.map { $0.toEntity() }, nextCursor: dto.nextCursor)
+    }
 }

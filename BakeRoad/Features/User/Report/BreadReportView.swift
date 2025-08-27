@@ -1,6 +1,13 @@
+//
+//  BreadReportView.swift
+//  BakeRoad
+//
+//  Created by 이현호 on 8/26/25.
+//
+
 import SwiftUI
 
-struct StatisticsView: View {
+struct BreadReportView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 32) {
@@ -385,5 +392,6 @@ struct SummaryCard: View {
 }
 
 #Preview {
-    StatisticsView()
+    BreadReportView()
 }
+

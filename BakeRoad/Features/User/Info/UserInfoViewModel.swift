@@ -18,7 +18,7 @@ class UserInfoViewModel: ObservableObject {
     var onNavigateToBadgeSettings: (() -> Void)?
     var onNavigateToReviews: (() -> Void)?
     var onNavigateToReceivedBreadges: (() -> Void)?
-    var onNavigateToEarnings: (() -> Void)?
+    var onNavigateToBreadReport: (() -> Void)?
     var onNavigateToPreferenceChange: (() -> Void)?
     
     private let userProfileUseCase: UserProfileUseCase
@@ -50,8 +50,8 @@ class UserInfoViewModel: ObservableObject {
         onNavigateToBadgeSettings?()
     }
     
-    func navigateToEarnings() {
-        onNavigateToEarnings?()
+    func navigateToBreadReport() {
+        onNavigateToBreadReport?()
     }
     
     func navigateToReceivedBreadges() {

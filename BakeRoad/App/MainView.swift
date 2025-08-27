@@ -198,8 +198,8 @@ struct MainView: View {
                 viewModel.onNavigateToBadgeSettings = {
                     // 뱃지 설정 화면으로 이동 (나중에 추가)
                 }
-                viewModel.onNavigateToEarnings = {
-                    // 빵말정산 화면으로 이동 (나중에 추가)
+                viewModel.onNavigateToBreadReport = {
+                    coordinator.push(.breadReport)
                 }
                 viewModel.onNavigateToReceivedBreadges = {
                     // 받은 빵지 화면으로 이동 (나중에 추가)
@@ -211,6 +211,20 @@ struct MainView: View {
             }())
             .navigationDestination(for: MainCoordinator.MyScreen.self) { screen in
                 switch screen {
+                case .breadReport:
+                    BreadReportListView(viewModel: {
+                        let viewModel = BreadReportViewModel(
+                            getBreadReportListUseCase: coordinator.dependency.getBreadReportListUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        viewModel.onNavigateToReport = { breadReport in
+                            print(breadReport)
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
                 case .myReview:
                     UserReviewListView(viewModel: {
                         let viewModel = UserReviewListViewModel(

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BEC35E9B2E5F39A2006C753B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = BEC35E9A2E5F39A2006C753B /* Kingfisher */; };
 		BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = BEF449D62E02D47B009BC50A /* KakaoSDK */; };
 		BEF449F52E02DE67009BC50A /* KakaoSDKFriendResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEF449F42E02DE67009BC50A /* KakaoSDKFriendResources.bundle */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEC35E9B2E5F39A2006C753B /* Kingfisher in Frameworks */,
 				BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			name = BakeRoad;
 			packageProductDependencies = (
 				BEF449D62E02D47B009BC50A /* KakaoSDK */,
+				BEC35E9A2E5F39A2006C753B /* Kingfisher */,
 			);
 			productName = BakeRoad;
 			productReference = BE6217892DF141E400812A08 /* BakeRoad.app */;
@@ -118,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE62178A2DF141E400812A08 /* Products */;
@@ -358,6 +362,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.5.0;
+			};
+		};
 		BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-ios-sdk.git";
@@ -369,6 +381,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BEC35E9A2E5F39A2006C753B /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		BEF449D62E02D47B009BC50A /* KakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;

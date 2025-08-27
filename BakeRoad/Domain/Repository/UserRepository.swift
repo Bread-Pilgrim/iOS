@@ -13,4 +13,5 @@ protocol UserRepository {
     func updateUserPreference(_ dto: UpdateUserPreferenceRequestDTO) async throws
     func getUserProfile() async throws -> UserProfile
     func getUserReview(_ requestDTO: UserReviewRequestDTO) async throws -> Page<UserReview>
+    func getBreadReportList(_ requestDTO: BreadReportListRequestDTO) async throws -> Page<BreadReportListItem>
 }

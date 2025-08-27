@@ -121,7 +121,7 @@ struct UserInfoView: View {
     private var menuList: some View {
         VStack(spacing: 0) {
             menuItem(title: "빵말정산") {
-                viewModel.navigateToEarnings()
+                viewModel.navigateToBreadReport()
             }
             
             menuItem(title: "받은 뱃지") {
