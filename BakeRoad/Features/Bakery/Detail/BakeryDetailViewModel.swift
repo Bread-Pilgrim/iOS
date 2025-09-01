@@ -80,7 +80,7 @@ final class BakeryDetailViewModel: ObservableObject {
     private func loadInitial(_ id: Int, areaCodes: String, tourCatCodes: String) async {
         async let detail = getBakeryDetail(id)
         async let tourList = getTourList(areaCodes: areaCodes, tourCatCodes: tourCatCodes)
-        async let reviewResult = getBakeryReviews(id, requestDTO: BakeryReviewRequestDTO(cursorValue: "0", pageSize: 3, sortClause: .like))
+        async let reviewResult = getBakeryReviews(id, requestDTO: BakeryReviewRequestDTO(cursorValue: "0||0", pageSize: 3, sortClause: .like))
         
         bakeryDetail = await detail
         recommendTourList = await tourList

@@ -32,7 +32,6 @@ final class BreadReportViewModel: ObservableObject {
         
         do {
             breadReport = try await getBreadReportUseCase.execute(request)
-            print(breadReport)
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {

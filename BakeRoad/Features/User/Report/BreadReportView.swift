@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct BreadReportView: View {
     @StateObject var viewModel: BreadReportViewModel
@@ -64,29 +65,37 @@ struct BreadReportView: View {
                 }
                 
                 ScrollView {
-                    VStack(spacing: 32) {
-                        // 지주간 부산 지역 Top3
-                        RegionTopSection()
+                    VStack(spacing: 24) {
+                        // 지주 간 부산 지역 Top3
+                        RegionTopSection(visitedAreas: breadReport.visitedAreas)
                         
                         // 가장 많이 먹은 빵 종류 Top3
-                        BreadTypeTopSection()
+                        BreadTypeTopSection(breadTypes: breadReport.breadTypes)
                         
                         // 하루 평균 빵 구매량
-                        DailyAveragePurchaseSection()
+                        DailyAveragePurchaseSection(dailyAvgQuantity: breadReport.dailyAvgQuantity,
+                                                    monthlyConsumptionGap: breadReport.monthlyConsumptionGap,
+                                                    totalQuantity: breadReport.totalQuantity,
+                                                    totalVisitCount: breadReport.totalVisitCount)
                         
                         // 이번 달 빵 소비 금액
-                        MonthlySpendingSection()
+                        MonthlySpendingSection(month: breadReport.month,
+                                               totalPrices: breadReport.totalPrices)
                         
                         // 요일별 빵 섭취 패턴
-                        WeeklyPatternSection()
+                        WeeklyPatternSection(weeklyDistribution: breadReport.weeklyDistribution)
                         
-                        // 이번 달 내 빵굴 활동 총정리
-                        MonthlySummarySection()
+                        // 이번 달 내 빵글 활동 총정리
+                        MonthlySummarySection(reviewCount: breadReport.reviewCount,
+                                              totalQuantity: breadReport.totalQuantity,
+                                              likedCount: breadReport.likedCount,
+                                              receivedLikesCount: breadReport.receivedLikesCount)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 16)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 20)
                 }
             }
+            .background(Color.gray40)
             .onChange(of: viewModel.errorMessage) { oldValue, newValue in
                 if let message = newValue {
                     ToastManager.show(message: message, type: .error)
@@ -97,357 +106,540 @@ struct BreadReportView: View {
     }
 }
 
-struct RegionTopSection: View {
+struct UnderlineText: View {
+    var text: String
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("지주간 부산 지역 Top3")
-                .font(.system(size: 18, weight: .bold))
+        Text(text)
+            .font(.bodyXsmallMedium)
+            .foregroundColor(.gray950)
+            .background(
+                Rectangle()
+                    .frame(height: 6)
+                    .foregroundColor(.primary50)
+                    .offset(y: 0),
+                alignment: .bottom
+            )
+    }
+}
+
+struct RegionTopSection: View {
+    let visitedAreas: [String: Int]
+    
+    var sortedAreas: [(key: String, value: Int)] {
+        visitedAreas.sorted { $0.value > $1.value }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("자주 간 부산 지역 Top3")
+                .font(.bodyMediumSemibold)
                 .foregroundColor(.black)
             
-            HStack(spacing: 24) {
-                RegionRankCard(rank: "1등", district: "해운대구", position: "1위")
-                RegionRankCard(rank: "2등", district: "남구", position: "1위")
-                RegionRankCard(rank: "3등", district: "수영구", position: "1위")
+            if sortedAreas.isEmpty {
+                VStack(spacing: 6) {
+                    UnderlineText(text: "아직 방문한 지역이 없어요!")
+                    Text("리뷰를 작성하고 빵말정산을 확인해보세요 😊")
+                        .font(.bodyXsmallMedium)
+                        .foregroundColor(.gray990)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(Color.white)
+                .cornerRadius(20)
+                .cardShadow(level: 2)
+            } else {
+                HStack(spacing: 0) {
+                    ForEach(Array(sortedAreas.prefix(3).enumerated()), id: \.offset) { index, area in
+                        RegionRankCard(
+                            rank: "\(index + 1)등",
+                            district: area.key,
+                            num: area.value
+                        )
+                        
+                        if index < 2 {
+                            Divider()
+                                .padding(.vertical, 23)
+                        }
+                    }
+                }
+                .frame(height: 116)
+                .background(Color.white)
+                .cornerRadius(20)
+                .cardShadow(level: 2)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
     }
 }
 
 struct RegionRankCard: View {
     let rank: String
     let district: String
-    let position: String
+    let num: Int
     
     var body: some View {
-        VStack(spacing: 12) {
-            Text(rank)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.black)
+        VStack(spacing: 6) {
+            UnderlineText(text: rank)
             
             Text(district)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.black)
+                .font(.bodyMediumSemibold)
+                .foregroundColor(.gray950)
             
-            Text(position)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(Color.orange)
-                .cornerRadius(12)
+            BakeRoadChip(title: "\(num)회",
+                         color: .main,
+                         size: .large,
+                         style: .fill)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
 struct BreadTypeTopSection: View {
+    let breadTypes: [String: Int]
+    
+    var sortedBreadTypes: [(color: Color, type: String, num: Int)] {
+        let colors: [Color] = [.primary500, .secondary500, .success500]
+        
+        return breadTypes
+            .sorted { $0.value > $1.value }
+            .prefix(3)
+            .enumerated()
+            .map { index, item in
+                (
+                    color: colors[index],
+                    type: item.key,
+                    num: item.value
+                )
+            }
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("가장 많이 먹은 빵 종류 Top3")
-                .font(.system(size: 18, weight: .bold))
+                .font(.bodyMediumSemibold)
                 .foregroundColor(.black)
             
-            HStack(spacing: 24) {
-                // 파이 차트 영역
-                ZStack {
-                    Circle()
-                        .trim(from: 0, to: 0.6)
-                        .stroke(Color.orange, lineWidth: 40)
-                        .rotationEffect(.degrees(-90))
-                    
-                    Circle()
-                        .trim(from: 0.6, to: 0.8)
-                        .stroke(Color.blue, lineWidth: 40)
-                        .rotationEffect(.degrees(-90 + 216))
-                    
-                    Circle()
-                        .trim(from: 0.8, to: 1.0)
-                        .stroke(Color.green, lineWidth: 40)
-                        .rotationEffect(.degrees(-90 + 288))
+            if sortedBreadTypes.isEmpty {
+                VStack(spacing: 6) {
+                    UnderlineText(text: "아직 먹은 빵 기록이 없어요!")
+                    Text("리뷰를 작성하고 빵말정산을 확인해보세요 😊")
+                        .font(.bodyXsmallMedium)
+                        .foregroundColor(.gray990)
                 }
-                .frame(width: 120, height: 120)
-                
-                // 범례
-                VStack(alignment: .leading, spacing: 12) {
-                    LegendItem(color: .orange, text: "페이스트리류", rank: "1위")
-                    LegendItem(color: .blue, text: "클래식 & 레트로 빵", rank: "1위")
-                    LegendItem(color: .green, text: "구움과자류", rank: "1위")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(Color.white)
+                .cornerRadius(20)
+                .cardShadow(level: 2)
+            } else {
+                HStack(spacing: 18) {
+                    Chart(sortedBreadTypes, id: \.type) { color, type, num in
+                        SectorMark(
+                            angle: .value("num", num),
+                            angularInset: 3
+                        )
+                        .cornerRadius(2)
+                        .foregroundStyle(color)
+                    }
+                    .chartLegend(.hidden)
+                    .frame(width: 90, height: 90)
+                    .padding(.vertical, 16)
+                    .padding(.leading, 18.5)
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(Array(sortedBreadTypes.enumerated()), id: \.offset) { index, item in
+                            LegendItem(color: item.color, text: item.type, num: item.num)
+                        }
+                    }
+                    .padding(.vertical, 16)
+                    .padding(.trailing, 18.5)
                 }
+                .background(Color.white)
+                .cornerRadius(20)
+                .cardShadow(level: 2)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
     }
 }
 
 struct LegendItem: View {
     let color: Color
     let text: String
-    let rank: String
+    let num: Int
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 6) {
             Circle()
                 .fill(color)
-                .frame(width: 12, height: 12)
+                .frame(width: 8, height: 8)
             
             Text(text)
-                .font(.system(size: 14))
-                .foregroundColor(.black)
+                .font(.bodyXsmallMedium)
+                .foregroundColor(.gray800)
             
             Spacer()
             
-            Text(rank)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
-                .background(Color.black)
-                .cornerRadius(8)
+            BakeRoadChip(title: "\(num)회", color: .gray, size: .small, style: .fill)
         }
     }
 }
 
 struct DailyAveragePurchaseSection: View {
+    let dailyAvgQuantity: Double
+    let monthlyConsumptionGap: Double
+    let totalQuantity: Int
+    let totalVisitCount: Int
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("하루 평균 빵 구매량")
-                .font(.system(size: 18, weight: .bold))
+                .font(.bodyMediumSemibold)
                 .foregroundColor(.black)
             
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .bottom, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 0) {
                     Text("하루 평균")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black)
-                    Text("3.32")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.orange)
+                        .font(.bodyMediumSemibold)
+                        .foregroundColor(.gray950)
+                        .padding(.trailing, 4)
+                    Text(String(format: "%.1f", dailyAvgQuantity))
+                        .font(.headingSmallBold)
+                        .foregroundColor(.primary500)
                     Text("개")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black)
+                        .font(.bodyMediumSemibold)
+                        .foregroundColor(.gray950)
+                }
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
+                
+                if totalQuantity != 0 && totalVisitCount != 0 {
+                    let underlineText = monthlyConsumptionGap > 0 ? "다른 빵글이들보다 \(monthlyConsumptionGap)개 더 먹었어요!" : "다른 빵글이들보다 \(-monthlyConsumptionGap)개 덜 먹었어요!"
+                    
+                    UnderlineText(text: underlineText)
+                        .padding(.horizontal, 16)
                 }
                 
-                Text("다른 빵굴이들보다 2개 더 먹었어요!")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-            }
-            
-            HStack {
-                Spacer()
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(Color.orange)
-                        .frame(width: 8, height: 8)
-                    Text("이번달 총 10개 / 3일")
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
+                HStack {
+                    Spacer()
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(Color.primary500)
+                            .frame(width: 8, height: 8)
+                        Text("이번달 총")
+                            .font(.bodyXsmallRegular)
+                            .foregroundColor(.gray600)
+                        Text("\(totalQuantity)개 / \(totalVisitCount)일")
+                            .font(.bodyXsmallSemibold)
+                            .foregroundColor(.gray600)
+                    }
                 }
+                .padding(.top, 20)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
+            .background(Color.white)
+            .cornerRadius(20)
+            .cardShadow(level: 2)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
     }
 }
 
 struct MonthlySpendingSection: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("이번 달 빵 소비 금액")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(.black)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .bottom, spacing: 4) {
-                    Text("총")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black)
-                    Text("5.5")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.orange)
-                    Text("만원")
-                        .font(.system(size: 16))
-                        .foregroundColor(.black)
-                }
-                
-                Text("전달 대비 1.2만원 더 썼어요!")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
-            }
-            
-            // 차트 영역
-            VStack(spacing: 12) {
-                // 그래프 선
-                ZStack {
-                    Path { path in
-                        path.move(to: CGPoint(x: 0, y: 60))
-                        path.addLine(to: CGPoint(x: 120, y: 80))
-                        path.addLine(to: CGPoint(x: 240, y: 20))
-                    }
-                    .stroke(Color.orange, lineWidth: 3)
-                    
-                    // 그래프 배경 영역
-                    Path { path in
-                        path.move(to: CGPoint(x: 0, y: 60))
-                        path.addLine(to: CGPoint(x: 120, y: 80))
-                        path.addLine(to: CGPoint(x: 240, y: 20))
-                        path.addLine(to: CGPoint(x: 240, y: 100))
-                        path.addLine(to: CGPoint(x: 0, y: 100))
-                        path.closeSubpath()
-                    }
-                    .fill(LinearGradient(
-                        colors: [Color.orange.opacity(0.3), Color.orange.opacity(0.1)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ))
-                }
-                .frame(height: 100)
-                
-                // 월별 라벨
-                HStack {
-                    VStack {
-                        Text("5월")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                        Text("0.0만원")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        Text("6월")
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
-                        Text("1.2만원")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        Text("7월")
-                            .font(.system(size: 12))
-                            .foregroundColor(.orange)
-                        Text("5.5만원")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.orange)
-                    }
-                }
+    let month: Int
+    let totalPrices: [Int]
+    
+    var data: [(month: Int, price: Int)] {
+        guard totalPrices.count >= 3 else {
+            return (0..<3).compactMap { index in
+                let targetMonth = month - (2 - index)
+                return (month: targetMonth, price: 0)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
+        
+        return (0..<3).compactMap { index in
+            let targetMonth = month - (2 - index)
+            let price = totalPrices[index]
+            return (month: targetMonth, price: price)
+        }
+    }
+    
+    var currentMonthPrice: Double {
+        guard totalPrices.count >= 3 else { return 0.0 }
+        return Double(totalPrices[2]) / 10000.0
+    }
+    
+    var monthlyComparison: (amount: Double, isIncrease: Bool) {
+        guard totalPrices.count >= 3 else { return (0.0, false) }
+        
+        let current = totalPrices[2]
+        let previous = totalPrices[1]
+        let difference = abs(current - previous)
+        let amount = Double(difference) / 10000.0
+        
+        return (
+            amount: amount,
+            isIncrease: current > previous
+        )
+    }
+    
+    var body: some View {
+        let startXScale = (Double(data.first?.month ?? 1) - 0.5)
+        let endXScale = (Double(data.last?.month ?? 12) + 0.5)
+        let noData = totalPrices.allSatisfy { $0 == 0 } || totalPrices.count < 3
+        
+        VStack(alignment: .leading, spacing: 8) {
+            Text("이번 달 빵 소비 금액")
+                .font(.bodyMediumSemibold)
+                .foregroundColor(.black)
+            
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 0) {
+                    Text("총")
+                        .font(.bodyMediumSemibold)
+                        .foregroundColor(.gray950)
+                    Text(String(format: "%.1f", currentMonthPrice))
+                        .font(.headingSmallBold)
+                        .foregroundColor(.primary500)
+                    Text("만원")
+                        .font(.bodyMediumSemibold)
+                        .foregroundColor(.gray950)
+                }
+                .padding(.top, 16)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 6)
+                
+                if !noData {
+                    UnderlineText(text: "전달 대비 \(String(format: "%.1f", monthlyComparison.amount))만원 \(monthlyComparison.isIncrease ? "더" : "덜") 썼어요!")
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 20)
+                }
+                
+                VStack(spacing: 8) {
+                    if noData {
+                        VStack {
+                            Spacer()
+                            
+                            Rectangle()
+                                .fill(Color.gray200)
+                                .frame(height: 1.6)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .frame(height: 85)
+                        .padding(.horizontal, 96)
+                    } else {
+                        Chart(data, id: \.month) { month, price in
+                            AreaMark(
+                                x: .value("month", month),
+                                yStart: .value("start", 0),
+                                yEnd: .value("price", price)
+                            )
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [
+                                        Color.primary500.opacity(0.1),
+                                        Color.primary500.opacity(0.01)
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .interpolationMethod(.catmullRom)
+                            
+                            LineMark(
+                                x: .value("month", month),
+                                y: .value("price", price)
+                            )
+                            .foregroundStyle(Color.primary500)
+                            .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                            .interpolationMethod(.catmullRom)
+                        }
+                        .chartXAxis(.hidden)
+                        .chartYAxis(.hidden)
+                        .chartXScale(domain: startXScale...endXScale) // X축 범위를 좁혀서 차트가 중앙에 오도록
+                        .frame(height: 85)
+                        .padding(.horizontal, 54)
+                    }
+                    
+                    HStack {
+                        ForEach(data, id: \.month) { month, price in
+                            VStack(spacing: 2) {
+                                Text("\(month)월")
+                                    .font(.body3xsmallMedium)
+                                    .foregroundColor(month == self.month ? .primary500 : .gray800)
+                                Text(String(format: "%.1f만원", Double(price) / 10000))
+                                    .font(.bodySmallSemibold)
+                                    .foregroundColor(.black)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding(.horizontal, 64.5)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+                
+            }
+            .background(Color.white)
+            .cornerRadius(20)
+            .cardShadow(level: 2)
+        }
     }
 }
 
 struct WeeklyPatternSection: View {
-    let weekdays = ["월", "화", "수", "목", "금", "토", "일"]
-    let values: [CGFloat] = [0.8, 0.6, 0.4, 1.0, 0.7, 0.7, 0.5]
+    let weeklyDistribution: [String: Int]
+    
+    var data: [(day: String, num: Int)] {
+        let dayOrder = ["0", "1", "2", "3", "4", "5", "6"]
+        
+        return dayOrder.map { key in
+            let count = weeklyDistribution[key] ?? 0
+            let dayName = dayName(from: Int(key) ?? 0)
+            return (day: dayName, num: count)
+        }
+    }
+    
+    private func dayName(from number: Int) -> String {
+        switch number {
+        case 0: return "월"
+        case 1: return "화"
+        case 2: return "수"
+        case 3: return "목"
+        case 4: return "금"
+        case 5: return "토"
+        case 6: return "일"
+        default: return ""
+        }
+    }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("요일별 빵 섭취 패턴")
-                .font(.system(size: 18, weight: .bold))
+                .font(.bodyMediumSemibold)
                 .foregroundColor(.black)
             
-            HStack(alignment: .bottom, spacing: 12) {
-                ForEach(Array(weekdays.enumerated()), id: \.offset) { index, day in
-                    VStack(spacing: 8) {
-                        Rectangle()
-                            .fill(day == "목" ? Color.orange : Color.orange.opacity(0.3))
-                            .frame(width: 32, height: values[index] * 100)
-                            .cornerRadius(4)
-                        
-                        Text(day)
-                            .font(.system(size: 12))
-                            .foregroundColor(.gray)
+            VStack(spacing: 12) {
+                let maxNum = data.max(by: { $0.num < $1.num })?.num ?? 0
+                
+                if maxNum == 0 {
+                    VStack(spacing: 6) {
+                        UnderlineText(text: "이번 달엔 아직 빵을 먹지 않았어요!")
+                        Text("리뷰를 작성하고 빵말정산을 확인해보세요😊")
+                            .font(.bodyXsmallMedium)
+                            .foregroundColor(.gray990)
+                    }
+                    .padding(.vertical, 36)
+                }
+                
+                Chart(data, id: \.day) { data in
+                    BarMark(
+                        x: .value("day", data.day),
+                        y: .value("num", maxNum == 0 ? 0.1 : max(Double(maxNum)*0.05, Double(data.num)))
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .foregroundStyle({
+                        if maxNum == 0 {
+                            return AnyShapeStyle(Color.gray50)
+                        } else if data.num == maxNum {
+                            return AnyShapeStyle(LinearGradient(colors: [.primary600, .primary500, .primary400],
+                                                                startPoint: .top,
+                                                                endPoint: .bottom))
+                        } else if data.num == 0 {
+                            return AnyShapeStyle(Color.gray50)
+                        } else {
+                            return AnyShapeStyle(Color.primary200)
+                        }
+                    }())
+                    
+                    if data.num == maxNum && maxNum > 0 {
+                        PointMark(
+                            x: .value("day", data.day),
+                            y: .value("num", Double(data.num))
+                        )
+                        .annotation(position: .top, spacing: 8) {
+                            Image("first")
+                                .resizable()
+                                .frame(width: 34, height: 30)
+                        }
+                        .opacity(0)
                     }
                 }
-            }
-            .frame(height: 120)
-            
-            HStack {
-                Spacer()
-                HStack(spacing: 4) {
-                    Text("1위")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Color.black)
-                        .cornerRadius(6)
+                .chartYScale(domain: 0...max(1, maxNum))
+                .chartXAxis(.hidden)
+                .chartYAxis(.hidden)
+                .padding(.horizontal, 16)
+                .padding(.top, maxNum == 0 ? 0 : 54)
+                
+                HStack(spacing: 0) {
+                    ForEach(data, id: \.day) { data in
+                        Text(data.day)
+                            .font(.body2xsmallSemibold)
+                            .foregroundColor(.gray800)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
+            .frame(height: 180)
+            .background(Color.white)
+            .cornerRadius(20)
+            .cardShadow(level: 2)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
     }
 }
 
 struct MonthlySummarySection: View {
+    let reviewCount: Int
+    let totalQuantity: Int
+    let likedCount: Int
+    let receivedLikesCount: Int
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("이번 달 내 빵굴 활동 총정리")
-                .font(.system(size: 18, weight: .bold))
+        VStack(alignment: .leading, spacing: 8) {
+            Text("이번 달 내 빵글 활동 총정리")
+                .font(.bodyMediumSemibold)
                 .foregroundColor(.black)
             
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 16) {
-                SummaryCard(title: "내가 남긴 리뷰", count: "1개")
-                SummaryCard(title: "내가 먹은 빵", count: "1개")
-                SummaryCard(title: "내가 남긴 좋아요", count: "1개")
-                SummaryCard(title: "내가 받은 좋아요", count: "1개")
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    SummaryCard(title: "내가 남긴 리뷰", count: reviewCount)
+                    Divider().padding(.top, 16)
+                    SummaryCard(title: "내가 먹은 빵", count: totalQuantity)
+                }
+                
+                Divider().padding(.horizontal, 16)
+                
+                HStack(spacing: 0) {
+                    SummaryCard(title: "내가 남긴 좋아요", count: likedCount)
+                    Divider().padding(.bottom, 16)
+                    SummaryCard(title: "내가 받은 좋아요", count: receivedLikesCount)
+                }
             }
+            .frame(height: 196)
+            .background(Color.white)
+            .cornerRadius(20)
+            .cardShadow(level: 2)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 24)
-        .background(Color.white)
-        .cornerRadius(16)
     }
 }
 
 struct SummaryCard: View {
     let title: String
-    let count: String
+    let count: Int
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             Text(title)
-                .font(.system(size: 14))
-                .foregroundColor(.black)
-                .multilineTextAlignment(.center)
+                .font(.bodyXsmallSemibold)
+                .foregroundColor(.gray950)
             
-            Text(count)
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .background(Color.orange)
-                .cornerRadius(12)
+            BakeRoadChip(title: "\(count)개",
+                         color: .main,
+                         size: .large,
+                         style: .fill)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, 20)
     }
 }

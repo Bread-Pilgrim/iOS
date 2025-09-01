@@ -123,7 +123,7 @@ struct DetailReviewSection: View {
                 }
                 .padding(.horizontal, 16)
             } else {
-                LazyVStack(spacing: 0) {
+                LazyVStack(spacing: 16) {
                     ForEach(viewModel.reviews.indices, id: \.self) { index in
                         let review = viewModel.reviews[index]
                         BakeryDetailReviewCard(review: review) { reviewId in

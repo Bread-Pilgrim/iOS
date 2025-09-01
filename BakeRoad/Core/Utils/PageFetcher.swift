@@ -50,7 +50,7 @@ final class PageFetcher<T: Identifiable>: ObservableObject where T.ID: Hashable 
         isLoading = true
         defer { isLoading = false }
 
-        let cursor = append ? (page.nextCursor ?? "0") : "0"  // 최초 요청 시 "0" 사용
+        let cursor = append ? (page.nextCursor ?? "0||0") : "0||0"  // 최초 요청 시 "0||0" 사용
         let result = try await fetchHandler(cursor, pageSize)
 
         if append {
