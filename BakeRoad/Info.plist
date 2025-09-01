@@ -19,6 +19,29 @@
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>img1.kakaocdn.net</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>k.kakaocdn.net</key>
+			<dict>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>tong.visitkorea.or.kr</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Bold.otf</string>
@@ -26,24 +49,5 @@
 		<string>Pretendard-Regular.otf</string>
 		<string>Pretendard-SemiBold.otf</string>
 	</array>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-      <key>NSExceptionDomains</key>
-      <dict>
-        <key>tong.visitkorea.or.kr</key>
-        <dict>
-          <key>NSIncludesSubdomains</key><true/>
-          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
-        </dict>
-        <key>k.kakaocdn.net</key>
-        <dict>
-          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
-        </dict>
-        <key>img1.kakaocdn.net</key>
-        <dict>
-          <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key><true/>
-        </dict>
-      </dict>
-    </dict>
 </dict>
 </plist>
