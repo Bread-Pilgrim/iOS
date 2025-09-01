@@ -25,6 +25,7 @@ final class AppDependency {
     let tourRepository: TourRepository
     let reviewRepository: ReviewRepository
     let searchRepository: SearchRepository
+    let badgeRepository: BadgeRepository
     
     // MARK: - UseCases
     let loginUseCase: LoginUseCase
@@ -53,6 +54,7 @@ final class AppDependency {
     let userReviewUseCase: UserReviewUseCase
     let getBreadReportListUseCase: GetBreadReportListUseCase
     let getBreadReportUseCase: GetBreadReportUseCase
+    let getBadgeListUseCase: GetBadgeListUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -77,6 +79,7 @@ final class AppDependency {
         self.tourRepository = TourRepositoryImpl(apiClient: authenticatedClient)
         self.reviewRepository = ReviewRepositoryImpl(apiClient: authenticatedClient)
         self.searchRepository = SearchRepositoryImpl(apiClient: authenticatedClient)
+        self.badgeRepository = BadgeRepositoryImpl(apiClient: authenticatedClient)
         
         // UseCase
         self.loginUseCase = LoginUseCaseImpl(repository: loginRepository)
@@ -105,5 +108,6 @@ final class AppDependency {
         self.userReviewUseCase = UserReviewUseCaseImpl(repository: userRepository)
         self.getBreadReportListUseCase = GetBreadReportListUseCaseImpl(repository: userRepository)
         self.getBreadReportUseCase = GetBreadReportUseCaseImpl(repository: userRepository)
+        self.getBadgeListUseCase = GetBadgeListUseCaseImpl(repository: badgeRepository)
     }
 }

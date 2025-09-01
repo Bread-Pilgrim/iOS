@@ -17,7 +17,7 @@ class UserInfoViewModel: ObservableObject {
     var onNavigateToSettings: (() -> Void)?
     var onNavigateToBadgeSettings: (() -> Void)?
     var onNavigateToReviews: (() -> Void)?
-    var onNavigateToReceivedBreadges: (() -> Void)?
+    var onNavigateToReceivedBadges: (() -> Void)?
     var onNavigateToBreadReport: (() -> Void)?
     var onNavigateToPreferenceChange: (() -> Void)?
     
@@ -54,8 +54,8 @@ class UserInfoViewModel: ObservableObject {
         onNavigateToBreadReport?()
     }
     
-    func navigateToReceivedBreadges() {
-        onNavigateToReceivedBreadges?()
+    func navigateToReceivedBadges() {
+        onNavigateToReceivedBadges?()
     }
     
     func navigateToMyReviews() {

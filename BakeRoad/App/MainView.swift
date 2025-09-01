@@ -196,13 +196,13 @@ struct MainView: View {
                     coordinator.push(.preference)
                 }
                 viewModel.onNavigateToBadgeSettings = {
-                    // 뱃지 설정 화면으로 이동 (나중에 추가)
+                    
                 }
                 viewModel.onNavigateToBreadReport = {
                     coordinator.push(.breadReportList)
                 }
-                viewModel.onNavigateToReceivedBreadges = {
-                    // 받은 빵지 화면으로 이동 (나중에 추가)
+                viewModel.onNavigateToReceivedBadges = {
+                    coordinator.push(.badge)
                 }
                 viewModel.onNavigateToReviews = {
                     coordinator.push(.myReview)
@@ -233,6 +233,17 @@ struct MainView: View {
                         }
                         viewModel.onNavigateToReport = { item in
                             coordinator.push(.breadReport(year: item.year, month: item.month))
+                        }
+                        return viewModel
+                    }())
+                    .hideNavigationBar()
+                case .badge:
+                    BadgeListView(viewModel: {
+                        let viewModel = BadgeListViewModel(
+                            getBadgeListUseCase: coordinator.dependency.getBadgeListUseCase
+                        )
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
                         }
                         return viewModel
                     }())

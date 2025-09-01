@@ -128,7 +128,7 @@ struct UserInfoView: View {
             }
             
             menuItem(title: "받은 뱃지") {
-                viewModel.navigateToReceivedBreadges()
+                viewModel.navigateToReceivedBadges()
             }
             
             menuItem(title: "내가 쓴 리뷰") {
