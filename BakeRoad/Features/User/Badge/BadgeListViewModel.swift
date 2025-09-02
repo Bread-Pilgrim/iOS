@@ -10,6 +10,8 @@ import Foundation
 @MainActor
 final class BadgeListViewModel: ObservableObject {
     @Published var badgeList: [Badge] = []
+    @Published var representedBadge: Badge?
+    @Published var selectedBadge: Badge?
     @Published var errorMessage: String?
     @Published var isLoading: Bool = false
     
@@ -31,6 +33,7 @@ final class BadgeListViewModel: ObservableObject {
         
         do {
             badgeList = try await getBadgeListUseCase.execute()
+            representedBadge = badgeList.first { $0.isRepresentative && $0.isEarned }
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {

@@ -18,11 +18,13 @@ struct BadgeResponseDTO: Decodable {
 
 extension BadgeResponseDTO {
     func toEntity() -> Badge {
-        Badge(
+        let baseURL = "https://rmpwbqnjauejvolxmamj.supabase.co/storage/v1/object/public/bread-bucket/images/"
+        
+        return Badge(
             id: badge_id,
             name: badge_name,
             description: description,
-            img: img_url,
+            imgUrl: baseURL+img_url,
             isEarned: is_earned,
             isRepresentative: is_representative ?? false
         )

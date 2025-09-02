@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct Badge {
+struct Badge: Identifiable {
     let id: Int
     let name: String
     let description: String
-    let img: String
+    let imgUrl: String
     let isEarned: Bool
     let isRepresentative: Bool
 }
