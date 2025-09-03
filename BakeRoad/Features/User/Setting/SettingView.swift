@@ -46,30 +46,62 @@ struct SettingView: View {
                 }
                 
                 settingMenuItem(title: "계정 탈퇴", showDivider: false, isNavigation: false) {
-                    print("탈퇴")
+                    viewModel.showDeleteAccountAlert()
                 }
             }
             
             Spacer()
         }
         .overlay {
-            if viewModel.showingLogoutAlert {
-                Color.black.opacity(0.8)
+            if viewModel.showingLogoutAlert || viewModel.showingDeleteAccountAlert || viewModel.showingDeleteCompletionAlert {
+                Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {
                         viewModel.dismissAlert()
                     }
                     .overlay {
-                        BakeRoadAlert(
-                            title: "로그아웃 하시겠어요?",
-                            primaryAction: AlertAction(title: "로그아웃") {
-                                viewModel.logout()
-                            },
-                            secondaryAction: AlertAction(title: "취소") {
-                                viewModel.dismissAlert()
-                            },
-                            layout: .horizontal
-                        )
+                        if viewModel.showingLogoutAlert {
+                            BakeRoadAlert(
+                                title: "로그아웃 하시겠어요?",
+                                primaryAction: AlertAction(title: "로그아웃") {
+                                    viewModel.logout()
+                                },
+                                secondaryAction: AlertAction(title: "취소") {
+                                    viewModel.dismissAlert()
+                                },
+                                layout: .horizontal
+                            )
+                        }
+                        
+                        Group {
+                            if viewModel.showingDeleteAccountAlert {
+                                BakeRoadAlert(
+                                    title: "⚠️ 계정 탈퇴 안내",
+                                    message: """
+                                  • 빵글 계정 및 모든 기록(리뷰, 찜, 뱃지 등)이 삭제됩니다.
+                                  • 삭제된 데이터는 복구할 수 없습니다.
+                                  • 소셜 계정 연동도 함께 해제됩니다.
+                                  """,
+                                    primaryAction: AlertAction(title: "탈퇴하기") {
+                                        viewModel.confirmDeleteAccount()
+                                    },
+                                    secondaryAction: AlertAction(title: "취소") {
+                                        viewModel.dismissAlert()
+                                    },
+                                    layout: .horizontal
+                                )
+                            }
+                            
+                            if viewModel.showingDeleteCompletionAlert {
+                                BakeRoadAlert(
+                                    message: "계정 탈퇴가 완료되었습니다.\n그동안 빵글을 이용해 주셔서 감사합니다.\n언제든 다시 찾아와주세요!🍞",
+                                    primaryAction: AlertAction(title: "확인") {
+                                        viewModel.handleDeleteCompletion()
+                                    },
+                                    layout: .horizontal
+                                )
+                            }
+                        }
                     }
             }
         }

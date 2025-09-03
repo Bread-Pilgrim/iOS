@@ -10,6 +10,8 @@ import Foundation
 @MainActor
 class SettingViewModel: ObservableObject {
     @Published var showingLogoutAlert = false
+    @Published var showingDeleteAccountAlert = false
+    @Published var showingDeleteCompletionAlert = false
     
     var onNavigateBack: (() -> Void)?
     var onNavigateToNotifications: (() -> Void)?
@@ -32,8 +34,30 @@ class SettingViewModel: ObservableObject {
         showingLogoutAlert = true
     }
     
+    func showDeleteAccountAlert() {
+        showingDeleteAccountAlert = true
+    }
+    
+    func confirmDeleteAccount() {
+        showingDeleteAccountAlert = false
+        
+        Task {
+            await deleteAccount()
+            showingDeleteCompletionAlert = true
+        }
+    }
+    
+    private func deleteAccount() async { }
+    
+    func handleDeleteCompletion() {
+        showingDeleteCompletionAlert = false
+        onLogout?()
+    }
+    
     func dismissAlert() {
         showingLogoutAlert = false
+        showingDeleteAccountAlert = false
+        showingDeleteCompletionAlert = false
     }
     
     func logout() {

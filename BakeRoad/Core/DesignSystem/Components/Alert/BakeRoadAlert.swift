@@ -44,6 +44,7 @@ struct BakeRoadAlert: View {
                     Text(message)
                         .font(.bodyXsmallMedium)
                         .foregroundColor(.gray800)
+                        .lineSpacing(2)
                 }
             }
             .padding(.vertical, 20)
