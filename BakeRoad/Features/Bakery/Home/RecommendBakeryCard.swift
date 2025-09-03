@@ -22,6 +22,7 @@ struct RecommendBakeryCard: View {
             Text(recommendBakery.name)
                 .font(.bodyXsmallSemibold)
                 .foregroundColor(.gray990)
+                .lineLimit(2)
             
             HStack(spacing: 0) {
                 Image("fillStar")

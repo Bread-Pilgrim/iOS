@@ -8,65 +8,79 @@
 import SwiftUI
 
 struct SearchResultView: View {
-    let searchResults: [Bakery]
-    let isLoading: Bool
-    let searchText: String
-    let isLoadingMore: Bool
-    let hasMoreResults: Bool
-    let onTapBakery: (Bakery) -> Void
-    let onLoadMore: () -> Void
+    @ObservedObject var viewModel: SearchViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if isLoading {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 16) {
-                        ForEach(0..<10, id: \.self) { _ in
-                            SkeletonListCard()
-                        }
-                    }
-                }
-            } else if searchResults.isEmpty {
-                VStack(alignment: .center, spacing: 4) {
-                    Text("검색 결과가 없습니다.")
-                        .font(.bodyXsmallRegular)
-                        .foregroundColor(.gray600)
-                    Text("다른 키워드로 다시 입력해주세요.")
-                        .font(.bodyXsmallRegular)
-                        .foregroundColor(.gray600)
-                }
-                .frame(height: 120)
-                .frame(maxWidth: .infinity)
-                .background(Color.gray40)
-                .cornerRadius(12)
-                
-                Spacer()
-            } else {
-                ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 16) {
-                        ForEach(searchResults) { bakery in
-                            BakeryCard(bakery: bakery)
-                                .frame(height: 126)
-                                .onTapGesture {
-                                    onTapBakery(bakery)
-                                }
-                                .onAppear {
-                                    if bakery == searchResults.last && hasMoreResults && !isLoadingMore {
-                                        onLoadMore()
-                                    }
-                                }
-                        }
-                        
-                        if isLoadingMore {
-                            ProgressView()
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                        }
-                    }
-                }
-            }
+            contentView
         }
         .padding(.horizontal, 16)
         .padding(.top, 20)
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        if viewModel.isLoading && viewModel.searchResults.isEmpty {
+            loadingView
+        } else if viewModel.searchResults.isEmpty {
+            emptyView
+        } else {
+            resultListView
+        }
+    }
+    
+    private var loadingView: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 16) {
+                ForEach(0..<10, id: \.self) { _ in
+                    SkeletonListCard()
+                }
+            }
+        }
+    }
+    
+    private var emptyView: some View {
+        VStack(spacing: 0) {
+            VStack(alignment: .center, spacing: 4) {
+                Text("검색 결과가 없습니다.")
+                    .font(.bodyXsmallRegular)
+                    .foregroundColor(.gray600)
+                Text("다른 키워드로 다시 입력해주세요.")
+                    .font(.bodyXsmallRegular)
+                    .foregroundColor(.gray600)
+            }
+            .frame(height: 120)
+            .frame(maxWidth: .infinity)
+            .background(Color.gray40)
+            .cornerRadius(12)
+            
+            Spacer()
+        }
+    }
+    
+    private var resultListView: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            LazyVStack(spacing: 16) {
+                ForEach(viewModel.searchResults) { bakery in
+                    BakeryCard(bakery: bakery)
+                        .frame(height: 126)
+                        .onAppear {
+                            guard viewModel.searchResults.last == bakery,
+                                  !viewModel.isLoading,
+                                  viewModel.nextCursor != nil else { return }
+                            Task { await viewModel.loadMoreResults() }
+                        }
+                        .onTapGesture {
+                            viewModel.didTapBakery(bakeryId: bakery.id, areaCode: bakery.areaID)
+                        }
+                }
+                
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                }
+            }
+        }
     }
 }

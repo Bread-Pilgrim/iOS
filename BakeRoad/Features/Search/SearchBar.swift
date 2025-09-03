@@ -8,10 +8,8 @@
 import SwiftUI
 
 struct SearchBar: View {
-    @Binding var text: String
-    var isSearchFocused: FocusState<Bool>.Binding
-    let onSearchSubmit: () -> Void
-    let onCancel: () -> Void
+    @ObservedObject var viewModel: SearchViewModel
+    @FocusState private var isFocused: Bool
     
     var body: some View {
         HStack(spacing: 8) {
@@ -23,20 +21,20 @@ struct SearchBar: View {
                     .tint(.black)
                 
                 
-                TextField("빵집이나 메뉴를 검색해보세요.", text: $text)
-                    .focused(isSearchFocused)
+                TextField("빵집이나 메뉴를 검색해보세요.", text: $viewModel.currentSearchText)
+                    .focused($isFocused)
                     .font(.bodyXsmallMedium)
                     .foregroundColor(.gray950)
                     .onSubmit {
-                        onSearchSubmit()
+                        Task { await viewModel.search(viewModel.currentSearchText) }
                     }
                     .padding(.vertical, 12)
                 
                 Spacer()
                 
-                if !text.isEmpty {
+                if !viewModel.currentSearchText.isEmpty {
                     Button {
-                        text = ""
+                        viewModel.currentSearchText = ""
                     } label: {
                         Image(systemName: "xmark")
                             .renderingMode(.template)
@@ -50,12 +48,12 @@ struct SearchBar: View {
             .background(Color.primary50)
             .cornerRadius(10)
             .onTapGesture {
-                isSearchFocused.wrappedValue = true
+                isFocused = true
             }
             
-            if isSearchFocused.wrappedValue || !text.isEmpty {
+            if isFocused || !viewModel.currentSearchText.isEmpty {
                 Button("취소") {
-                    onCancel()
+                    viewModel.cancelSearch()
                 }
                 .font(.bodyXsmallSemibold)
                 .foregroundColor(.gray800)
@@ -64,5 +62,11 @@ struct SearchBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 6)
+        .onChange(of: isFocused) { _, newValue in
+            viewModel.isSearchFocused = newValue
+        }
+        .onChange(of: viewModel.isSearchFocused) { _, newValue in
+            isFocused = newValue
+        }
     }
 }

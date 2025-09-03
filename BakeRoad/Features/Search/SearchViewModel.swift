@@ -10,10 +10,10 @@ import Foundation
 @MainActor
 class SearchViewModel: ObservableObject {
     @Published var recentSearches: [RecentSearch] = []
-    @Published var recentBakeries: [Bakery] = []
+    @Published var recentBakeries: [RecommendBakery] = []
     @Published var searchResults: [Bakery] = []
-    @Published var isLoadingRecentBakeries = false
-    @Published var isLoadingSearch = false
+    @Published var nextCursor: String?
+    @Published var isLoading = false
     @Published var errorMessage: String?
     
     // 검색 상태 관리
@@ -21,29 +21,44 @@ class SearchViewModel: ObservableObject {
     @Published var hasPerformedSearch: Bool = false
     @Published var isSearchFocused: Bool = false
     
-    // 페이징 관련 상태
-    @Published var isLoadingMore = false
-    @Published var hasMoreResults = true
-    private var nextCursor: String? = "0"
-    private let pageSize = 20
-    
     private let recentSearchManager = RecentSearchManager()
     private let searchBakeryUseCase: SearchBakeryUseCase
+    private let recentBakeryUseCase: RecentBakeryUseCase
     
     var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
     
-    init(searchBakeryUseCase: SearchBakeryUseCase) {
+    init (
+        searchBakeryUseCase: SearchBakeryUseCase,
+        recentBakeryUseCase: RecentBakeryUseCase
+    ) {
         self.searchBakeryUseCase = searchBakeryUseCase
+        self.recentBakeryUseCase = recentBakeryUseCase
         
         Task { await loadInitial() }
     }
     
     private func loadInitial() async {
-        recentSearches = recentSearchManager.getRecentSearches()
+        Task {
+            await loadRecentBakery()
+            recentSearches = recentSearchManager.getRecentSearches()
+        }
     }
     
     func loadRecentSearches() {
         recentSearches = recentSearchManager.getRecentSearches()
+    }
+    
+    func loadRecentBakery() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            recentBakeries = try await recentBakeryUseCase.execute()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
     }
     
     func search(_ searchText: String) async {
@@ -52,65 +67,58 @@ class SearchViewModel: ObservableObject {
         
         // 검색 상태 업데이트
         currentSearchText = trimmedText
-        hasPerformedSearch = true
         isSearchFocused = false
+        hasPerformedSearch = true
         
         // 페이징 상태 초기화
-        nextCursor = "0"
-        hasMoreResults = true
+        nextCursor = nil
         searchResults = []
         
         // 최근 검색어에 추가
         recentSearchManager.addRecentSearch(trimmedText)
         loadRecentSearches()
         
-        isLoadingSearch = true
-        defer { isLoadingSearch = false }
+        isLoading = true
+        defer { isLoading = false }
         
         do {
             let request = SearchBakeryRequestDTO(
                 keyword: trimmedText,
                 cursor: "0",
-                pageSize: pageSize
+                pageSize: 20
             )
             
             let response = try await searchBakeryUseCase.execute(request)
             searchResults = response.items
             nextCursor = response.nextCursor
-            hasMoreResults = response.hasNext
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
-            errorMessage = "검색 결과를 불러올 수 없습니다."
+            errorMessage = "잠시 후 다시 시도해주세요."
         }
     }
     
-    func selectRecentSearch(_ searchText: String) async {
-        await search(searchText)
-    }
-    
     func loadMoreResults() async {
-        guard hasMoreResults && !isLoadingMore && !isLoadingSearch && !currentSearchText.isEmpty else { return }
-        guard let cursor = nextCursor else { return }
+        guard !isLoading,
+              let nextCursor = nextCursor else { return }
         
-        isLoadingMore = true
-        defer { isLoadingMore = false }
+        isLoading = true
+        defer { isLoading = false }
         
         do {
             let request = SearchBakeryRequestDTO(
                 keyword: currentSearchText,
-                cursor: cursor,
-                pageSize: pageSize
+                cursor: nextCursor,
+                pageSize: 20
             )
             
             let response = try await searchBakeryUseCase.execute(request)
             searchResults.append(contentsOf: response.items)
-            nextCursor = response.nextCursor
-            hasMoreResults = response.hasNext
+            self.nextCursor = response.nextCursor
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
-            errorMessage = "검색 결과를 불러올 수 없습니다."
+            errorMessage = "잠시 후 다시 시도해주세요."
         }
     }
     
@@ -128,16 +136,15 @@ class SearchViewModel: ObservableObject {
         currentSearchText = ""
         hasPerformedSearch = false
         isSearchFocused = false
-     }
-    
-    func clearAllRecentBakeries() {
-        recentBakeries.removeAll()
     }
     
-    func didTapBakery(_ bakery: Bakery) {
+    func clearAllRecentBakeries() {
+    }
+    
+    func didTapBakery(bakeryId: Int, areaCode: Int) {
         let filter = BakeryDetailFilter(
-            bakeryId: bakery.id,
-            areaCodes: [bakery.areaID],
+            bakeryId: bakeryId,
+            areaCodes: [areaCode],
             tourCatCodes: CategoryManager.shared.selectedCategoryCodes
         )
         onNavigateToBakeryDetail?(filter)

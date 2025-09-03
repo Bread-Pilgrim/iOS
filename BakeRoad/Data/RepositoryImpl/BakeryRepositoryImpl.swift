@@ -153,4 +153,15 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         return dto.toEntity()
     }
+    
+    func getRecentBakeryList() async throws -> [RecommendBakery] {
+        let request = APIRequest(
+            path: BakeryEndPoint.listRecent,
+            method: .get
+        )
+        
+        let dto = try await apiClient.request(request, responseType: [RecentBakeryResponseDTO].self)
+        
+        return dto.map { $0.toEntity() }
+    }
 }

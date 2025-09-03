@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct RecentSearchView: View {
-    let recentSearches: [RecentSearch]
-    let onSelectSearch: (String) -> Void
-    let onRemoveSearch: (UUID) -> Void
-    let onClearAll: () -> Void
+    @ObservedObject var viewModel: SearchViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -23,16 +20,16 @@ struct RecentSearchView: View {
                 Spacer()
                 
                 Button("전체 삭제") {
-                    onClearAll()
+                    viewModel.clearAllRecentSearches()
                 }
                 .font(.bodyXsmallSemibold)
-                .foregroundColor(recentSearches.isEmpty ? .gray200 : .gray800)
-                .disabled(recentSearches.isEmpty)
+                .foregroundColor(viewModel.recentSearches.isEmpty ? .gray200 : .gray800)
+                .disabled(viewModel.recentSearches.isEmpty)
             }
             .padding(.top, 20)
             .padding(.bottom, 16)
             
-            if recentSearches.isEmpty {
+            if viewModel.recentSearches.isEmpty {
                 VStack(alignment: .center, spacing: 4) {
                     Text("아직 검색하신 내역이 없어요.")
                         .font(.bodyXsmallRegular)
@@ -48,12 +45,13 @@ struct RecentSearchView: View {
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 8) {
-                        ForEach(recentSearches) { search in
+                        ForEach(viewModel.recentSearches) { search in
                             RecentSearchItem(
-                                searchText: search.text,
-                                onSelect: { onSelectSearch(search.text) },
-                                onRemove: { onRemoveSearch(search.id) }
-                            )
+                                searchText: search.text) {
+                                    viewModel.removeRecentSearch(search.id)
+                                } onSelect: {
+                                    Task { await viewModel.search(search.text) }
+                                }
                         }
                     }
                 }
@@ -69,8 +67,8 @@ struct RecentSearchView: View {
 
 struct RecentSearchItem: View {
     let searchText: String
-    let onSelect: () -> Void
     let onRemove: () -> Void
+    let onSelect: () -> Void
     
     var body: some View {
         HStack(spacing: 4) {

@@ -14,6 +14,7 @@ enum BakeryEndPoint {
     static let listHot = "/bakeries/hot"
     static let listVisited = "/bakeries/visited"
     static let listLike = "/bakeries/like"
+    static let listRecent = "/bakeries/recent"
     
     static func detail(_ id: Int) -> String {
         return "/bakeries/\(id)"

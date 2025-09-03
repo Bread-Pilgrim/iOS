@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct RecentBakeryView: View {
-    let recentBakeries: [Bakery]
-    let isLoading: Bool
-    let onClearAll: () -> Void
-    let onTapBakery: (Bakery) -> Void
+    @ObservedObject var viewModel: SearchViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if isLoading {
+            if viewModel.isLoading && viewModel.recentBakeries.isEmpty {
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 16) {
                         ForEach(0..<10, id: \.self) { _ in
@@ -32,15 +29,15 @@ struct RecentBakeryView: View {
                     Spacer()
                     
                     Button("전체 삭제") {
-                        onClearAll()
+                        viewModel.clearAllRecentBakeries()
                     }
                     .font(.bodyXsmallSemibold)
-                    .foregroundColor(recentBakeries.isEmpty ? .gray200 : .gray800)
-                    .disabled(recentBakeries.isEmpty)
+                    .foregroundColor(viewModel.recentBakeries.isEmpty ? .gray200 : .gray800)
+                    .disabled(viewModel.recentBakeries.isEmpty)
                 }
                 .padding(.bottom, 16)
                 
-                if recentBakeries.isEmpty {
+                if viewModel.recentBakeries.isEmpty {
                     VStack(alignment: .center, spacing: 4) {
                         Text("최근에 조회한 빵집이 없어요.")
                             .font(.bodyXsmallRegular)
@@ -56,13 +53,12 @@ struct RecentBakeryView: View {
                     
                     Spacer()
                 } else {
-                    ScrollView(.vertical, showsIndicators: false) {
-                        LazyVStack(spacing: 16) {
-                            ForEach(recentBakeries) { bakery in
-                                BakeryCard(bakery: bakery)
-                                    .frame(height: 126)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(viewModel.recentBakeries) { bakery in
+                                RecommendBakeryCard(recommendBakery: bakery)
                                     .onTapGesture {
-                                        onTapBakery(bakery)
+                                        viewModel.didTapBakery(bakeryId: bakery.id, areaCode: bakery.commercialAreaId)
                                     }
                             }
                         }

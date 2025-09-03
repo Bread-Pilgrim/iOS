@@ -107,7 +107,8 @@ struct MainView: View {
         NavigationStack(path: $coordinator.searchPath) {
             SearchView(viewModel: {
                 let viewModel = SearchViewModel(
-                    searchBakeryUseCase: coordinator.dependency.searchBakeyUseCase
+                    searchBakeryUseCase: coordinator.dependency.searchBakeyUseCase,
+                    recentBakeryUseCase: coordinator.dependency.recentBakeryUseCase
                 )
                 viewModel.onNavigateToBakeryDetail = { filter in
                     coordinator.push(.searchDetail(filter))

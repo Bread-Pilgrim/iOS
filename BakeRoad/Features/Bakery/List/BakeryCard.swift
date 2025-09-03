@@ -81,24 +81,24 @@ struct SignatureMenuChipsView: View {
         let menus = Array(signatureMenus.prefix(3))
         
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 ForEach(menus, id: \.self) { chip($0) }
             }
             
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
                     ForEach(menus.prefix(2), id: \.self) { chip($0) }
                 }
                 if menus.count > 2 {
-                    HStack(spacing: 8) { chip(menus[2]) }
+                    HStack(spacing: 6) { chip(menus[2]) }
                 }
             }
             
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 if let first = menus.first {
-                    HStack(spacing: 8) { chip(first) }
+                    HStack(spacing: 6) { chip(first) }
                 }
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     ForEach(menus.dropFirst(), id: \.self) { chip($0) }
                 }
             }

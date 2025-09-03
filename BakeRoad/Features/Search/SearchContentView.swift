@@ -8,46 +8,16 @@
 import SwiftUI
 
 struct SearchContentView: View {
-    let isSearchFocused: Bool
     @ObservedObject var viewModel: SearchViewModel
-    let onRecentSearchSelected: (String) -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            if isSearchFocused {
-                RecentSearchView(
-                    recentSearches: viewModel.recentSearches,
-                    onSelectSearch: onRecentSearchSelected,
-                    onRemoveSearch: { searchID in
-                        viewModel.removeRecentSearch(searchID)
-                    },
-                    onClearAll: {
-                        viewModel.clearAllRecentSearches()
-                    }
-                )
+            if viewModel.isSearchFocused {
+                RecentSearchView(viewModel: viewModel)
             } else if viewModel.hasPerformedSearch {
-                SearchResultView(
-                    searchResults: viewModel.searchResults,
-                    isLoading: viewModel.isLoadingSearch,
-                    searchText: viewModel.currentSearchText,
-                    isLoadingMore: viewModel.isLoadingMore,
-                    hasMoreResults: viewModel.hasMoreResults,
-                    onTapBakery: { bakery in
-                        viewModel.didTapBakery(bakery)
-                    },
-                    onLoadMore: {
-                        Task {
-                            await viewModel.loadMoreResults()
-                        }
-                    }
-                )
-            }
-            else {
-                RecentBakeryView(recentBakeries: viewModel.recentBakeries, isLoading: viewModel.isLoadingRecentBakeries) {
-                    viewModel.clearAllRecentBakeries()
-                } onTapBakery: { bakery in
-                    viewModel.didTapBakery(bakery)
-                }
+                SearchResultView(viewModel: viewModel)
+            } else {
+                RecentBakeryView(viewModel: viewModel)
             }
             
             Spacer()
