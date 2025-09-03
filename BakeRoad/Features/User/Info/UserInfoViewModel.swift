@@ -15,7 +15,6 @@ class UserInfoViewModel: ObservableObject {
     
     // 네비게이션 콜백들
     var onNavigateToSettings: (() -> Void)?
-    var onNavigateToBadgeSettings: (() -> Void)?
     var onNavigateToReviews: (() -> Void)?
     var onNavigateToReceivedBadges: (() -> Void)?
     var onNavigateToBreadReport: (() -> Void)?
@@ -29,7 +28,7 @@ class UserInfoViewModel: ObservableObject {
         Task { await loadUserProfile() }
     }
     
-    private func loadUserProfile() async {
+    func loadUserProfile() async {
         isLoadingProfile = true
         defer { isLoadingProfile = false }
         
@@ -44,10 +43,6 @@ class UserInfoViewModel: ObservableObject {
     
     func navigateToSettings() {
         onNavigateToSettings?()
-    }
-    
-    func navigateToBadgeSettings() {
-        onNavigateToBadgeSettings?()
     }
     
     func navigateToBreadReport() {

@@ -39,6 +39,9 @@ struct UserInfoView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            Task { await viewModel.loadUserProfile() }
+        }
         .onChange(of: viewModel.errorMessage) { oldValue, newValue in
             if let message = newValue {
                 ToastManager.show(message: message, type: .error)
@@ -100,7 +103,7 @@ struct UserInfoView: View {
                                 Spacer()
                                 
                                 Button {
-                                    viewModel.navigateToBadgeSettings()
+                                    viewModel.navigateToReceivedBadges()
                                 } label: {
                                     Text("뱃지설정")
                                         .underline()

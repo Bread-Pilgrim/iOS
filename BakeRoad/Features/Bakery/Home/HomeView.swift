@@ -140,6 +140,7 @@ struct HomeView: View {
             .fullScreenCover(isPresented: $showPreferenceEdit) {
                 OnboardingView(
                     viewModel: viewModel.createOnboardingViewModel(isPreferenceEdit: true),
+                    isModal: true,
                     onFinish: {
                         showPreferenceEdit = false
                         Task {

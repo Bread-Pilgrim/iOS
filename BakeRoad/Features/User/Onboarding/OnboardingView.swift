@@ -9,15 +9,18 @@ import SwiftUI
 
 struct OnboardingView: View {
     @StateObject private var viewModel: OnboardingViewModel
+    let isModal: Bool
     var onFinish: () -> Void
     @State private var showDismissAlert = false
     @Environment(\.dismiss) private var dismiss
     
     init(
         viewModel: OnboardingViewModel,
+        isModal: Bool? = nil,
         onFinish: @escaping () -> Void
     ) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.isModal = isModal ?? false
         self.onFinish = onFinish
     }
     
@@ -25,7 +28,11 @@ struct OnboardingView: View {
         VStack(alignment: .leading) {
             HStack {
                 Button {
-                    showDismissAlert = true
+                    if viewModel.canGoBack {
+                        isModal ? dismiss() : viewModel.navigateBack()
+                    } else {
+                        showDismissAlert = true
+                    }
                 } label: {
                     Image("arrowLeft")
                         .resizable()
@@ -114,7 +121,7 @@ struct OnboardingView: View {
                             message: "변경한 취향은 모두 저장되지 않아요😂",
                             primaryAction: AlertAction(title: "나가기") {
                                 showDismissAlert = false
-                                dismiss()
+                                isModal ? dismiss() : viewModel.navigateBack()
                             },
                             secondaryAction: AlertAction(title: "취소") {
                                 showDismissAlert = false

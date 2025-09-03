@@ -195,9 +195,6 @@ struct MainView: View {
                 viewModel.onNavigateToPreferenceChange = {
                     coordinator.push(.preference)
                 }
-                viewModel.onNavigateToBadgeSettings = {
-                    
-                }
                 viewModel.onNavigateToBreadReport = {
                     coordinator.push(.breadReportList)
                 }
@@ -289,15 +286,19 @@ struct MainView: View {
                     }())
                     .hideNavigationBar()
                 case .preference:
-                    OnboardingView(
-                        viewModel: OnboardingViewModel(
+                    OnboardingView(viewModel: {
+                        let viewModel = OnboardingViewModel(
                             getPreferenceOptionsUseCase: coordinator.dependency.getPreferenceOptionsUseCase,
                             userOnboardUseCase: coordinator.dependency.userOnboardUseCase,
                             getUserPreferenceUseCase: coordinator.dependency.getUserPreferenceUseCase,
                             updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase,
                             isPreferenceEdit: true
                         )
-                    ) {
+                        viewModel.onNavigateBack = {
+                            coordinator.popMy()
+                        }
+                        return viewModel
+                    }()) {
                         coordinator.popMy()
                         ToastManager.show(message: "내 빵 취향이 변경되었습니다!")
                     }

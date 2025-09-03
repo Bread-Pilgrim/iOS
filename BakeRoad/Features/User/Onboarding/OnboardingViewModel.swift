@@ -39,6 +39,11 @@ final class OnboardingViewModel: ObservableObject {
     var canProceed: Bool {
         !(selections[currentStep]?.isEmpty ?? true)
     }
+    var canGoBack: Bool {
+        originalSelections == selections
+    }
+    
+    var onNavigateBack: (() -> Void)?
     
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -160,5 +165,9 @@ final class OnboardingViewModel: ObservableObject {
             }
         }
         return allIds
+    }
+    
+    func navigateBack() {
+        onNavigateBack?()
     }
 }
