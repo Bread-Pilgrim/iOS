@@ -145,7 +145,8 @@ final class BakeryRepositoryImpl: BakeryRepository {
     func getMyBakeryList(_ type: MyBakeryType, requestDTO: BakeryMyListRequestDTO) async throws -> Page<Bakery> {
         let request = APIRequest(
             path: type.listEndPoint,
-            method: .get
+            method: .get,
+            parameters: requestDTO
         )
         
         let dto = try await apiClient.request(request, responseType: BakeryListResponseDTO.self)

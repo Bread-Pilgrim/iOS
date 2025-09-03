@@ -126,7 +126,7 @@ struct VisitedBakeryView: View {
             }
             .frame(height: 28)
             
-            if viewModel.isLoading {
+            if viewModel.bakeries.isEmpty && viewModel.isLoading {
                 SkeletonListView()
             } else if viewModel.bakeries.isEmpty {
                 VStack(alignment: .center, spacing: 4) {
@@ -148,7 +148,10 @@ struct VisitedBakeryView: View {
                             BakeryCard(bakery: bakery)
                                 .frame(height: 126)
                                 .onAppear {
-                                    Task { await viewModel.loadMore() }
+                                    guard viewModel.bakeries.last == bakery,
+                                          !viewModel.isLoading,
+                                          viewModel.nextCursor != nil else { return }
+                                    Task { await viewModel.loadMoreBakeries() }
                                 }
                                 .onTapGesture {
                                     viewModel.onTapBakery(bakery)
@@ -194,7 +197,7 @@ struct LikeBakeryView: View {
             }
             .frame(height: 28)
             
-            if viewModel.isLoading {
+            if viewModel.bakeries.isEmpty && viewModel.isLoading {
                 SkeletonListView()
             } else if viewModel.bakeries.isEmpty {
                 VStack(alignment: .center, spacing: 4) {
@@ -216,7 +219,10 @@ struct LikeBakeryView: View {
                             BakeryCard(bakery: bakery)
                                 .frame(height: 126)
                                 .onAppear {
-                                    Task { await viewModel.loadMore() }
+                                    guard viewModel.bakeries.last == bakery,
+                                          !viewModel.isLoading,
+                                          viewModel.nextCursor != nil else { return }
+                                    Task { await viewModel.loadMoreBakeries() }
                                 }
                                 .onTapGesture {
                                     viewModel.onTapBakery(bakery)
