@@ -33,11 +33,11 @@ struct NotificationView: View {
             }
             
             VStack(spacing: 0) {
-                ForEach(Array(viewModel.notifications.enumerated()), id: \.element.id) { index, notification in
-                    expandableNotificationItem(
-                        notification: notification,
+                ForEach(Array(viewModel.notices.enumerated()), id: \.element.id) { index, notice in
+                    expandableNoticeItem(
+                        notice: notice,
                         onToggle: {
-                            viewModel.toggleExpanded(for: notification.id)
+                            viewModel.toggleExpanded(for: notice)
                         }
                     )
                 }
@@ -49,7 +49,7 @@ struct NotificationView: View {
         .navigationBarHidden(true)
     }
     
-    private func expandableNotificationItem(notification: NotificationItem, showDivider: Bool = true, onToggle: @escaping () -> Void) -> some View {
+    private func expandableNoticeItem(notice: Notice, showDivider: Bool = true, onToggle: @escaping () -> Void) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Button {
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -57,24 +57,24 @@ struct NotificationView: View {
                 }
             } label: {
                 HStack {
-                    Text(notification.title)
+                    Text(notice.title)
                         .font(.bodyMediumSemibold)
                         .foregroundColor(.gray900)
                         .multilineTextAlignment(.leading)
                     
                     Spacer()
                     
-                    Image(systemName: notification.isExpanded ? "chevron.up" : "chevron.down")
+                    Image(systemName: notice.isExpanded ? "chevron.up" : "chevron.down")
                         .foregroundColor(.gray500)
                         .frame(width: 16, height: 16)
                 }
                 .padding(16)
             }
             
-            if notification.isExpanded,
-               let description = notification.description {
+            if notice.isExpanded,
+               !notice.contents.isEmpty {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(description)
+                    Text(notice.contents.joined(separator: "\n"))
                         .font(.bodyXsmallRegular)
                         .foregroundColor(.gray800)
                         .multilineTextAlignment(.leading)
@@ -90,8 +90,4 @@ struct NotificationView: View {
             }
         }
     }
-}
-
-#Preview {
-    NotificationView(viewModel: NotificationViewModel())
 }

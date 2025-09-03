@@ -41,8 +41,12 @@ struct SettingView: View {
                     viewModel.navigateToAppInfo()
                 }
                 
-                settingMenuItem(title: "로그아웃", showDivider: false) {
+                settingMenuItem(title: "로그아웃", isNavigation: false) {
                     viewModel.showLogoutAlert()
+                }
+                
+                settingMenuItem(title: "계정 탈퇴", showDivider: false, isNavigation: false) {
+                    print("탈퇴")
                 }
             }
             
@@ -71,18 +75,20 @@ struct SettingView: View {
         }
     }
     
-    private func settingMenuItem(title: String, showDivider: Bool = true, action: @escaping () -> Void) -> some View {
+    private func settingMenuItem(title: String, showDivider: Bool = true, isNavigation: Bool = true, action: @escaping () -> Void) -> some View {
         VStack(spacing: 0) {
             Button(action: action) {
                 HStack {
                     Text(title)
                         .font(.bodyMediumSemibold)
-                        .foregroundColor(.gray900)
+                        .foregroundColor(isNavigation ? .gray900 : .gray400)
                     
                     Spacer()
                     
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.gray500)
+                    if isNavigation {
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray500)
+                    }
                 }
                 .padding(.vertical, 20)
                 .padding(.horizontal, 16)

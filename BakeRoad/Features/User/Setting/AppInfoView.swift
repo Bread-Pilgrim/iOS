@@ -60,26 +60,6 @@ struct AppInfoView: View {
                 Rectangle()
                     .fill(Color.gray50)
                     .frame(height: 1)
-                
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("사용자 정보")
-                        .font(.bodyMediumSemibold)
-                        .foregroundColor(.gray900)
-                    Text("ID : ho971122@naver.com")
-                        .font(.bodyXsmallRegular)
-                        .tint(.gray800)
-                    Text("이름 : 이현호")
-                        .font(.bodyXsmallRegular)
-                        .foregroundColor(.gray800)
-                    Text("이메일 : ho971122@naver.com")
-                        .font(.bodyXsmallRegular)
-                        .tint(.gray800)
-                }
-                .padding(.horizontal, 16)
-                
-                Rectangle()
-                    .fill(Color.gray50)
-                    .frame(height: 1)
             }
             .padding(.vertical, 20)
             

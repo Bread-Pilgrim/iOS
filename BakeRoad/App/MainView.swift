@@ -323,7 +323,9 @@ struct MainView: View {
                     .hideNavigationBar()
                 case .notification:
                     NotificationView(viewModel: {
-                        let viewModel = NotificationViewModel()
+                        let viewModel = NotificationViewModel(
+                            getNoticeUseCase: coordinator.dependency.getNoticeUseCase
+                        )
                         viewModel.onNavigateBack = {
                             coordinator.popMy()
                         }
