@@ -12,7 +12,7 @@ struct BakeryListView: View {
     
     var body: some View {
         VStack {
-            if viewModel.isLoading {
+            if viewModel.isLoading && viewModel.bakeries.isEmpty {
                 SkeletonListView()
                     .padding(.top, 16)
             } else {
@@ -23,26 +23,13 @@ struct BakeryListView: View {
                             BakeryCard(bakery: bakery)
                                 .frame(height: 126)
                                 .onAppear {
-                                    // 마지막 2개 아이템에서만 페이징 트리거
-                                    if index >= max(0, viewModel.bakeries.count - 2) && viewModel.hasNext {
-                                        Task {
-                                            await viewModel.loadMoreOnScroll()
-                                        }
-                                    }
+                                    guard viewModel.bakeries.last == bakery,
+                                          !viewModel.isLoading,
+                                          viewModel.nextCursor != nil else { return }
+                                    Task { await viewModel.loadMoreItems() }
                                 }
                                 .onTapGesture {
                                     viewModel.didTapBakery(bakery)
-                                }
-                        }
-                        
-                        // 로딩 인디케이터
-                        if viewModel.hasNext {
-                            ProgressView()
-                                .frame(height: 50)
-                                .onAppear {
-                                    Task {
-                                        await viewModel.loadMoreOnScroll()
-                                    }
                                 }
                         }
                     }
@@ -53,9 +40,6 @@ struct BakeryListView: View {
             }
         }
         .background(Color.white)
-        .task {
-            await viewModel.loadInitial()
-        }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

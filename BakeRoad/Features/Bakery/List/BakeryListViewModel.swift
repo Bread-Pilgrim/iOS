@@ -10,50 +10,39 @@ import Foundation
 @MainActor
 final class BakeryListViewModel: ObservableObject {
     @Published var bakeries: [Bakery] = []
-    @Published var hasNext: Bool = false
-    @Published var errorMessage: String?
-    @Published var isLoadingMore = false
+    @Published var nextCursor: String?
     @Published var isLoading = false
-
-    private let fetcher: PageFetcher<Bakery>
+    @Published var errorMessage: String?
+    
+    private let filter: BakeryListFilter
+    private let getBakeryListUseCase: GetBakeryListUseCase
     
     var onNavigateToBakeryDetail: ((Bakery) -> Void)?
     var onNavigateBack: (() -> Void)?
-
+    
     init(
         filter: BakeryListFilter,
         getBakeryListUseCase: GetBakeryListUseCase
     ) {
-        self.fetcher = PageFetcher<Bakery>(pageSize: 15) { cursor, size in
-            let request = BakeryListRequestDTO(
-                area_code: filter.areaCodes.map(String.init).joined(separator: ","),
-                cursor_value: cursor,
-                page_size: size
-            )
-            return try await getBakeryListUseCase.execute(filter.type, request: request)
-        }
-
+        self.filter = filter
+        self.getBakeryListUseCase = getBakeryListUseCase
+        
         Task { await loadInitial() }
     }
-
-    func loadInitial() async {
+    
+    private func loadInitial() async {
         isLoading = true
         defer { isLoading = false }
         
         do {
-            try await fetcher.loadInitial()
-            syncState()
-        } catch let APIError.serverError(_, message) {
-            errorMessage = message
-        } catch {
-            errorMessage = "잠시 후 다시 시도해주세요."
-        }
-    }
-
-    func loadMoreIfNeeded(currentItem: Bakery) async {
-        do {
-            try await fetcher.loadMoreIfNeeded(currentItem: currentItem)
-            syncState()
+            let request = BakeryListRequestDTO(
+                area_code: filter.areaCodes.map(String.init).joined(separator: ","),
+                cursor_value: "0",
+                page_size: 15
+            )
+            let response = try await getBakeryListUseCase.execute(filter.type, request: request)
+            bakeries = response.items
+            nextCursor = response.nextCursor
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
@@ -61,26 +50,27 @@ final class BakeryListViewModel: ObservableObject {
         }
     }
     
-    // 스크롤 기반 페이징
-    func loadMoreOnScroll() async {
-        guard !isLoadingMore, hasNext else { return }
+    func loadMoreItems() async {
+        guard !isLoading,
+              let nextCursor = nextCursor else { return }
         
-        isLoadingMore = true
-        defer { isLoadingMore = false }
+        isLoading = true
+        defer { isLoading = false }
         
         do {
-            try await fetcher.loadMoreIfScrolledToEnd()
-            syncState()
+            let request = BakeryListRequestDTO(
+                area_code: filter.areaCodes.map(String.init).joined(separator: ","),
+                cursor_value: nextCursor,
+                page_size: 15
+            )
+            let response = try await getBakeryListUseCase.execute(filter.type, request: request)
+            bakeries.append(contentsOf: response.items)
+            self.nextCursor = response.nextCursor
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
             errorMessage = "잠시 후 다시 시도해주세요."
         }
-    }
-
-    private func syncState() {
-        bakeries = fetcher.page.items
-        hasNext = fetcher.page.hasNext
     }
     
     func didTapBakery(_ bakery: Bakery) {
