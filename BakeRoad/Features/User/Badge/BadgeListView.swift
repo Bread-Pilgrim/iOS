@@ -82,6 +82,10 @@ struct BadgeListView: View {
             if let badge = viewModel.selectedBadge {
                 BadgeSheet(badge: badge) { badge in
                     showSheet = false
+                    Task {
+                        let message = await viewModel.toggleBadgeRepresent(badge)
+                        ToastManager.show(message: message)
+                    }
                 }
                 .presentationDetents([.height(308)])
                 .presentationDragIndicator(.hidden)

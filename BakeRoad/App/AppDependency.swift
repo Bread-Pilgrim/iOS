@@ -55,6 +55,8 @@ final class AppDependency {
     let getBreadReportListUseCase: GetBreadReportListUseCase
     let getBreadReportUseCase: GetBreadReportUseCase
     let getBadgeListUseCase: GetBadgeListUseCase
+    let badgeRepresentUseCase: BadgeRepresentUseCase
+    let badgeDerepresentUseCase: BadgeDerepresentUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -109,5 +111,7 @@ final class AppDependency {
         self.getBreadReportListUseCase = GetBreadReportListUseCaseImpl(repository: userRepository)
         self.getBreadReportUseCase = GetBreadReportUseCaseImpl(repository: userRepository)
         self.getBadgeListUseCase = GetBadgeListUseCaseImpl(repository: badgeRepository)
+        self.badgeRepresentUseCase = BadgeRepresentUseCaseImpl(repository: userRepository)
+        self.badgeDerepresentUseCase = BadgeDerepresentUseCaseImpl(repository: userRepository)
     }
 }

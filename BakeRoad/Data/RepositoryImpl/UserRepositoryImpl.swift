@@ -91,4 +91,22 @@ final class UserRepositoryImpl: UserRepository {
         
         return dto.toEntity()
     }
+    
+    func badgeRepresent(_ id: Int) async throws {
+        let request = APIRequest(
+            path: UserEndpoint.badgeRepresent(id),
+            method: .post
+        )
+        
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+    }
+    
+    func badgeDerepresent(_ id: Int) async throws {
+        let request = APIRequest(
+            path: UserEndpoint.badgeDerepresent(id),
+            method: .post
+        )
+        
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+    }
 }

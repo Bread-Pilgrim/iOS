@@ -15,4 +15,11 @@ enum UserEndpoint {
     static let userProfile = "/users/me"
     static let breadReportList = "/users/me/bread-report/monthly"
     static let breadReport = "/users/me/bread-report"
+    
+    static func badgeRepresent(_ id: Int) -> String {
+        return "/users/me/badges/\(id)/represent"
+    }
+    static func badgeDerepresent(_ id: Int) -> String {
+        return "/users/me/badges/\(id)/derepresent"
+    }
 }

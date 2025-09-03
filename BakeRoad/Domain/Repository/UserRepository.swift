@@ -15,4 +15,6 @@ protocol UserRepository {
     func getUserReview(_ requestDTO: UserReviewRequestDTO) async throws -> Page<UserReview>
     func getBreadReportList(_ requestDTO: BreadReportListRequestDTO) async throws -> Page<BreadReportListItem>
     func getBreadReport(_ requestDTO: BreadReportRequestDTO) async throws -> BreadReport
+    func badgeRepresent(_ id: Int) async throws
+    func badgeDerepresent(_ id: Int) async throws
 }

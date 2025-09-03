@@ -240,7 +240,9 @@ struct MainView: View {
                 case .badge:
                     BadgeListView(viewModel: {
                         let viewModel = BadgeListViewModel(
-                            getBadgeListUseCase: coordinator.dependency.getBadgeListUseCase
+                            getBadgeListUseCase: coordinator.dependency.getBadgeListUseCase,
+                            badgeRepresentUseCase: coordinator.dependency.badgeRepresentUseCase,
+                            badgeDerepresentUseCase: coordinator.dependency.badgeDerepresentUseCase
                         )
                         viewModel.onNavigateBack = {
                             coordinator.popMy()
