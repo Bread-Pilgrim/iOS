@@ -14,6 +14,7 @@ struct UserReview: Identifiable, Equatable {
     let reviewContent: String
     let reviewRating: Double
     let reviewLikeCount: Int
+    let reviewCreatedAt: String
     let isLike: Bool
     let menus: [String]
     let photos: [String]
@@ -26,6 +27,7 @@ struct UserReview: Identifiable, Equatable {
             reviewContent: reviewContent,
             reviewRating: reviewRating,
             reviewLikeCount: isLike ? reviewLikeCount - 1 : reviewLikeCount + 1,
+            reviewCreatedAt: reviewCreatedAt,
             isLike: !isLike,
             menus: menus,
             photos: photos

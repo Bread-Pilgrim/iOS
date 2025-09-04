@@ -67,18 +67,28 @@ struct UserReviewCard: View {
                     }
                 }
                 
-                Button(action: {
-                    onLikeTapped(review.id)
-                }) {
-                    HStack(spacing: 4) {
-                        let isLikedColor = review.isLike ? Color.primary500 : Color.gray300
-                        
-                        Image(systemName: "heart.fill")
-                            .foregroundColor(isLikedColor)
-                        
-                        Text(review.reviewLikeCount > 0 ? "\(review.reviewLikeCount)" : "좋아요")
-                            .font(.bodyXsmallRegular)
-                            .foregroundColor(isLikedColor)
+                HStack {
+                    Button {
+                        onLikeTapped(review.id)
+                    } label: {
+                        HStack(spacing: 4) {
+                            let isLikedColor = review.isLike ? Color.primary500 : Color.gray300
+                            
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(isLikedColor)
+                            
+                            Text(review.reviewLikeCount > 0 ? "\(review.reviewLikeCount)" : "좋아요")
+                                .font(.bodyXsmallRegular)
+                                .foregroundColor(isLikedColor)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    if let date = extractDate(from: review.reviewCreatedAt) {
+                        Text(date)
+                            .font(.body2xsmallRegular)
+                            .foregroundColor(.gray300)
                     }
                 }
                 .padding(.top, 8)
@@ -89,5 +99,15 @@ struct UserReviewCard: View {
         .cornerRadius(12)
         .padding(.horizontal, 16)
     }
+    
+    private func extractDate(from isoString: String) -> String? {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "yyyy-MM-dd"
+        
+        guard let date = inputFormatter.date(from: isoString) else { return nil }
+        return outputFormatter.string(from: date)
+    }
 }
-
