@@ -53,7 +53,7 @@ struct BakeryListView: View {
             }
             
             ToolbarItem(placement: .principal) {
-                Text("내 취향 빵집")
+                Text(viewModel.filter.type == .hot ? "Hot한 빵집 모음" : "내 취향 빵집")
                     .font(.headingSmallBold)
                     .foregroundColor(.gray990)
             }

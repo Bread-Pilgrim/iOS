@@ -14,7 +14,7 @@ final class BakeryListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    private let filter: BakeryListFilter
+    let filter: BakeryListFilter
     private let getBakeryListUseCase: GetBakeryListUseCase
     
     var onNavigateToBakeryDetail: ((Bakery) -> Void)?
