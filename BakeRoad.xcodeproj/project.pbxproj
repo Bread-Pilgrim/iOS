@@ -287,6 +287,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BakeRoad/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "빵글";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진첩에 접근할 수 있도록 허용해주세요.\n맛있게 찍은 빵 사진을 리뷰에 올릴 수 있어요!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -320,6 +321,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BakeRoad/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "빵글";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "사진첩에 접근할 수 있도록 허용해주세요.\n맛있게 찍은 빵 사진을 리뷰에 올릴 수 있어요!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
