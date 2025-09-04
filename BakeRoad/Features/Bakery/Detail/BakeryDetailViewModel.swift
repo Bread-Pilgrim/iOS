@@ -256,7 +256,7 @@ extension BakeryDetailViewModel {
             case .visitor:
                 let request = BakeryReviewRequestDTO(cursorValue: nextCursor, pageSize: 5, sortClause: currentSortOption)
                 let response = try await getBakeryReviewsUseCase.execute(filter.bakeryId, requestDTO: request)
-                reviews = response.page.items
+                reviews.append(contentsOf: response.page.items)
                 reviewData = response.data
                 self.nextCursor = response.page.nextCursor
             case .my:
