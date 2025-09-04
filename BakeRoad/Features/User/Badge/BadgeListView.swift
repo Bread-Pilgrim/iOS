@@ -183,26 +183,27 @@ struct BadgeSheet: View {
                 .frame(width: 90, height: 90)
                 .cornerRadius(20)
                 .padding(.top, 24)
-                .padding(.bottom, 16)
             
-            VStack(spacing: 8) {
-                Text(badge.name)
-                    .font(.bodyMediumSemibold)
-                    .foregroundColor(.gray990)
-                
-                Text(badge.description)
-                    .font(.bodyXsmallMedium)
-                    .foregroundColor(.gray600)
-            }
-            .padding(.horizontal, 99.5)
-            .padding(.bottom, 24)
+            Text(badge.name)
+                .font(.bodyMediumSemibold)
+                .foregroundColor(.gray990)
+                .padding(.top, 16)
+                .padding(.bottom, 8)
+            
+            Text(badge.description)
+                .font(.bodyXsmallMedium)
+                .foregroundColor(.gray600)
+                .multilineTextAlignment(.center)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(width: 144)
             
             BakeRoadSolidButton(title: badge.isRepresentative ? "대표 뱃지 해지하기" : "대표 뱃지로 설정",
                                 style: badge.isRepresentative ? .secondary : .primary,
                                 size: .large,
-                                isDisabled: !badge.isEarned) {
-                onTap(badge)
-            }
+                                isDisabled: !badge.isEarned) { onTap(badge) }
+                .padding(.top, 24)
+                .padding(.bottom, 2)
         }
         .padding(.horizontal, 16)
     }
