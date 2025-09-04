@@ -35,6 +35,8 @@ struct SearchBar: View {
                 if !viewModel.currentSearchText.isEmpty {
                     Button {
                         viewModel.currentSearchText = ""
+                        viewModel.hasPerformedSearch = false
+                        viewModel.isSearchFocused = true
                     } label: {
                         Image(systemName: "xmark")
                             .renderingMode(.template)
