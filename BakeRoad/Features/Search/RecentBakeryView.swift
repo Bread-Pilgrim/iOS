@@ -13,10 +13,10 @@ struct RecentBakeryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if viewModel.isLoading && viewModel.recentBakeries.isEmpty {
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 16) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 10) {
                         ForEach(0..<10, id: \.self) { _ in
-                            SkeletonListCard()
+                            SkeletonBakeryCard()
                         }
                     }
                 }
