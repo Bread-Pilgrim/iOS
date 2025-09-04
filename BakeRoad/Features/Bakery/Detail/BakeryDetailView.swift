@@ -128,22 +128,21 @@ struct BakeryDetailView: View {
                 ToastManager.show(message: "리뷰가 성공적으로 작성되었습니다.", type: .success)
             }
         }
-//        .fullScreenCover(isPresented: $showReviewComplete) {
-//            ReviewCompleteView(
-//                bakeryId: viewModel.filter.bakeryId,
-//                onGoHome: {
-//                    showReviewComplete = false
-//                    viewModel.onNavigateBack?()
-//                },
-//                onGoToReview: {
-//                    showReviewComplete = false
-//                    selectedTab = .review
-//                    Task {
-//                        await viewModel.loadReviews(type: .visitor)
-//                    }
-//                }
-//            )
-//        }
+        .fullScreenCover(isPresented: $showReviewComplete) {
+            ReviewCompleteView(
+                bakeryId: viewModel.filter.bakeryId,
+                onGoHome: {
+                    showReviewComplete = false
+                    viewModel.onNavigateBack?()
+                },
+                onGoToReview: {
+                    showReviewComplete = false
+                    selectedTab = .review
+                    viewModel.currentReviewType = .my
+                    Task { await viewModel.loadReviews(type: .my) }
+                }
+            )
+        }
     }
     
     private var detailTabBar: some View {

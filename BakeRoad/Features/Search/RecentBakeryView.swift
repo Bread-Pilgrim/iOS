@@ -54,7 +54,7 @@ struct RecentBakeryView: View {
                     Spacer()
                 } else {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
+                        HStack(alignment: .top, spacing: 10) {
                             ForEach(viewModel.recentBakeries) { bakery in
                                 RecommendBakeryCard(recommendBakery: bakery)
                                     .onTapGesture {

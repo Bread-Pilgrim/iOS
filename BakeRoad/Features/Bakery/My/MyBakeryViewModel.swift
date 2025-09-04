@@ -17,7 +17,6 @@ final class MyBakeryViewModel: ObservableObject {
     @Published var likeSortOption: SortOption = .newest
     
     private let getMyBakeryListUseCase: GetMyBakeryListUseCase
-    private var bakeryFetcher: PageFetcher<Bakery>?
     private var currentTab: MyBakeryType = .visited
     
     var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?

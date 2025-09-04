@@ -56,7 +56,7 @@ struct HomeView: View {
                     .padding(.top, 21)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
+                        HStack(alignment: .top, spacing: 10) {
                             ForEach(viewModel.preferenceBakeries) { recommendBakery in
                                 RecommendBakeryCard(recommendBakery: recommendBakery)
                                     .onTapGesture {
@@ -84,7 +84,7 @@ struct HomeView: View {
                     .padding(.top, 40)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
+                        HStack(alignment: .top, spacing: 10) {
                             ForEach(viewModel.hotBakeries) { recommendBakery in
                                 RecommendBakeryCard(recommendBakery: recommendBakery)
                                     .onTapGesture {

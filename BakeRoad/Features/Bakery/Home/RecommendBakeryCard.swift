@@ -16,7 +16,7 @@ struct RecommendBakeryCard: View {
                 imageUrl: recommendBakery.imgUrl,
                 placeholder: .ratio1_1
             )
-            .frame(width: 116, height: 116)
+            .frame(height: 116)
             .cornerRadius(12)
             
             Text(recommendBakery.name)
@@ -40,5 +40,6 @@ struct RecommendBakeryCard: View {
             
             BakeryOpenStatusChip(openStatus: BakeryOpenStatus(rawValue: recommendBakery.openStatus), style: .weak)
         }
+        .frame(width: 116)
     }
 }

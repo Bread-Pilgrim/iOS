@@ -13,9 +13,7 @@ struct DetailReviewSection: View {
     @Binding var selectedTab: DetailTab
     @ObservedObject var viewModel: BakeryDetailViewModel
     
-    @State private var selectedReviewType = 0
     @State private var isShowingSortSheet = false
-    @State private var selectedSortOption: SortOption = .like
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -25,12 +23,12 @@ struct DetailReviewSection: View {
                         "방문자 리뷰 (\(reviewData.reviewCount.formattedWithSeparator)개) ",
                         "내가 쓴 리뷰"
                     ],
-                    selectedIndex: $selectedReviewType)
+                    selectedType: $viewModel.currentReviewType)
                 .padding(.horizontal, 20)
             }
             
             HStack(spacing: 0) {
-                if selectedTab == .review && selectedReviewType == 1 {
+                if selectedTab == .review && viewModel.currentReviewType == .my {
                     Text("내가 쓴 리뷰")
                         .font(.bodyLargeSemibold)
                         .foregroundColor(.black)
@@ -69,7 +67,7 @@ struct DetailReviewSection: View {
             }
             .padding(.horizontal, 16)
             
-            if !viewModel.reviews.isEmpty && selectedTab == .review && selectedReviewType == 0 {
+            if !viewModel.reviews.isEmpty && selectedTab == .review && viewModel.currentReviewType == .visitor {
                 HStack(spacing: 0) {
                     Image("fillStar")
                         .resizable()
@@ -83,22 +81,19 @@ struct DetailReviewSection: View {
                     Spacer()
                     
                     BakeRoadTextButton(
-                        title: selectedSortOption.displayTitle(),
+                        title: viewModel.currentSortOption.displayTitle(),
                         type: .assistive,
                         size: .small) {
                             isShowingSortSheet = true
                         }
                         .sheet(isPresented: $isShowingSortSheet) {
                             SortOptionSheet(
-                                selectedOption: $selectedSortOption,
+                                selectedOption: $viewModel.currentSortOption,
                                 options: [.like, .newest, .ratingHigh, .ratingLow],
                                 isMyBakery: false,
                                 onConfirm: {
                                     isShowingSortSheet = false
-                                    // 정렬 옵션 변경 시 API 재호출
-                                    Task {
-                                        await viewModel.changeSortOption(selectedSortOption)
-                                    }
+                                    Task { await viewModel.changeSortOption(viewModel.currentSortOption) }
                                 },
                                 onCancel: {
                                     isShowingSortSheet = false
@@ -130,26 +125,11 @@ struct DetailReviewSection: View {
                             viewModel.didTapReviewLikeButton(reviewId)
                         }
                         .onAppear {
-                            // 리뷰탭에서만 페이징 트리거 (마지막 2개 아이템에서)
-                            if selectedTab == .review && 
-                               index >= max(0, viewModel.reviews.count - 2) &&
-                               viewModel.hasNextReviews {
-                                Task {
-                                    await viewModel.loadMoreReviewsOnScroll()
-                                }
-                            }
+                            guard viewModel.reviews.last == review,
+                                  !viewModel.isLoading,
+                                  viewModel.nextCursor != nil else { return }
+                            Task { await viewModel.loadMoreReviews() }
                         }
-                    }
-                    
-                    // 로딩 인디케이터
-                    if viewModel.hasNextReviews && selectedTab == .review {
-                        ProgressView()
-                            .frame(height: 50)
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreReviewsOnScroll()
-                                }
-                            }
                     }
                 }
                 
@@ -171,12 +151,12 @@ struct DetailReviewSection: View {
         }
         .id(DetailTab.review)
         .padding(.bottom, 20)
-        .onChange(of: selectedReviewType) { oldValue, newValue in
+        .onChange(of: viewModel.currentReviewType) { oldValue, newValue in
             if selectedTab == .review {
                 Task {
-                    if newValue == 0 {
+                    if newValue == .visitor {
                         // 방문자 리뷰
-                        await viewModel.loadReviews(type: .visitor, sortOption: selectedSortOption)
+                        await viewModel.loadReviews(type: .visitor, sortOption: viewModel.currentSortOption)
                     } else {
                         // 내가 쓴 리뷰
                         await viewModel.loadReviews(type: .my)

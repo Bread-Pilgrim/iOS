@@ -9,24 +9,24 @@ import SwiftUI
 
 struct BakeRoadSegmentedControl: View {
     let types: [String]
-    @Binding var selectedIndex: Int
+    @Binding var selectedType: ReviewType
 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(types.indices, id: \.self) { index in
                 Button(action: {
                     withAnimation {
-                        selectedIndex = index
+                        selectedType = ReviewType(rawValue: index) ?? .visitor
                     }
                 }) {
                     Text(types[index])
-                        .font(selectedIndex == index ? .bodyXsmallSemibold : .bodyXsmallMedium)
-                        .foregroundColor(selectedIndex == index ? .secondary500 : .gray200)
+                        .font(selectedType == ReviewType(rawValue: index) ? .bodyXsmallSemibold : .bodyXsmallMedium)
+                        .foregroundColor(selectedType == ReviewType(rawValue: index) ? .secondary500 : .gray200)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                         .background(
                             ZStack {
-                                if selectedIndex == index {
+                                if selectedType == ReviewType(rawValue: index) {
                                     RoundedRectangle(cornerRadius: 999)
                                         .fill(Color.secondary100)
                                 }
