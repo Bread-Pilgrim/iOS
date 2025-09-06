@@ -28,4 +28,16 @@ final class TourRepositoryImpl: TourRepository {
         
         return entity
     }
+    
+    func getTourEvent(_ areaCodes: String) async throws -> EventPopup {
+        let request = APIRequest(
+            path: TourEndPoint.getTourEvent,
+            method: .get,
+            parameters: ["area_code" : areaCodes]
+        )
+        
+        let dto = try await apiClient.request(request, responseType: TourEventResponseDTO.self)
+        
+        return dto.toEntity()
+    }
 }

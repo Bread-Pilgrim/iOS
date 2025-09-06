@@ -16,7 +16,10 @@ final class HomeViewModel: ObservableObject {
     @Published var preferenceBakeries: [RecommendBakery] = []
     @Published var hotBakeries: [RecommendBakery] = []
     @Published var tourInfoList: [TourInfo] = []
+    @Published var eventPopup: EventPopup?
     @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var showEventPopup = false
     
     private let getAreaListUseCase: GetAreaListUseCase
     private let getBakeriesUseCase: GetBakeriesUseCase
@@ -25,6 +28,7 @@ final class HomeViewModel: ObservableObject {
     private let userOnboardUseCase: UserOnboardUseCase
     private let getUserPreferenceUseCase: GetUserPreferenceUseCase
     private let updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
+    private let getTourEventUseCase: GetTourEventUseCase
     private var cancellables = Set<AnyCancellable>()
     
     var onNavigateToBakeryList: ((BakeryListFilter) -> Void)?
@@ -40,7 +44,8 @@ final class HomeViewModel: ObservableObject {
         getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase,
         userOnboardUseCase: UserOnboardUseCase,
         getUserPreferenceUseCase: GetUserPreferenceUseCase,
-        updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
+        updateUserPreferenceUseCase: UpdateUserPreferenceUseCase,
+        getTourEventUseCase: GetTourEventUseCase
     ) {
         self.getAreaListUseCase = getAreaListUseCase
         self.getBakeriesUseCase = getBakeriesUseCase
@@ -49,6 +54,7 @@ final class HomeViewModel: ObservableObject {
         self.userOnboardUseCase = userOnboardUseCase
         self.getUserPreferenceUseCase = getUserPreferenceUseCase
         self.updateUserPreferenceUseCase = updateUserPreferenceUseCase
+        self.getTourEventUseCase = getTourEventUseCase
         
         Task { await loadInitial() }
         
@@ -96,6 +102,7 @@ final class HomeViewModel: ObservableObject {
         preferenceBakeries = await pref
         hotBakeries = await hot
         tourInfoList = await tours
+        await getTourEvent()
     }
     
     func getAreaList() async -> [Area] {
@@ -108,6 +115,20 @@ final class HomeViewModel: ObservableObject {
     func getTourList() async -> [TourInfo] {
         let result = (try? await getTourListUseCase.execute(areaCodes: areaCodes, tourCatCodes: tourCatCodes)) ?? []
         return Array(result.prefix(5))
+    }
+    func getTourEvent() async {
+        if !canShowToday() {
+            return
+        }
+        
+        do {
+            eventPopup = try await getTourEventUseCase.execute(areaCodes)
+            showEventPopup = eventPopup != nil
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
     }
     
     func toggleArea(_ id: Int) {
@@ -161,5 +182,18 @@ final class HomeViewModel: ObservableObject {
             updateUserPreferenceUseCase: updateUserPreferenceUseCase,
             isPreferenceEdit: isPreferenceEdit
         )
+    }
+    
+    private func canShowToday() -> Bool {
+        guard let todayNotShow = UserDefaults.standard.object(forKey: "todayNotShow") as? Date else {
+            return true
+        }
+        
+        if Date() > todayNotShow {
+            UserDefaults.standard.removeObject(forKey: "todayNotShow")
+            return true
+        }
+        
+        return false
     }
 }

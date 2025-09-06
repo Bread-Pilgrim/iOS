@@ -8,6 +8,6 @@
 import Foundation
 
 enum AppConstant {
-    static let kakaoAppKey = "d368bee8923ade9b85e79051dcd9ab49"
+    static let kakaoAppKey = "51502a87adb7922bc9b5e1fe7cc39c5a"
     static let baseURL = "fastapi-1015297428835.asia-northeast3.run.app"
 }

@@ -9,4 +9,5 @@ import Foundation
 
 protocol TourRepository {
     func getTourList(areaCodes: String, tourCatCodes: String) async throws -> [TourInfo]
+    func getTourEvent(_ areaCodes: String) async throws -> EventPopup
 }

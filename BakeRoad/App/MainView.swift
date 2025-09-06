@@ -44,7 +44,8 @@ struct MainView: View {
                     getPreferenceOptionsUseCase: coordinator.dependency.getPreferenceOptionsUseCase,
                     userOnboardUseCase: coordinator.dependency.userOnboardUseCase,
                     getUserPreferenceUseCase: coordinator.dependency.getUserPreferenceUseCase,
-                    updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase
+                    updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase,
+                    getTourEventUseCase: coordinator.dependency.getTourEventUseCase
                 )
                 viewModel.onNavigateToBakeryList = { filter in
                     coordinator.push(.list(filter))

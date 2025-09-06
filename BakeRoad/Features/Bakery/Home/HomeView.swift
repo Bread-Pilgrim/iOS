@@ -137,6 +137,12 @@ struct HomeView: View {
                 )
             )
             .padding(.bottom, 28)
+            .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+                if let message = newValue {
+                    ToastManager.show(message: message, type: .error)
+                    viewModel.errorMessage = nil
+                }
+            }
             .fullScreenCover(isPresented: $showPreferenceEdit) {
                 OnboardingView(
                     viewModel: viewModel.createOnboardingViewModel(isPreferenceEdit: true),
@@ -149,6 +155,17 @@ struct HomeView: View {
                         }
                     }
                 )
+            }
+            .sheet(isPresented: $viewModel.showEventPopup) {
+                if let eventPopup = viewModel.eventPopup {
+                    EventPopupSheet(
+                        eventPopup: eventPopup,
+                        isPresented: $viewModel.showEventPopup
+                    )
+                    .presentationDetents([.fraction(0.7)])
+                    .presentationDragIndicator(.hidden)
+                    .presentationBackground(.clear)
+                }
             }
         }
     }

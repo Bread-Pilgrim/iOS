@@ -9,4 +9,5 @@ import Foundation
 
 enum TourEndPoint {
     static let getTourList = "/tours/area"
+    static let getTourEvent = "/tours/events/area"
 }

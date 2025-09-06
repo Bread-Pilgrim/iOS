@@ -60,6 +60,7 @@ final class AppDependency {
     let badgeDerepresentUseCase: BadgeDerepresentUseCase
     let getNoticeUseCase: GetNoticeUseCase
     let recentBakeryUseCase: RecentBakeryUseCase
+    let getTourEventUseCase: GetTourEventUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -119,5 +120,6 @@ final class AppDependency {
         self.badgeDerepresentUseCase = BadgeDerepresentUseCaseImpl(repository: userRepository)
         self.getNoticeUseCase = GetNoticeUseCaseImpl(repository: noticeRepository)
         self.recentBakeryUseCase = RecentBakeryUseCaseImpl(repository: bakeryRepository)
+        self.getTourEventUseCase = GetTourEventUseCaseImpl(repository: tourRepository)
     }
 }
