@@ -78,37 +78,37 @@ extension MainView {
         NavigationStack(path: $coordinator.homePath) {
             if let homeViewModel = tabViewModels.homeViewModel {
                 HomeView(viewModel: homeViewModel)
+                    .navigationDestination(for: MainCoordinator.HomeScreen.self) { screen in
+                        homeNavigationDestination(screen)
+                    }
             }
-        }
-        .navigationDestination(for: MainCoordinator.HomeScreen.self) { screen in
-            homeNavigationDestination(screen)
         }
     }
     
     private var searchTab: some View {
         NavigationStack(path: $coordinator.searchPath) {
             SearchView(viewModel: createSearchViewModel())
-        }
-        .navigationDestination(for: MainCoordinator.SearchScreen.self) { screen in
-            searchNavigationDestination(screen)
+                .navigationDestination(for: MainCoordinator.SearchScreen.self) { screen in
+                    searchNavigationDestination(screen)
+                }
         }
     }
     
     private var favoritesTab: some View {
         NavigationStack(path: $coordinator.favoritesPath) {
             MyBakeryView(viewModel: createFavoritesViewModel())
-        }
-        .navigationDestination(for: MainCoordinator.FavoritesScreen.self) { screen in
-            favoritesNavigationDestination(screen)
+                .navigationDestination(for: MainCoordinator.FavoritesScreen.self) { screen in
+                    favoritesNavigationDestination(screen)
+                }
         }
     }
     
     private var myTab: some View {
         NavigationStack(path: $coordinator.myPath) {
             UserInfoView(viewModel: createUserInfoViewModel())
-        }
-        .navigationDestination(for: MainCoordinator.MyScreen.self) { screen in
-            myNavigationDestination(screen)
+                .navigationDestination(for: MainCoordinator.MyScreen.self) { screen in
+                    myNavigationDestination(screen)
+                }
         }
     }
 }
