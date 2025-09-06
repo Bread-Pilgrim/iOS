@@ -132,14 +132,16 @@ final class BakeryRepositoryImpl: BakeryRepository {
         return dto
     }
     
-    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO, imageData: [Data]) async throws {
+    func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO, imageData: [Data]) async throws -> [Badge]? {
         let request = APIRequest(
             path: BakeryEndPoint.writeReview(id),
             method: .post,
             parameters: requestDTO
         )
         
-        let _ = try await apiClient.requestMultipart(request, imageData: imageData, responseType: EmptyDTO.self)
+        let dto = try await apiClient.requestMultipart(request, imageData: imageData, responseType: EmptyDTO.self, extraType: [BadgeTriggerResponseDTO].self)
+        
+        return dto.extra?.map { $0.toEntity() }
     }
     
     func getMyBakeryList(_ type: MyBakeryType, requestDTO: BakeryMyListRequestDTO) async throws -> Page<Bakery> {

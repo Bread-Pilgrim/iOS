@@ -12,6 +12,7 @@ struct SelectedMenu: Identifiable {
     let id: Int
     let menu: BakeryMenu
     var quantity: Int
+    let breadType: Int
 }
 
 @MainActor
@@ -30,7 +31,7 @@ final class WriteReviewViewModel: ObservableObject {
     private let getBakeryMenuUseCase: GetBakeryMenuUseCase
     private let writeReviewUseCase: WriteReviewUseCase
     
-    var onReviewSubmitted: (() -> Void)?
+    var onReviewSubmitted: (([Badge]?) -> Void)?
     
     init(
         bakeryId: Int,
@@ -61,7 +62,10 @@ final class WriteReviewViewModel: ObservableObject {
     
     func toggleMenu(_ menu: BakeryMenu, isSelected: Bool) {
         if isSelected {
-            selectedMenus[menu.id] = SelectedMenu(id: menu.id, menu: menu, quantity: 1)
+            selectedMenus[menu.id] = SelectedMenu(id: menu.id,
+                                                  menu: menu,
+                                                  quantity: 1,
+                                                  breadType: menu.breadTypeID)
         } else {
             selectedMenus.removeValue(forKey: menu.id)
         }
@@ -85,14 +89,18 @@ final class WriteReviewViewModel: ObservableObject {
             do {
                 // SelectedMenu를 ConsumedMenu로 변환
                 let consumedMenus = selectedMenus.values.map { selectedMenu in
-                    ConsumedMenu(menuId: selectedMenu.menu.id, quantity: selectedMenu.quantity)
+                    ConsumedMenu(
+                        menuId: selectedMenu.menu.id,
+                        quantity: selectedMenu.quantity,
+                        breadTypeID: selectedMenu.breadType
+                    )
                 }
                 
                 // 이미지를 Data로 변환
                 let imageData = selectedImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
                 
                 // 리뷰 작성 API 호출
-                try await writeReviewUseCase.execute(
+                let response = try await writeReviewUseCase.execute(
                     bakeryId,
                     request: WriteReviewRequestDTO(
                         rating: rating,
@@ -104,7 +112,7 @@ final class WriteReviewViewModel: ObservableObject {
                     imageData: imageData
                 )
                 
-                onReviewSubmitted?()
+                onReviewSubmitted?(response)
             } catch let APIError.serverError(_, message) {
                 errorMessage = message
             } catch {

@@ -24,6 +24,7 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var showMenuSelection = false
     @Published var currentReviewType: ReviewType = .visitor
     @Published var currentSortOption: SortOption = .like
+    @Published var badges: [Badge] = []
     
     let filter: BakeryDetailFilter
     private let getBakeryDetailUseCase: GetBakeryDetailUseCase

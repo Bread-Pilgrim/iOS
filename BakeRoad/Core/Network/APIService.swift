@@ -23,10 +23,11 @@ final class APIService {
         self.tokenStore = tokenStore
     }
     
-    func request<T: Decodable>(
+    func request<T: Decodable, E: Decodable>(
         _ request: APIRequest,
-        responseType: T.Type
-    ) async throws -> T {
+        responseType: T.Type,
+        extraType: E.Type
+    ) async throws -> (data: T, extra: E?) {
         let url = baseURL + request.path
         let method = HTTPMethod(rawValue: request.method.rawValue)
         let parameters = try request.parameters?.asDictionary()
@@ -48,19 +49,19 @@ final class APIService {
             headers: headers
         )
         
-        let baseResponse: BaseResponse<T> = try await withCheckedThrowingContinuation { continuation in
+        let baseResponse: BaseResponse<T, E> = try await withCheckedThrowingContinuation { continuation in
             dataTask.responseData { response in
                 switch response.result {
                 case .success(let data):
                     do {
-                        let decoded = try JSONDecoder().decode(BaseResponse<T>.self, from: data)
+                        let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
                         continuation.resume(returning: decoded)
                     } catch {
                         continuation.resume(throwing: APIError.decoding)
                     }
                 case .failure(let afError):
                     if let data = response.data,
-                       let decoded = try? JSONDecoder().decode(BaseResponse<T>.self, from: data) {
+                       let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
                         continuation.resume(
                             throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
                         )
@@ -82,19 +83,20 @@ final class APIService {
         
         guard let data = baseResponse.data else {
             if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
-                return emptyResult
+                return (emptyResult, nil)
             }
             throw APIError.emptyData
         }
         
-        return data
+        return (data, baseResponse.extra)
     }
     
-    func requestMultipart<T: Decodable>(
+    func requestMultipart<T: Decodable, E: Decodable>(
         _ request: APIRequest,
         imageData: [Data],
-        responseType: T.Type
-    ) async throws -> T {
+        responseType: T.Type,
+        extraType: E.Type
+    ) async throws -> (data: T, extra: E?) {
         let url = baseURL + request.path
         let method = HTTPMethod(rawValue: request.method.rawValue)
         let parameters = try request.parameters?.asDictionary()
@@ -108,7 +110,7 @@ final class APIService {
             }
         }
         
-        let baseResponse: BaseResponse<T> = try await withCheckedThrowingContinuation { continuation in
+        let baseResponse: BaseResponse<T, E> = try await withCheckedThrowingContinuation { continuation in
             session.upload(multipartFormData: { multipartFormData in
                 if let parameters = parameters {
                     for (key, value) in parameters {
@@ -131,14 +133,14 @@ final class APIService {
                 switch response.result {
                 case .success(let data):
                     do {
-                        let decoded = try JSONDecoder().decode(BaseResponse<T>.self, from: data)
+                        let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
                         continuation.resume(returning: decoded)
                     } catch {
                         continuation.resume(throwing: APIError.decoding)
                     }
                 case .failure(let afError):
                     if let data = response.data,
-                       let decoded = try? JSONDecoder().decode(BaseResponse<T>.self, from: data) {
+                       let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
                         continuation.resume(
                             throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
                         )
@@ -160,11 +162,11 @@ final class APIService {
         
         guard let data = baseResponse.data else {
             if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
-                return emptyResult
+                return (emptyResult, nil)
             }
             throw APIError.emptyData
         }
         
-        return data
+        return (data, baseResponse.extra)
     }
 }

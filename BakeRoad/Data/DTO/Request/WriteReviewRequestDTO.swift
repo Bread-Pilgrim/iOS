@@ -42,9 +42,11 @@ struct WriteReviewRequestDTO: Encodable {
 struct ConsumedMenu: Encodable {
     let menuId: Int
     let quantity: Int
+    let breadTypeID: Int
     
     enum CodingKeys: String, CodingKey {
         case menuId = "menu_id"
         case quantity
+        case breadTypeID = "bread_type_id"
     }
 }

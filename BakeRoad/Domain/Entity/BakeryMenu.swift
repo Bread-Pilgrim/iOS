@@ -8,7 +8,8 @@
 import Foundation
 
 struct BakeryMenu: Identifiable, Equatable {
-    let id: Int               // menu_id
-    let name: String          // menu_name
-    let isSignature: Bool     // is_signature
+    let id: Int
+    let name: String
+    let breadTypeID: Int
+    let isSignature: Bool
 }

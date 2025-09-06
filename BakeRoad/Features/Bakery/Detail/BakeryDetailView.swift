@@ -35,6 +35,7 @@ struct BakeryDetailView: View {
     
     @State private var selectedTab: DetailTab = .home
     @State private var showReviewComplete = false
+    @State private var showBadgeSheet = false
     
     var body: some View {
         Group {
@@ -115,18 +116,23 @@ struct BakeryDetailView: View {
                         getBakeryMenuUseCase: viewModel.getBakeryMenuUseCase,
                         writeReviewUseCase: viewModel.writeReviewUseCase
                     )
-                    writeReviewViewModel.onReviewSubmitted = {
+                    writeReviewViewModel.onReviewSubmitted = { badges in
                         viewModel.showMenuSelection = false
                         showReviewComplete = true
+                        if let badges = badges {
+                            viewModel.badges = badges
+                            showBadgeSheet = true
+                        }
                     }
                     return writeReviewViewModel
                 }())
             }
         }
-        .onChange(of: showReviewComplete) { oldValue, newValue in
-            if newValue {
-                ToastManager.show(message: "리뷰가 성공적으로 작성되었습니다.", type: .success)
-            }
+        .sheet(isPresented: $showBadgeSheet) {
+            BadgeEarnedSheet(
+                badges: viewModel.badges,
+                isPresented: $showBadgeSheet
+            )
         }
         .fullScreenCover(isPresented: $showReviewComplete) {
             ReviewCompleteView(
