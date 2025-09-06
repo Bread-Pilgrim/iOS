@@ -137,6 +137,9 @@ struct HomeView: View {
                 )
             )
             .padding(.bottom, 28)
+            .refreshable {
+                Task { await viewModel.loadInitial() }
+            }
             .onChange(of: viewModel.errorMessage) { oldValue, newValue in
                 if let message = newValue {
                     ToastManager.show(message: message, type: .error)
