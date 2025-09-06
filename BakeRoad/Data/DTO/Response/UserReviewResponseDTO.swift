@@ -20,6 +20,7 @@ struct UserReviewResponseDTO: Decodable {
 struct UserReviewDTO: Decodable {
     let reviewId: Int
     let bakeryId: Int
+    let commericalAreaID: Int
     let bakeryName: String
     let reviewContent: String
     let reviewRating: Double
@@ -48,6 +49,7 @@ struct UserReviewDTO: Decodable {
     private enum CodingKeys: String, CodingKey {
         case reviewId = "review_id"
         case bakeryId = "bakery_id"
+        case commericalAreaID = "commerical_area_id"
         case bakeryName = "bakery_name"
         case reviewContent = "review_content"
         case reviewRating = "review_rating"
@@ -64,6 +66,7 @@ extension UserReviewDTO {
         UserReview(
             id: reviewId,
             bakeryId: bakeryId,
+            commericalAreaID: commericalAreaID,
             bakeryName: bakeryName,
             reviewContent: reviewContent,
             reviewRating: reviewRating,

@@ -34,7 +34,7 @@ struct UserReviewCard: View {
                     onDetailsTapped(
                         BakeryDetailFilter(
                             bakeryId: review.bakeryId,
-                            areaCodes: [14],
+                            areaCodes: [review.commericalAreaID],
                             tourCatCodes: CategoryManager.shared.selectedCategoryCodes
                         )
                     )
