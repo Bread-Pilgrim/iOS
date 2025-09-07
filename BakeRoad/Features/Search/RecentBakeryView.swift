@@ -29,7 +29,9 @@ struct RecentBakeryView: View {
                     Spacer()
                     
                     Button("전체 삭제") {
-                        viewModel.clearAllRecentBakeries()
+                        Task {
+                            await viewModel.clearAllRecentBakeries()
+                        }
                     }
                     .font(.bodyXsmallSemibold)
                     .foregroundColor(viewModel.recentBakeries.isEmpty ? .gray200 : .gray800)

@@ -186,7 +186,8 @@ extension MainView {
     private func createSearchViewModel() -> SearchViewModel {
         let viewModel = SearchViewModel(
             searchBakeryUseCase: coordinator.dependency.searchBakeyUseCase,
-            recentBakeryUseCase: coordinator.dependency.recentBakeryUseCase
+            recentBakeryUseCase: coordinator.dependency.recentBakeryUseCase,
+            deleteRecentBakeryUseCase: coordinator.dependency.deleteRecentBakeryUseCase
         )
         viewModel.onNavigateToBakeryDetail = { filter in
             coordinator.push(.searchDetail(filter))

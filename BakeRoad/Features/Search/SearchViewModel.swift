@@ -24,15 +24,18 @@ class SearchViewModel: ObservableObject {
     private let recentSearchManager = RecentSearchManager()
     private let searchBakeryUseCase: SearchBakeryUseCase
     private let recentBakeryUseCase: RecentBakeryUseCase
+    private let deleteRecentBakeryUseCase: DeleteRecentBakeryUseCase
     
     var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
     
     init (
         searchBakeryUseCase: SearchBakeryUseCase,
-        recentBakeryUseCase: RecentBakeryUseCase
+        recentBakeryUseCase: RecentBakeryUseCase,
+        deleteRecentBakeryUseCase: DeleteRecentBakeryUseCase
     ) {
         self.searchBakeryUseCase = searchBakeryUseCase
         self.recentBakeryUseCase = recentBakeryUseCase
+        self.deleteRecentBakeryUseCase = deleteRecentBakeryUseCase
         
         Task { await loadInitial() }
     }
@@ -138,7 +141,20 @@ class SearchViewModel: ObservableObject {
         isSearchFocused = false
     }
     
-    func clearAllRecentBakeries() {
+    func clearAllRecentBakeries() async {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            try await deleteRecentBakeryUseCase.execute()
+            recentBakeries.removeAll()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
     }
     
     func didTapBakery(bakeryId: Int, areaCode: Int) {

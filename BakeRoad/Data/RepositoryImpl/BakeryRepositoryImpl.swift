@@ -166,4 +166,13 @@ final class BakeryRepositoryImpl: BakeryRepository {
         
         return dto.map { $0.toEntity() }
     }
+    
+    func deleteRecentBakeryList() async throws {
+        let request = APIRequest(
+            path: BakeryEndPoint.listRecent,
+            method: .delete
+        )
+        
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+    }
 }

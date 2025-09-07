@@ -20,4 +20,5 @@ protocol BakeryRepository {
     func writeReview(_ id: Int, requestDTO: WriteReviewRequestDTO, imageData: [Data]) async throws -> [Badge]?
     func getMyBakeryList(_ type: MyBakeryType, requestDTO: BakeryMyListRequestDTO) async throws -> Page<Bakery>
     func getRecentBakeryList() async throws -> [RecommendBakery]
+    func deleteRecentBakeryList() async throws
 }
