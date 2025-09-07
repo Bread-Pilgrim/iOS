@@ -55,7 +55,7 @@ struct BakeryInfoView: View {
                     Spacer()
                     
                     Button {
-                        print("열려라 지도")
+                        openKakaoMap(latitude: 37.3952969470752, longitude: 127.110449292622)
                     } label: {
                         Text("지도 보기")
                             .font(.body2xsmallMedium)
@@ -93,6 +93,20 @@ struct BakeryInfoView: View {
             }
         }
         .padding(.horizontal, 16)
+    }
+    
+    private func openKakaoMap(latitude: Double, longitude: Double) {
+        let urlString = "kakaomap://look?p=\(latitude),\(longitude)"
+        
+        if let url = URL(string: urlString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                if let appStoreURL = URL(string: "https://apps.apple.com/kr/app/kakaomap/id304608425") {
+                    UIApplication.shared.open(appStoreURL)
+                }
+            }
+        }
     }
 }
 

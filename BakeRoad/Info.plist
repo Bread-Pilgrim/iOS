@@ -18,6 +18,7 @@
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
+        <string>kakaomap</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
