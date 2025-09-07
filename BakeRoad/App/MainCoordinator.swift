@@ -31,8 +31,11 @@ final class MainCoordinator: ObservableObject {
     @Published var myPath = NavigationPath()
     
     let dependency: AppDependency
-    init(dependency: AppDependency) {
+    weak var appCoordinator: AppCoordinator?
+    
+    init(dependency: AppDependency, appCoordinator: AppCoordinator? = nil) {
         self.dependency = dependency
+        self.appCoordinator = appCoordinator
         setupKeyboardObservers()
     }
     
@@ -56,6 +59,14 @@ final class MainCoordinator: ObservableObject {
                 self?.isKeyboardVisible = false
             }
         }
+    }
+    
+    func logout() {
+        appCoordinator?.logout()
+    }
+    
+    func deleteAccount() {
+        appCoordinator?.deleteAccount()
     }
     
     func switchTab(_ tab: Tab) { selectedTab = tab }

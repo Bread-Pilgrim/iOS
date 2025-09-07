@@ -348,7 +348,10 @@ extension MainView {
             coordinator.push(.appInfo)
         }
         viewModel.onLogout = {
-            // 로그아웃 처리 로직 (나중에 추가)
+            coordinator.logout()
+        }
+        viewModel.onDeleteAccount = {
+            coordinator.deleteAccount()
         }
         return viewModel
     }

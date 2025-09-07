@@ -17,6 +17,7 @@ class SettingViewModel: ObservableObject {
     var onNavigateToNotifications: (() -> Void)?
     var onNavigateToAppInfo: (() -> Void)?
     var onLogout: (() -> Void)?
+    var onDeleteAccount: (() -> Void)?
     
     func navigateBack() {
         onNavigateBack?()
@@ -39,19 +40,17 @@ class SettingViewModel: ObservableObject {
     }
     
     func confirmDeleteAccount() {
-        showingDeleteAccountAlert = false
-        
         Task {
             await deleteAccount()
+            clearAllUserDefaults()
+            showingDeleteAccountAlert = false
             showingDeleteCompletionAlert = true
         }
     }
     
-    private func deleteAccount() async { }
-    
     func handleDeleteCompletion() {
         showingDeleteCompletionAlert = false
-        onLogout?()
+        onDeleteAccount?()
     }
     
     func dismissAlert() {
@@ -61,7 +60,21 @@ class SettingViewModel: ObservableObject {
     }
     
     func logout() {
-        showingLogoutAlert = false
-        onLogout?()
+        Task {
+            await logoutAccount()
+            clearAllUserDefaults()
+            showingLogoutAlert = false
+            onLogout?()
+        }
+    }
+    
+    private func deleteAccount() async { }
+    
+    private func logoutAccount() async { }
+    
+    private func clearAllUserDefaults() {
+        guard let bundleId = Bundle.main.bundleIdentifier else { return }
+        UserDefaults.standard.removePersistentDomain(forName: bundleId)
+        UserDefaults.standard.synchronize()
     }
 }

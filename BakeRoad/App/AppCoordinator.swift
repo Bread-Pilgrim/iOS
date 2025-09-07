@@ -31,7 +31,19 @@ final class AppCoordinator: ObservableObject {
     }
     
     func showMain() {
-        mainCoordinator = MainCoordinator(dependency: dependency)
+        mainCoordinator = MainCoordinator(dependency: dependency, appCoordinator: self)
         route = .main
+    }
+    
+    func logout() {
+        mainCoordinator = nil
+        route = .login
+        ToastManager.show(message: "로그아웃되었습니다.")
+    }
+    
+    func deleteAccount() {
+        mainCoordinator = nil
+        route = .login
+        ToastManager.show(message: "회원탈퇴가 완료되었습니다.")
     }
 }
