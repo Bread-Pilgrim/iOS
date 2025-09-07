@@ -46,7 +46,7 @@ struct WriteReviewView: View {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(Array(viewModel.selectedMenus.values)) { selectedMenu in
-                                BakeRoadChip(title: selectedMenu.menu.name,
+                                BakeRoadChip(title: "\(selectedMenu.menu.name) \(selectedMenu.quantity)개",
                                              color: .lightGray,
                                              size: .large,
                                              style: .weak)
