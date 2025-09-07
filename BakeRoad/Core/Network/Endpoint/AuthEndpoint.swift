@@ -8,6 +8,7 @@
 import Foundation
 
 enum AuthEndpoint {
-    static let login = "/auth/login"
     static let verifyToken = "/auth/token/verify"
+    static let login = "/auth/login"
+    static let logout = "/auth/logout"
 }

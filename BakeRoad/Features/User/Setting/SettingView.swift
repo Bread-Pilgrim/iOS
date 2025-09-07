@@ -52,6 +52,12 @@ struct SettingView: View {
             
             Spacer()
         }
+        .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+            if let message = newValue {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
+            }
+        }
         .overlay {
             if viewModel.showingLogoutAlert || viewModel.showingDeleteAccountAlert || viewModel.showingDeleteCompletionAlert {
                 Color.black.opacity(0.4)

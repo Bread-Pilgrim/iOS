@@ -12,6 +12,15 @@ class SettingViewModel: ObservableObject {
     @Published var showingLogoutAlert = false
     @Published var showingDeleteAccountAlert = false
     @Published var showingDeleteCompletionAlert = false
+    @Published var errorMessage: String?
+    
+    private let logoutUseCase: LogoutUseCase
+    
+    init(
+        logoutUseCase: LogoutUseCase
+    ) {
+        self.logoutUseCase = logoutUseCase
+    }
     
     var onNavigateBack: (() -> Void)?
     var onNavigateToNotifications: (() -> Void)?
@@ -70,7 +79,15 @@ class SettingViewModel: ObservableObject {
     
     private func deleteAccount() async { }
     
-    private func logoutAccount() async { }
+    private func logoutAccount() async {
+        do {
+            try await logoutUseCase.execute()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
+    }
     
     private func clearAllUserDefaults() {
         guard let bundleId = Bundle.main.bundleIdentifier else { return }

@@ -57,4 +57,13 @@ final class LoginRepositoryImpl: LoginRepository {
         
         return entity
     }
+    
+    func logout() async throws {
+        let request = APIRequest(
+            path: AuthEndpoint.logout,
+            method: .post
+        )
+        
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+    }
 }
