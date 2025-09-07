@@ -24,10 +24,10 @@ final class LoginViewModel: ObservableObject {
     func login(_ token: String? = nil) {
         Task {
             isLoading = true
+            defer { isLoading = false }
             
             do {
                 let loginResult = try await loginUseCase.execute(token)
-                isLoading = false
                 
                 if loginResult.onboardingCompleted {
                     coordinator.route = .main

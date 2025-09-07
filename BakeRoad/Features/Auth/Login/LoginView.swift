@@ -44,6 +44,12 @@ struct LoginView: View {
             }
             .padding(.horizontal, 16)
         }
+        .disabled(viewModel.isLoading)
+        .overlay {
+            if viewModel.isLoading {
+                ProgressView()
+            }
+        }
         .onChange(of: viewModel.errorMessage) { oldValue, newValue in
             if let message = newValue {
                 ToastManager.show(message: message, type: .error)
