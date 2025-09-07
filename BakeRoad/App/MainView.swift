@@ -121,7 +121,7 @@ extension MainView {
         case .list(let filter):
             BakeryListView(viewModel: createBakeryListViewModel(filter: filter))
         case .bakeryDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popHome))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popHome, popToHome: coordinator.returnToHome))
                 .hideNavigationBar()
         }
     }
@@ -130,7 +130,7 @@ extension MainView {
     private func searchNavigationDestination(_ screen: MainCoordinator.SearchScreen) -> some View {
         switch screen {
         case .searchDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popSearch))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popSearch, popToHome: coordinator.returnToHome))
                 .hideNavigationBar()
         }
     }
@@ -139,7 +139,7 @@ extension MainView {
     private func favoritesNavigationDestination(_ screen: MainCoordinator.FavoritesScreen) -> some View {
         switch screen {
         case .favoritesDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popFavorites))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popFavorites, popToHome: coordinator.returnToHome))
                 .hideNavigationBar()
         }
     }
@@ -160,7 +160,7 @@ extension MainView {
             UserReviewListView(viewModel: createUserReviewListViewModel())
                 .hideNavigationBar()
         case .myReviewDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popMy))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.returnToHome, popToHome: coordinator.returnToHome))
                 .hideNavigationBar()
         case .preference:
             OnboardingView(viewModel: createPreferenceViewModel()) {
@@ -226,7 +226,8 @@ extension MainView {
     
     private func createBakeryDetailViewModel(
         filter: BakeryDetailFilter,
-        popAction: @escaping () -> Void
+        popAction: @escaping () -> Void,
+        popToHome: @escaping () -> Void
     ) -> BakeryDetailViewModel {
         let viewModel = BakeryDetailViewModel(
             filter: filter,
@@ -243,6 +244,7 @@ extension MainView {
             writeReviewUseCase: coordinator.dependency.writeReviewUseCase
         )
         viewModel.onNavigateBack = popAction
+        viewModel.onNavigateHome = popToHome
         return viewModel
     }
     

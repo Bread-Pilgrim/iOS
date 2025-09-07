@@ -104,4 +104,17 @@ final class MainCoordinator: ObservableObject {
             isTabBarHidden = !myPath.isEmpty
         }
     }
+    
+    func returnToHome() {
+        clearAllNavigationStacks()
+        selectedTab = .home
+        isTabBarHidden = false
+    }
+    
+    private func clearAllNavigationStacks() {
+        homePath = NavigationPath()
+        searchPath = NavigationPath()
+        favoritesPath = NavigationPath()
+        myPath = NavigationPath()
+    }
 }

@@ -41,6 +41,7 @@ final class BakeryDetailViewModel: ObservableObject {
     let writeReviewUseCase: WriteReviewUseCase
     
     var onNavigateBack: (() -> Void)?
+    var onNavigateHome: (() -> Void)?
     
     init(
         filter: BakeryDetailFilter,

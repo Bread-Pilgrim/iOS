@@ -139,7 +139,7 @@ struct BakeryDetailView: View {
                 bakeryId: viewModel.filter.bakeryId,
                 onGoHome: {
                     showReviewComplete = false
-                    viewModel.onNavigateBack?()
+                    viewModel.onNavigateHome?()
                 },
                 onGoToReview: {
                     showReviewComplete = false
