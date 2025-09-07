@@ -62,6 +62,8 @@ final class AppDependency {
     let recentBakeryUseCase: RecentBakeryUseCase
     let getTourEventUseCase: GetTourEventUseCase
     let deleteRecentBakeryUseCase: DeleteRecentBakeryUseCase
+    let logoutUseCase: LogoutUseCase
+    let deleteAccountUseCase: DeleteAccountUseCase
     
     private init() {
         // 네트워크/토큰 관련
@@ -123,5 +125,7 @@ final class AppDependency {
         self.recentBakeryUseCase = RecentBakeryUseCaseImpl(repository: bakeryRepository)
         self.getTourEventUseCase = GetTourEventUseCaseImpl(repository: tourRepository)
         self.deleteRecentBakeryUseCase = DeleteRecentBakeryUseCaseImpl(repository: bakeryRepository)
+        self.logoutUseCase = LogoutUseCaseImpl(repository: loginRepository)
+        self.deleteAccountUseCase = DeleteAccountUseCaseImpl(repository: userRepository)
     }
 }

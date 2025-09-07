@@ -56,6 +56,15 @@ final class UserRepositoryImpl: UserRepository {
         return dto.toEntity()
     }
     
+    func deleteAccount() async throws {
+        let request = APIRequest(
+            path: UserEndpoint.userProfile,
+            method: .delete
+        )
+        
+        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+    }
+    
     func getUserReview(_ requestDTO: UserReviewRequestDTO) async throws -> Page<UserReview> {
         let request = APIRequest(
             path: UserEndpoint.getMyReviews,

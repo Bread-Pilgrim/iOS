@@ -376,7 +376,10 @@ extension MainView {
     }
     
     private func createSettingViewModel() -> SettingViewModel {
-        let viewModel = SettingViewModel()
+        let viewModel = SettingViewModel(
+            logoutUseCase: coordinator.dependency.logoutUseCase,
+            deleteAccountUseCase: coordinator.dependency.deleteAccountUseCase
+        )
         viewModel.onNavigateBack = {
             coordinator.popMy()
         }

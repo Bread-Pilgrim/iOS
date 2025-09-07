@@ -12,14 +12,18 @@ class SettingViewModel: ObservableObject {
     @Published var showingLogoutAlert = false
     @Published var showingDeleteAccountAlert = false
     @Published var showingDeleteCompletionAlert = false
+    @Published var isLoading = false
     @Published var errorMessage: String?
     
     private let logoutUseCase: LogoutUseCase
+    private let deleteAccountUseCase: DeleteAccountUseCase
     
     init(
-        logoutUseCase: LogoutUseCase
+        logoutUseCase: LogoutUseCase,
+        deleteAccountUseCase: DeleteAccountUseCase
     ) {
         self.logoutUseCase = logoutUseCase
+        self.deleteAccountUseCase = deleteAccountUseCase
     }
     
     var onNavigateBack: (() -> Void)?
@@ -77,9 +81,23 @@ class SettingViewModel: ObservableObject {
         }
     }
     
-    private func deleteAccount() async { }
+    private func deleteAccount() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            try await deleteAccountUseCase.execute()
+        } catch let APIError.serverError(_, message) {
+            errorMessage = message
+        } catch {
+            errorMessage = "잠시 후 다시 시도해주세요."
+        }
+    }
     
     private func logoutAccount() async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await logoutUseCase.execute()
         } catch let APIError.serverError(_, message) {
