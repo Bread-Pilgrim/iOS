@@ -16,22 +16,39 @@ struct LoginView: View {
     }
     
     var body: some View {
-//        SignInWithAppleButton { requst in
-//            requst.requestedScopes = [.fullName, .email]
-//        } onCompletion: { result in
-//            print(result)
-//        }
-        
         VStack(spacing: 68) {
             Image("login")
             
-            Button {
-                viewModel.login()
-                print("카카오 로그인")
-            } label: {
-                Image("kakaoLogin")
+            VStack(spacing: 16) {
+                Button {
+                    viewModel.login()
+                } label: {
+                    Image("kakaoLogin")
+                        .resizable()
+                }
+                .frame(height: 44)
+                .cornerRadius(10)
+                
+                SignInWithAppleButton { requst in
+                    requst.requestedScopes = [.fullName, .email]
+                } onCompletion: { result in
+                    viewModel.loginWithApple(result)
+                }
+                .frame(height: 44)
+                .cornerRadius(10)
+                .overlay {
+                    Image("appleLogin")
+                        .resizable()
+                        .allowsHitTesting(false)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+            if let message = newValue {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
             }
         }
-        .padding()
     }
 }

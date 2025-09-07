@@ -40,4 +40,21 @@ final class LoginRepositoryImpl: LoginRepository {
         
         return entity
     }
+    
+    func loginWithApple(_ accessToken: String) async throws -> Login {
+        let request = APIRequest(
+            path: AuthEndpoint.login,
+            method: .post,
+            parameters: LoginRequestDTO(loginType: .APPLE),
+            customHeaders: ["access-token": accessToken]
+        )
+        
+        let dto = try await apiClient.request(request, responseType: LoginReponseDTO.self)
+        
+        let entity = LoginMapper.map(from: dto)
+        
+        tokenStore.onboardingCompleted = entity.onboardingCompleted
+        
+        return entity
+    }
 }

@@ -8,17 +8,20 @@
 import Foundation
 
 protocol LoginUseCase {
-    func execute() async throws -> Login
+    func execute(_ accessToken: String?) async throws -> Login
 }
 
 final class LoginUseCaseImpl: LoginUseCase {
     private let repository: LoginRepository
-
+    
     init(repository: LoginRepository) {
         self.repository = repository
     }
-
-    func execute() async throws -> Login {
+    
+    func execute(_ accessToken: String?) async throws -> Login {
+        if let token = accessToken {
+            return try await repository.loginWithApple(token)
+        }
         return try await repository.loginWithKakao()
     }
 }

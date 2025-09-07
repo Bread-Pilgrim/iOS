@@ -9,4 +9,5 @@ import Foundation
 
 protocol LoginRepository {
     func loginWithKakao() async throws -> Login
+    func loginWithApple(_ accessToken: String) async throws -> Login
 }
