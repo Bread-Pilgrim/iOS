@@ -10,7 +10,7 @@ import Foundation
 struct UserReview: Identifiable, Equatable {
     let id: Int
     let bakeryId: Int
-    let commericalAreaID: Int
+    let commercialAreaID: Int
     let bakeryName: String
     let reviewContent: String
     let reviewRating: Double
@@ -24,7 +24,7 @@ struct UserReview: Identifiable, Equatable {
         return UserReview(
             id: id,
             bakeryId: bakeryId,
-            commericalAreaID: commericalAreaID,
+            commercialAreaID: commercialAreaID,
             bakeryName: bakeryName,
             reviewContent: reviewContent,
             reviewRating: reviewRating,
