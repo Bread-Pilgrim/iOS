@@ -17,10 +17,33 @@ final class MainCoordinator: ObservableObject {
     }
     
     // 탭별 화면 enum
-    enum HomeScreen: Hashable { case list(_ filter: BakeryListFilter), bakeryDetail(_ filter: BakeryDetailFilter) }
-    enum SearchScreen: Hashable { case searchDetail(_ filter: BakeryDetailFilter) }
-    enum FavoritesScreen: Hashable { case favoritesDetail(_ filter: BakeryDetailFilter) }
-    enum MyScreen: Hashable { case breadReportList, breadReport(year: Int, month: Int), badge, myReview, myReviewDetail(_ filter: BakeryDetailFilter), preference, setting, notification, appInfo }
+    enum HomeScreen: Hashable {
+        case list(_ filter: BakeryListFilter)
+        case bakeryDetail(_ filter: BakeryDetailFilter)
+        case badgeFromHome
+    }
+    
+    enum SearchScreen: Hashable {
+        case searchDetail(_ filter: BakeryDetailFilter)
+        case badgeFromSearch
+    }
+    
+    enum FavoritesScreen: Hashable {
+        case favoritesDetail(_ filter: BakeryDetailFilter)
+        case badgeFromFavorites
+    }
+    
+    enum MyScreen: Hashable {
+        case breadReportList
+        case breadReport(year: Int, month: Int)
+        case badge
+        case myReview
+        case myReviewDetail(_ filter: BakeryDetailFilter)
+        case preference
+        case setting
+        case notification
+        case appInfo
+    }
     
     @Published var selectedTab: Tab = .home
     @Published var isTabBarHidden = false
@@ -67,6 +90,26 @@ final class MainCoordinator: ObservableObject {
     
     func deleteAccount() {
         appCoordinator?.deleteAccount()
+    }
+    
+    func pushBadgeFromHome() {
+        isTabBarHidden = true
+        homePath.append(HomeScreen.badgeFromHome)
+    }
+    
+    func pushBadgeFromSearch() {
+        isTabBarHidden = true
+        searchPath.append(SearchScreen.badgeFromSearch)
+    }
+    
+    func pushBadgeFromFavorites() {
+        isTabBarHidden = true
+        favoritesPath.append(FavoritesScreen.badgeFromFavorites)
+    }
+    
+    func pushBadgeFromMy() {
+        isTabBarHidden = true
+        myPath.append(MyScreen.badge)
     }
     
     func switchTab(_ tab: Tab) { selectedTab = tab }

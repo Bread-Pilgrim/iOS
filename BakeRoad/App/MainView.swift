@@ -121,7 +121,10 @@ extension MainView {
         case .list(let filter):
             BakeryListView(viewModel: createBakeryListViewModel(filter: filter))
         case .bakeryDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popHome, popToHome: coordinator.returnToHome))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter))
+                .hideNavigationBar()
+        case .badgeFromHome:
+            BadgeListView(viewModel: createBadgeListViewModel())
                 .hideNavigationBar()
         }
     }
@@ -130,7 +133,10 @@ extension MainView {
     private func searchNavigationDestination(_ screen: MainCoordinator.SearchScreen) -> some View {
         switch screen {
         case .searchDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popSearch, popToHome: coordinator.returnToHome))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter))
+                .hideNavigationBar()
+        case .badgeFromSearch:
+            BadgeListView(viewModel: createBadgeListViewModel())
                 .hideNavigationBar()
         }
     }
@@ -139,7 +145,10 @@ extension MainView {
     private func favoritesNavigationDestination(_ screen: MainCoordinator.FavoritesScreen) -> some View {
         switch screen {
         case .favoritesDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.popFavorites, popToHome: coordinator.returnToHome))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter))
+                .hideNavigationBar()
+        case .badgeFromFavorites:
+            BadgeListView(viewModel: createBadgeListViewModel())
                 .hideNavigationBar()
         }
     }
@@ -160,7 +169,7 @@ extension MainView {
             UserReviewListView(viewModel: createUserReviewListViewModel())
                 .hideNavigationBar()
         case .myReviewDetail(let filter):
-            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter, popAction: coordinator.returnToHome, popToHome: coordinator.returnToHome))
+            BakeryDetailView(viewModel: createBakeryDetailViewModel(filter: filter))
                 .hideNavigationBar()
         case .preference:
             OnboardingView(viewModel: createPreferenceViewModel()) {
@@ -226,9 +235,7 @@ extension MainView {
     }
     
     private func createBakeryDetailViewModel(
-        filter: BakeryDetailFilter,
-        popAction: @escaping () -> Void,
-        popToHome: @escaping () -> Void
+        filter: BakeryDetailFilter
     ) -> BakeryDetailViewModel {
         let viewModel = BakeryDetailViewModel(
             filter: filter,
@@ -244,8 +251,31 @@ extension MainView {
             getBakeryMenuUseCase: coordinator.dependency.getBakeryMenuUseCase,
             writeReviewUseCase: coordinator.dependency.writeReviewUseCase
         )
-        viewModel.onNavigateBack = popAction
-        viewModel.onNavigateHome = popToHome
+        viewModel.onNavigateBack = {
+            switch coordinator.selectedTab {
+            case .home:
+                coordinator.popHome()
+            case .search:
+                coordinator.popSearch()
+            case .favorites:
+                coordinator.popFavorites()
+            case .my:
+                coordinator.popMy()
+            }
+        }
+        viewModel.onNavigateHome = coordinator.returnToHome
+        viewModel.onNavigateToBadgeList = {
+            switch coordinator.selectedTab {
+            case .home:
+                coordinator.pushBadgeFromHome()
+            case .search:
+                coordinator.pushBadgeFromSearch()
+            case .favorites:
+                coordinator.pushBadgeFromFavorites()
+            case .my:
+                coordinator.pushBadgeFromMy()
+            }
+        }
         return viewModel
     }
     
@@ -302,7 +332,16 @@ extension MainView {
             badgeDerepresentUseCase: coordinator.dependency.badgeDerepresentUseCase
         )
         viewModel.onNavigateBack = {
-            coordinator.popMy()
+            switch coordinator.selectedTab {
+            case .home:
+                coordinator.popHome()
+            case .search:
+                coordinator.popSearch()
+            case .favorites:
+                coordinator.popFavorites()
+            case .my:
+                coordinator.popMy()
+            }
         }
         return viewModel
     }

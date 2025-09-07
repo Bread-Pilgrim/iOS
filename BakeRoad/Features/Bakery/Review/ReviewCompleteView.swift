@@ -9,8 +9,12 @@ import SwiftUI
 
 struct ReviewCompleteView: View {
     let bakeryId: Int
+    let badges: [Badge]
     let onGoHome: () -> Void
     let onGoToReview: () -> Void
+    let onGoToBadgeList: () -> Void
+    
+    @State private var showBadgeSheet = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -43,5 +47,17 @@ struct ReviewCompleteView: View {
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            showBadgeSheet = badges.count > 0
+        }
+        .sheet(isPresented: $showBadgeSheet) {
+            BadgeEarnedSheet(
+                badges: badges,
+                isPresented: $showBadgeSheet,
+                onGoToBadgeList: onGoToBadgeList
+            )
+            .presentationDetents([badges.count > 1 ? .fraction(0.51) : .fraction(0.47)])
+            .presentationDragIndicator(.hidden)
+        }
     }
 }

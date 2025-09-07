@@ -12,6 +12,7 @@ import Kingfisher
 struct BadgeEarnedSheet: View {
     let badges: [Badge]
     @Binding var isPresented: Bool
+    let onGoToBadgeList: () -> Void
     @State private var currentIndex = 0
     
     var body: some View {
@@ -54,6 +55,7 @@ struct BadgeEarnedSheet: View {
                 
                 BakeRoadSolidButton(title: "내 뱃지 보기", style: .primary, size: .large) {
                     isPresented = false
+                    onGoToBadgeList()
                 }
                 .frame(maxWidth: .infinity)
             }

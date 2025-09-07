@@ -35,7 +35,6 @@ struct BakeryDetailView: View {
     
     @State private var selectedTab: DetailTab = .home
     @State private var showReviewComplete = false
-    @State private var showBadgeSheet = false
     
     var body: some View {
         Group {
@@ -121,22 +120,16 @@ struct BakeryDetailView: View {
                         showReviewComplete = true
                         if let badges = badges {
                             viewModel.badges = badges
-                            showBadgeSheet = true
                         }
                     }
                     return writeReviewViewModel
                 }())
             }
         }
-        .sheet(isPresented: $showBadgeSheet) {
-            BadgeEarnedSheet(
-                badges: viewModel.badges,
-                isPresented: $showBadgeSheet
-            )
-        }
         .fullScreenCover(isPresented: $showReviewComplete) {
             ReviewCompleteView(
                 bakeryId: viewModel.filter.bakeryId,
+                badges: viewModel.badges,
                 onGoHome: {
                     showReviewComplete = false
                     viewModel.onNavigateHome?()
@@ -146,8 +139,10 @@ struct BakeryDetailView: View {
                     selectedTab = .review
                     viewModel.currentReviewType = .my
                     Task { await viewModel.loadReviews(type: .my) }
+                }) {
+                    showReviewComplete = false
+                    viewModel.onNavigateToBadgeList?()
                 }
-            )
         }
     }
     

@@ -42,6 +42,7 @@ final class BakeryDetailViewModel: ObservableObject {
     
     var onNavigateBack: (() -> Void)?
     var onNavigateHome: (() -> Void)?
+    var onNavigateToBadgeList: (() -> Void)?
     
     init(
         filter: BakeryDetailFilter,
