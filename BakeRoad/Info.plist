@@ -9,7 +9,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao51502a87adb7922bc9b5e1fe7cc39c5a</string>
+				<string>kakaod368bee8923ade9b85e79051dcd9ab49</string>
 			</array>
 		</dict>
 	</array>
@@ -18,7 +18,7 @@
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
-        <string>kakaomap</string>
+		<string>kakaomap</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>

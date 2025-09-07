@@ -11,8 +11,9 @@ final class UserDefaultsTokenStore: TokenStore, @unchecked Sendable {
     private let accessTokenKey = "access-token"
     private let refreshTokenKey = "refresh-token"
     private let onboardingCompletedKey = "onboarding_completed"
+    private let loginTypeKey = "login_type"
     private let userDefaults = UserDefaults.standard
-
+    
     var accessToken: String? {
         get { userDefaults.string(forKey: accessTokenKey) }
         set {
@@ -23,7 +24,7 @@ final class UserDefaultsTokenStore: TokenStore, @unchecked Sendable {
             }
         }
     }
-
+    
     var refreshToken: String? {
         get { userDefaults.string(forKey: refreshTokenKey) }
         set {
@@ -38,5 +39,19 @@ final class UserDefaultsTokenStore: TokenStore, @unchecked Sendable {
     var onboardingCompleted: Bool {
         get { userDefaults.bool(forKey: onboardingCompletedKey) }
         set { userDefaults.set(newValue, forKey: onboardingCompletedKey) }
+    }
+    
+    var loginType: LoginType? {
+        get {
+            guard let typeString = userDefaults.string(forKey: loginTypeKey) else { return nil }
+            return LoginType(rawValue: typeString)
+        }
+        set {
+            if let type = newValue {
+                userDefaults.set(type.rawValue, forKey: loginTypeKey)
+            } else {
+                userDefaults.removeObject(forKey: loginTypeKey)
+            }
+        }
     }
 }

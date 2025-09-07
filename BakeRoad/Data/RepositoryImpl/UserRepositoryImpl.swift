@@ -9,9 +9,17 @@ import Foundation
 
 final class UserRepositoryImpl: UserRepository {
     private let apiClient: APIClient
+    private let kakaoLoginService: KakaoLoginService
+    private let tokenStore: TokenStore
     
-    init(apiClient: APIClient) {
+    init(
+        apiClient: APIClient,
+        kakaoLoginService: KakaoLoginService,
+        tokenStore: TokenStore = UserDefaultsTokenStore()
+    ) {
         self.apiClient = apiClient
+        self.kakaoLoginService = kakaoLoginService
+        self.tokenStore = tokenStore
     }
     
     func postUserOnboard(_ dto: UserOnboardRequestDTO) async throws {
@@ -63,6 +71,10 @@ final class UserRepositoryImpl: UserRepository {
         )
         
         let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+        
+        if tokenStore.loginType == .KAKAO {
+            try await kakaoLoginService.withdraw()
+        }
     }
     
     func getUserReview(_ requestDTO: UserReviewRequestDTO) async throws -> Page<UserReview> {

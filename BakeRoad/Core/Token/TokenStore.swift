@@ -11,4 +11,5 @@ protocol TokenStore: AnyObject, Sendable {
     var accessToken: String? { get set }
     var refreshToken: String? { get set }
     var onboardingCompleted: Bool { get set }
+    var loginType: LoginType? { get set }
 }

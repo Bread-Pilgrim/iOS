@@ -82,7 +82,10 @@ final class AppDependency {
             apiClient: authenticatedClient
         )
         self.preferenceRepository = PreferenceRepositoryImpl(apiClient: authenticatedClient)
-        self.userRepository = UserRepositoryImpl(apiClient: authenticatedClient)
+        self.userRepository = UserRepositoryImpl(
+            apiClient: authenticatedClient,
+            kakaoLoginService: kakaoLoginService
+        )
         self.areasRepository = AreasRepositoryImpl(apiClient: authenticatedClient)
         self.bakeryRepository = BakeryRepositoryImpl(apiClient: authenticatedClient)
         self.tourRepository = TourRepositoryImpl(apiClient: authenticatedClient)

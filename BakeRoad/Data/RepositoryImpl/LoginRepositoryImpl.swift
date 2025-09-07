@@ -37,6 +37,7 @@ final class LoginRepositoryImpl: LoginRepository {
         let entity = LoginMapper.map(from: dto)
         
         tokenStore.onboardingCompleted = entity.onboardingCompleted
+        tokenStore.loginType = .KAKAO
         
         return entity
     }
@@ -54,6 +55,7 @@ final class LoginRepositoryImpl: LoginRepository {
         let entity = LoginMapper.map(from: dto)
         
         tokenStore.onboardingCompleted = entity.onboardingCompleted
+        tokenStore.loginType = .APPLE
         
         return entity
     }
@@ -65,5 +67,9 @@ final class LoginRepositoryImpl: LoginRepository {
         )
         
         let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+        
+        if tokenStore.loginType == .KAKAO {
+            try await kakaoLoginService.logout()
+        }
     }
 }
