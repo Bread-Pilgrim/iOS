@@ -12,56 +12,55 @@ struct BreadReportView: View {
     @StateObject var viewModel: BreadReportViewModel
     
     var body: some View {
-        if let breadReport = viewModel.breadReport {
-            VStack(spacing: 20) {
-                ZStack {
-                    HStack {
-                        Button {
-                            viewModel.navigateBack()
-                        } label: {
-                            Image("arrowLeft")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundColor(.black)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(16)
-                    
-                    HStack(spacing: 10) {
-                        if viewModel.canNavigateToPrevious() {
-                            Button {
-                                viewModel.navigateToPrevious()
-                            } label: {
-                                Image(systemName: "chevron.left")
-                                    .foregroundColor(.gray600)
-                                    .frame(width: 20, height: 20)
-                            }
-                        } else {
-                            Spacer()
-                                .frame(width: 20, height: 20)
-                        }
-                        
-                        Text(String(format: "%d년 %d월", breadReport.year, breadReport.month))
-                            .font(.bodyLargeSemibold)
+        VStack(spacing: 20) {
+            ZStack {
+                HStack {
+                    Button {
+                        viewModel.navigateBack()
+                    } label: {
+                        Image("arrowLeft")
+                            .resizable()
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.black)
-                        
-                        if viewModel.canNavigateToNext() {
-                            Button {
-                                viewModel.navigateToNext()
-                            } label: {
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray600)
-                                    .frame(width: 20, height: 20)
-                            }
-                        } else {
-                            Spacer()
+                    }
+                    
+                    Spacer()
+                }
+                .padding(16)
+                
+                HStack(spacing: 10) {
+                    if viewModel.canNavigateToPrevious() {
+                        Button {
+                            viewModel.navigateToPrevious()
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.gray600)
                                 .frame(width: 20, height: 20)
                         }
+                    } else {
+                        Spacer()
+                            .frame(width: 20, height: 20)
+                    }
+                    
+                    Text(viewModel.currentReport.id)
+                        .font(.bodyLargeSemibold)
+                        .foregroundColor(.black)
+                    
+                    if viewModel.canNavigateToNext() {
+                        Button {
+                            viewModel.navigateToNext()
+                        } label: {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray600)
+                                .frame(width: 20, height: 20)
+                        }
+                    } else {
+                        Spacer()
+                            .frame(width: 20, height: 20)
                     }
                 }
-                
+            }
+            if let breadReport = viewModel.breadReport {
                 ScrollView {
                     VStack(spacing: 24) {
                         // 지주 간 부산 지역 Top3
@@ -92,19 +91,21 @@ struct BreadReportView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 20)
                 }
+            } else {
+                Spacer()
             }
-            .background(Color.gray40)
-            .disabled(viewModel.isLoading)
-            .overlay {
-                if viewModel.isLoading {
-                    ProgressView()
-                }
+        }
+        .background(Color.gray40)
+        .disabled(viewModel.isLoading)
+        .overlay {
+            if viewModel.isLoading {
+                ProgressView()
             }
-            .onChange(of: viewModel.errorMessage) { oldValue, newValue in
-                if let message = newValue {
-                    ToastManager.show(message: message, type: .error)
-                    viewModel.errorMessage = nil
-                }
+        }
+        .onChange(of: viewModel.errorMessage) { oldValue, newValue in
+            if let message = newValue {
+                ToastManager.show(message: message, type: .error)
+                viewModel.errorMessage = nil
             }
         }
     }
