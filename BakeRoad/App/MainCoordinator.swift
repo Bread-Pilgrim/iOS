@@ -55,10 +55,12 @@ final class MainCoordinator: ObservableObject {
     
     let dependency: AppDependency
     weak var appCoordinator: AppCoordinator?
+    let badges: [Badge]?
     
-    init(dependency: AppDependency, appCoordinator: AppCoordinator? = nil) {
+    init(dependency: AppDependency, appCoordinator: AppCoordinator? = nil, badges: [Badge]? = nil) {
         self.dependency = dependency
         self.appCoordinator = appCoordinator
+        self.badges = badges
         setupKeyboardObservers()
     }
     

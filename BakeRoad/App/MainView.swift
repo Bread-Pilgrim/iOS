@@ -60,7 +60,8 @@ extension MainView {
             userOnboardUseCase: coordinator.dependency.userOnboardUseCase,
             getUserPreferenceUseCase: coordinator.dependency.getUserPreferenceUseCase,
             updateUserPreferenceUseCase: coordinator.dependency.updateUserPreferenceUseCase,
-            getTourEventUseCase: coordinator.dependency.getTourEventUseCase
+            getTourEventUseCase: coordinator.dependency.getTourEventUseCase,
+            badges: coordinator.badges
         )
         
         viewModel.onNavigateToBakeryList = { filter in
@@ -68,6 +69,9 @@ extension MainView {
         }
         viewModel.onNavigateToBakeryDetail = { filter in
             coordinator.push(.bakeryDetail(filter))
+        }
+        viewModel.onGoToBadgeList = {
+            coordinator.pushBadgeFromHome()
         }
         
         return viewModel

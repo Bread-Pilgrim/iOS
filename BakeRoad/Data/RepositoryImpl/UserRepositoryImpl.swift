@@ -22,14 +22,16 @@ final class UserRepositoryImpl: UserRepository {
         self.tokenStore = tokenStore
     }
     
-    func postUserOnboard(_ dto: UserOnboardRequestDTO) async throws {
+    func postUserOnboard(_ dto: UserOnboardRequestDTO) async throws -> [Badge]? {
         let request = APIRequest(
             path: UserEndpoint.onboarding,
             method: .post,
             parameters: dto
         )
         
-        let _ = try await apiClient.request(request, responseType: EmptyDTO.self)
+        let dto = try await apiClient.request(request, responseType: EmptyDTO.self, extraType: [BadgeTriggerResponseDTO].self)
+        
+        return dto.extra?.map { $0.toEntity() }
     }
     
     func getUserPreference() async throws -> [OnboardingStep: [Preference]] {

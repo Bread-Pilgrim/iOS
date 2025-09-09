@@ -17,9 +17,11 @@ final class HomeViewModel: ObservableObject {
     @Published var hotBakeries: [RecommendBakery] = []
     @Published var tourInfoList: [TourInfo] = []
     @Published var eventPopup: EventPopup?
+    @Published var badges: [Badge]?
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var showEventPopup = false
+    @Published var showBadgePopup = false
     
     private let getAreaListUseCase: GetAreaListUseCase
     private let getBakeriesUseCase: GetBakeriesUseCase
@@ -33,6 +35,7 @@ final class HomeViewModel: ObservableObject {
     
     var onNavigateToBakeryList: ((BakeryListFilter) -> Void)?
     var onNavigateToBakeryDetail: ((BakeryDetailFilter) -> Void)?
+    var onGoToBadgeList: (() -> Void)?
     
     private var areaCodes: String { selectedAreaCodes.map(String.init).joined(separator: ",") }
     private var tourCatCodes: String { categoryManager.tourCatCodes }
@@ -45,7 +48,8 @@ final class HomeViewModel: ObservableObject {
         userOnboardUseCase: UserOnboardUseCase,
         getUserPreferenceUseCase: GetUserPreferenceUseCase,
         updateUserPreferenceUseCase: UpdateUserPreferenceUseCase,
-        getTourEventUseCase: GetTourEventUseCase
+        getTourEventUseCase: GetTourEventUseCase,
+        badges: [Badge]? = nil
     ) {
         self.getAreaListUseCase = getAreaListUseCase
         self.getBakeriesUseCase = getBakeriesUseCase
@@ -55,8 +59,12 @@ final class HomeViewModel: ObservableObject {
         self.getUserPreferenceUseCase = getUserPreferenceUseCase
         self.updateUserPreferenceUseCase = updateUserPreferenceUseCase
         self.getTourEventUseCase = getTourEventUseCase
+        self.badges = badges
         
-        Task { await loadInitial() }
+        Task { 
+            await loadInitial()
+            checkInitialPopups()
+        }
         
         setupBindings()
     }
@@ -123,7 +131,6 @@ final class HomeViewModel: ObservableObject {
         
         do {
             eventPopup = try await getTourEventUseCase.execute(areaCodes)
-            showEventPopup = eventPopup != nil
         } catch let APIError.serverError(_, message) {
             errorMessage = message
         } catch {
@@ -195,5 +202,19 @@ final class HomeViewModel: ObservableObject {
         }
         
         return false
+    }
+    
+    private func checkInitialPopups() {
+        if let badges = badges,
+           !badges.isEmpty {
+            showBadgePopup = true
+        } else if eventPopup != nil && canShowToday() {
+            showEventPopup = true
+        }
+    }
+    
+    func onBadgePopupDismissed() {
+        badges = nil
+        showEventPopup = eventPopup != nil && canShowToday()
     }
 }

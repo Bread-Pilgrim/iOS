@@ -30,8 +30,8 @@ final class AppCoordinator: ObservableObject {
         route = .onboarding
     }
     
-    func showMain() {
-        mainCoordinator = MainCoordinator(dependency: dependency, appCoordinator: self)
+    func showMain(with badges: [Badge]? = nil) {
+        mainCoordinator = MainCoordinator(dependency: dependency, appCoordinator: self, badges: badges)
         route = .main
     }
     

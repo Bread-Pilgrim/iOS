@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UserOnboardUseCase {
-    func execute(_ dto: UserOnboardRequestDTO) async throws
+    func execute(_ dto: UserOnboardRequestDTO) async throws -> [Badge]?
 }
 
 final class UserOnboardUseCaseImpl: UserOnboardUseCase {
@@ -18,7 +18,7 @@ final class UserOnboardUseCaseImpl: UserOnboardUseCase {
         self.repository = repository
     }
     
-    func execute(_ dto: UserOnboardRequestDTO) async throws {
-        try await repository.postUserOnboard(dto)
+    func execute(_ dto: UserOnboardRequestDTO) async throws -> [Badge]? {
+        return try await repository.postUserOnboard(dto)
     }
 }

@@ -29,8 +29,8 @@ struct OnboardingFlowView: View {
             .navigationDestination(for: OnboardingRoute.self) { route in
                 switch route {
                 case .nickname:
-                    NickNameView(viewModel: onboardingViewModel) {
-                        coordinator.showMain()
+                    NickNameView(viewModel: onboardingViewModel) { badges in
+                        coordinator.showMain(with: badges)
                     }
                     .navigationBarBackButtonHidden(true)
                     .toolbar {

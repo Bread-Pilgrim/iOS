@@ -54,7 +54,8 @@ struct ReviewCompleteView: View {
             BadgeEarnedSheet(
                 badges: badges,
                 isPresented: $showBadgeSheet,
-                onGoToBadgeList: onGoToBadgeList
+                onGoToBadgeList: onGoToBadgeList,
+                onDismiss: nil
             )
             .presentationDetents([badges.count > 1 ? .fraction(0.51) : .fraction(0.47)])
             .presentationDragIndicator(.hidden)

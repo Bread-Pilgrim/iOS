@@ -159,6 +159,18 @@ struct HomeView: View {
                     }
                 )
             }
+            .sheet(isPresented: $viewModel.showBadgePopup) {
+                if let badges = viewModel.badges {
+                    BadgeEarnedSheet(badges: badges,
+                                     isPresented: $viewModel.showBadgePopup) {
+                        viewModel.onGoToBadgeList?()
+                    } onDismiss: {
+                        viewModel.onBadgePopupDismissed()
+                    }
+                    .presentationDetents([badges.count > 1 ? .fraction(0.51) : .fraction(0.47)])
+                    .presentationDragIndicator(.hidden)
+                }
+            }
             .sheet(isPresented: $viewModel.showEventPopup) {
                 if let eventPopup = viewModel.eventPopup {
                     EventPopupSheet(

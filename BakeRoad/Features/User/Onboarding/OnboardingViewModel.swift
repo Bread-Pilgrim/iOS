@@ -104,25 +104,26 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
     
-    func submitOnboarding(_ nickName: String) async -> Bool {
-        guard !isLoading else { return false }
+    func submitOnboarding(_ nickName: String) async -> [Badge]? {
+        guard !isLoading else { return nil }
         isLoading = true
         defer { isLoading = false }
         
         do {
-            try await userOnboardUseCase.execute(.init(
+            let response = try await userOnboardUseCase.execute(.init(
                 nickname: nickName,
                 bread_types: selections[.breadType]?.map(\.id) ?? [],
                 flavors: selections[.flavor]?.map(\.id) ?? [],
                 atmospheres: selections[.atmosphere]?.map(\.id) ?? []
             ))
-            return true
+            
+            return response
         } catch let APIError.serverError(_, message) {
             errorMessage = message
-            return false
+            return nil
         } catch {
             errorMessage = "잠시 후 다시 시도해주세요."
-            return false
+            return nil
         }
     }
     

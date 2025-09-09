@@ -13,6 +13,7 @@ struct BadgeEarnedSheet: View {
     let badges: [Badge]
     @Binding var isPresented: Bool
     let onGoToBadgeList: () -> Void
+    var onDismiss: (() -> Void)?
     @State private var currentIndex = 0
     
     var body: some View {
@@ -50,12 +51,14 @@ struct BadgeEarnedSheet: View {
             HStack(spacing: 8) {
                 BakeRoadOutlinedButton(title: "닫기", style: .secondary, size: .large) {
                     isPresented = false
+                    onDismiss?()
                 }
                 .frame(maxWidth: .infinity)
                 
                 BakeRoadSolidButton(title: "내 뱃지 보기", style: .primary, size: .large) {
                     isPresented = false
                     onGoToBadgeList()
+                    onDismiss?()
                 }
                 .frame(maxWidth: .infinity)
             }

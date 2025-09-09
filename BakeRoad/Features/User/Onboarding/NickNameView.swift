@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NickNameView: View {
     @ObservedObject var viewModel: OnboardingViewModel
-    var onComplete: () -> Void
+    var onComplete: ([Badge]) -> Void
     
     @State private var nickname: String = ""
     @State private var isCheckMsg: String = ""
@@ -61,9 +61,8 @@ struct NickNameView: View {
                                 size: .xlarge,
                                 isDisabled: isValid) {
                 Task { @MainActor in
-                    let success = await viewModel.submitOnboarding(nickname)
-                    if success {
-                        onComplete()
+                    if let badges = await viewModel.submitOnboarding(nickname) {
+                        onComplete(badges)
                     } else {
                         isCheckMsg = viewModel.errorMessage ?? ""
                         isTextFieldFocused = true
