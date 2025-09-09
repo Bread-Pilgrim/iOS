@@ -83,7 +83,7 @@ final class APIService {
         
         guard let data = baseResponse.data else {
             if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
-                return (emptyResult, nil)
+                return (emptyResult, baseResponse.extra)
             }
             throw APIError.emptyData
         }
@@ -162,7 +162,7 @@ final class APIService {
         
         guard let data = baseResponse.data else {
             if T.self == EmptyDTO.self, let emptyResult = EmptyDTO() as? T {
-                return (emptyResult, nil)
+                return (emptyResult, baseResponse.extra)
             }
             throw APIError.emptyData
         }
