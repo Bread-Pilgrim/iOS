@@ -52,6 +52,7 @@ final class OnboardingViewModel: ObservableObject {
     private let userOnboardUseCase: UserOnboardUseCase
     private let getUserPreferenceUseCase: GetUserPreferenceUseCase
     private let updateUserPreferenceUseCase: UpdateUserPreferenceUseCase
+    private let tokenStore: TokenStore = UserDefaultsTokenStore()
     
     init(
         getPreferenceOptionsUseCase: GetPreferenceOptionsUseCase,
@@ -116,6 +117,8 @@ final class OnboardingViewModel: ObservableObject {
                 flavors: selections[.flavor]?.map(\.id) ?? [],
                 atmospheres: selections[.atmosphere]?.map(\.id) ?? []
             ))
+            
+            tokenStore.onboardingCompleted = true
             
             return response
         } catch let APIError.serverError(_, message) {
