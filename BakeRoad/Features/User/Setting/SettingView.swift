@@ -41,6 +41,10 @@ struct SettingView: View {
                     viewModel.navigateToAppInfo()
                 }
                 
+                settingMenuItem(title: "개인정보 처리방침") {
+                    UIApplication.shared.open(URL(string: "https://elite-pet-b14.notion.site/261277e51b8680269c80dc42f91b20d0")!)
+                }
+                
                 settingMenuItem(title: "로그아웃", isNavigation: false) {
                     viewModel.showLogoutAlert()
                 }
