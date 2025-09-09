@@ -13,6 +13,8 @@ struct BakeryDetailResponseDTO: Decodable {
     let address: String
     let phone: String
     let openStatus: String
+    let mapy: Double
+    let mapx: Double
     let operatingHours: [OperatingHour]?
     let isLike: Bool
     let bakeryImgUrls: [String]?
@@ -52,6 +54,8 @@ struct BakeryDetailResponseDTO: Decodable {
         case address
         case phone
         case openStatus = "open_status"
+        case mapy
+        case mapx
         case operatingHours = "operating_hours"
         case isLike = "is_like"
         case bakeryImgUrls = "bakery_img_urls"
@@ -67,6 +71,8 @@ extension BakeryDetailResponseDTO {
             address: address,
             phone: phone,
             openStatus: BakeryOpenStatus(rawValue: openStatus) ?? .open,
+            mapy: mapy,
+            mapx: mapx,
             operatingHours: (operatingHours ?? []).map {
                 BakeryDetail.OperatingHour(
                     dayOfWeek: $0.dayOfWeek,

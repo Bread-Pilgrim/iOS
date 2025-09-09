@@ -55,7 +55,7 @@ struct BakeryInfoView: View {
                     Spacer()
                     
                     Button {
-                        openKakaoMap(latitude: 37.3952969470752, longitude: 127.110449292622)
+                        openKakaoMap(latitude: bakery.mapy, longitude: bakery.mapx)
                     } label: {
                         Text("지도 보기")
                             .font(.body2xsmallMedium)

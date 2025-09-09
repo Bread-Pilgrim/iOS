@@ -13,6 +13,8 @@ struct BakeryDetail: Equatable, Identifiable {
     let address: String
     let phone: String?
     let openStatus: BakeryOpenStatus
+    let mapy: Double
+    let mapx: Double
     let operatingHours: [OperatingHour]
     let isLike: Bool
     let imageUrls: [String]
@@ -55,6 +57,8 @@ extension BakeryDetail {
             address: self.address,
             phone: self.phone,
             openStatus: self.openStatus,
+            mapy: self.mapy,
+            mapx: self.mapx,
             operatingHours: self.operatingHours,
             isLike: !self.isLike,
             imageUrls: self.imageUrls,
