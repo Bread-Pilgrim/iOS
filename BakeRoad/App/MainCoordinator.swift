@@ -35,7 +35,7 @@ final class MainCoordinator: ObservableObject {
     
     enum MyScreen: Hashable {
         case breadReportList
-        case breadReport(year: Int, month: Int)
+        case breadReport(selectedReport: BreadReportListItem, allReports: [BreadReportListItem])
         case badge
         case myReview
         case myReviewDetail(_ filter: BakeryDetailFilter)

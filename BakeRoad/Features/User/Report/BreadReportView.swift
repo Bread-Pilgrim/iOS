@@ -30,17 +30,16 @@ struct BreadReportView: View {
                     .padding(16)
                     
                     HStack(spacing: 10) {
-                        Button {
-                            let request = BreadReportRequestDTO(
-                                year: breadReport.month == 1 ? breadReport.year-1 : breadReport.year,
-                                month: breadReport.month == 1 ? 12 : breadReport.month-1
-                            )
-                            Task {
-                                await viewModel.loadBreadReport(request)
+                        if viewModel.canNavigateToPrevious() {
+                            Button {
+                                viewModel.navigateToPrevious()
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.gray600)
+                                    .frame(width: 20, height: 20)
                             }
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(.gray600)
+                        } else {
+                            Spacer()
                                 .frame(width: 20, height: 20)
                         }
                         
@@ -48,17 +47,16 @@ struct BreadReportView: View {
                             .font(.bodyLargeSemibold)
                             .foregroundColor(.black)
                         
-                        Button {
-                            let request = BreadReportRequestDTO(
-                                year: breadReport.month == 12 ? breadReport.year+1 : breadReport.year,
-                                month: breadReport.month == 12 ? 1 : breadReport.month+1
-                            )
-                            Task {
-                                await viewModel.loadBreadReport(request)
+                        if viewModel.canNavigateToNext() {
+                            Button {
+                                viewModel.navigateToNext()
+                            } label: {
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray600)
+                                    .frame(width: 20, height: 20)
                             }
-                        } label: {
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray600)
+                        } else {
+                            Spacer()
                                 .frame(width: 20, height: 20)
                         }
                     }
@@ -96,6 +94,12 @@ struct BreadReportView: View {
                 }
             }
             .background(Color.gray40)
+            .disabled(viewModel.isLoading)
+            .overlay {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+            }
             .onChange(of: viewModel.errorMessage) { oldValue, newValue in
                 if let message = newValue {
                     ToastManager.show(message: message, type: .error)

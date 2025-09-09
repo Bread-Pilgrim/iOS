@@ -17,7 +17,7 @@ final class BreadReportListViewModel: ObservableObject {
     private let getBreadReportListUseCase: GetBreadReportListUseCase
     
     var onNavigateBack: (() -> Void)?
-    var onNavigateToReport: ((BreadReportListItem) -> Void)?
+    var onNavigateToReport: ((BreadReportListItem, [BreadReportListItem]) -> Void)?
     
     init(
         getBreadReportListUseCase: GetBreadReportListUseCase
@@ -67,6 +67,6 @@ final class BreadReportListViewModel: ObservableObject {
     }
     
     func navigateToReport(_ item: BreadReportListItem) {
-        onNavigateToReport?(item)
+        onNavigateToReport?(item, breadReportList)
     }
 }

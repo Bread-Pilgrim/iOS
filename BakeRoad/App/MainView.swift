@@ -160,8 +160,8 @@ extension MainView {
     @ViewBuilder
     private func myNavigationDestination(_ screen: MainCoordinator.MyScreen) -> some View {
         switch screen {
-        case .breadReport(let year, let month):
-            BreadReportView(viewModel: createBreadReportViewModel(year: year, month: month))
+        case .breadReport(let selectedReport, let allReports):
+            BreadReportView(viewModel: createBreadReportViewModel(selectedReport: selectedReport, allReports: allReports))
                 .hideNavigationBar()
         case .breadReportList:
             BreadReportListView(viewModel: createBreadReportListViewModel())
@@ -305,10 +305,11 @@ extension MainView {
         return viewModel
     }
     
-    private func createBreadReportViewModel(year: Int, month: Int) -> BreadReportViewModel {
+    private func createBreadReportViewModel(selectedReport: BreadReportListItem, allReports: [BreadReportListItem]) -> BreadReportViewModel {
         let viewModel = BreadReportViewModel(
-            request: BreadReportRequestDTO(year: year, month: month),
-            getBreadReportUseCase: coordinator.dependency.getBreadReportUseCase
+            getBreadReportUseCase: coordinator.dependency.getBreadReportUseCase,
+            currentReport: selectedReport,
+            allReports: allReports
         )
         viewModel.onNavigateBack = {
             coordinator.popMy()
@@ -323,8 +324,8 @@ extension MainView {
         viewModel.onNavigateBack = {
             coordinator.popMy()
         }
-        viewModel.onNavigateToReport = { item in
-            coordinator.push(.breadReport(year: item.year, month: item.month))
+        viewModel.onNavigateToReport = { selectedReport, allReports in
+            coordinator.push(.breadReport(selectedReport: selectedReport, allReports: allReports))
         }
         return viewModel
     }
