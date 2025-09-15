@@ -20,6 +20,7 @@ final class BakeryDetailViewModel: ObservableObject {
     @Published var reviewData: BakeryReviewData?
     @Published var nextCursor: String?
     @Published var isLoading = false
+    @Published var successMessage: String?
     @Published var errorMessage: String?
     @Published var showMenuSelection = false
     @Published var currentReviewType: ReviewType = .visitor
@@ -171,8 +172,10 @@ final class BakeryDetailViewModel: ObservableObject {
             do {
                 if originalDetail.isLike {
                     try await bakeryDislikeUseCase.execute(filter.bakeryId)
+                    successMessage = "내 빵집에서 제거했어요."
                 } else {
                     try await bakeryLikeUseCase.execute(filter.bakeryId)
+                    successMessage = "내 빵집에 저장했어요."
                 }
             } catch let APIError.serverError(_, message) {
                 bakeryDetail = originalDetail

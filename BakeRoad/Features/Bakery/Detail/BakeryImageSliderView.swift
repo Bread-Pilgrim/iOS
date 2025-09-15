@@ -40,9 +40,6 @@ struct BakeryImageSliderView: View {
                     BakeRoadCircleButton(icon: bakeryDetail.isLike ? "favorites_fill" : "heart") {
                         onLikeButtonTap()
                     }
-                    .onChange(of: bakeryDetail.isLike) { oldValue, newValue in
-                        ToastManager.show(message: newValue ? "내 빵집에 저장했어요." : "내 빵집에서 제거했어요.")
-                    }
                 }
                 .padding(.top, 15)
                 .padding(.horizontal, 16)
