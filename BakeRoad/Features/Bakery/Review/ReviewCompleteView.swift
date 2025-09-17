@@ -18,7 +18,10 @@ struct ReviewCompleteView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Spacer()
+            LottieView(name: "success")
+                .frame(width: 400, height: 400)
+                .padding(.top, 110)
+                .padding(.bottom, -40)
             
             VStack(alignment: .center, spacing: 4) {
                 Text("리뷰를 작성했어요!")

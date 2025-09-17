@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE3A7C2A2E7AE6720098FA81 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = BE3A7C292E7AE6720098FA81 /* Lottie */; };
 		BEC35E9B2E5F39A2006C753B /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = BEC35E9A2E5F39A2006C753B /* Kingfisher */; };
 		BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = BEF449D62E02D47B009BC50A /* KakaoSDK */; };
 		BEF449F52E02DE67009BC50A /* KakaoSDKFriendResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BEF449F42E02DE67009BC50A /* KakaoSDKFriendResources.bundle */; };
@@ -45,6 +46,7 @@
 			files = (
 				BEC35E9B2E5F39A2006C753B /* Kingfisher in Frameworks */,
 				BEF449D72E02D47B009BC50A /* KakaoSDK in Frameworks */,
+				BE3A7C2A2E7AE6720098FA81 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +92,7 @@
 			packageProductDependencies = (
 				BEF449D62E02D47B009BC50A /* KakaoSDK */,
 				BEC35E9A2E5F39A2006C753B /* Kingfisher */,
+				BE3A7C292E7AE6720098FA81 /* Lottie */,
 			);
 			productName = BakeRoad;
 			productReference = BE6217892DF141E400812A08 /* BakeRoad.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				BEF449D52E02D47B009BC50A /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				BE3A7C282E7AE6720098FA81 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE62178A2DF141E400812A08 /* Products */;
@@ -376,6 +380,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BE3A7C282E7AE6720098FA81 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.2;
+			};
+		};
 		BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
@@ -395,6 +407,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BE3A7C292E7AE6720098FA81 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE3A7C282E7AE6720098FA81 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
 		BEC35E9A2E5F39A2006C753B /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BEC35E992E5F39A2006C753B /* XCRemoteSwiftPackageReference "Kingfisher" */;
