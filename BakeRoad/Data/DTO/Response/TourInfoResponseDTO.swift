@@ -33,7 +33,9 @@ extension TourInfoResponseDTO {
             title: title,
             address: address,
             imageUrl: tourImg,
-            categoryName: tourType
+            categoryName: tourType,
+            mapx: mapx,
+            mapy: mapy
         )
     }
 }

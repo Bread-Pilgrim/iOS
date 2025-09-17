@@ -118,6 +118,9 @@ struct HomeView: View {
                                     imageUrl: item.imageUrl,
                                     categoryName: item.categoryName
                                 )
+                                .onTapGesture {
+                                    openKakaoMap(latitude: item.mapy, longitude: item.mapx)
+                                }
                             }
                         }
                     }
@@ -180,6 +183,20 @@ struct HomeView: View {
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.hidden)
                     .presentationBackground(.clear)
+                }
+            }
+        }
+    }
+    
+    private func openKakaoMap(latitude: Double, longitude: Double) {
+        let urlString = "kakaomap://look?p=\(latitude),\(longitude)"
+        
+        if let url = URL(string: urlString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                if let appStoreURL = URL(string: "https://apps.apple.com/kr/app/kakaomap/id304608425") {
+                    UIApplication.shared.open(appStoreURL)
                 }
             }
         }

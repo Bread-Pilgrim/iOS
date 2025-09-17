@@ -13,4 +13,6 @@ struct TourInfo: Identifiable {
     let address: String
     let imageUrl: String
     let categoryName: String
+    let mapx: Double
+    let mapy: Double
 }

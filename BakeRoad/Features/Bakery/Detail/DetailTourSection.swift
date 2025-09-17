@@ -22,6 +22,9 @@ struct DetailTourSection: View {
                     HStack(alignment: .top, spacing: 12) {
                         ForEach(tours) { tour in
                             NearRecommnedTourCard(tour: tour)
+                                .onTapGesture {
+                                    openKakaoMap(latitude: tour.mapy, longitude: tour.mapx)
+                                }
                         }
                     }
                 }
@@ -44,6 +47,9 @@ struct DetailTourSection: View {
                                 imageUrl: tour.imageUrl,
                                 categoryName: tour.categoryName
                             )
+                            .onTapGesture {
+                                openKakaoMap(latitude: tour.mapy, longitude: tour.mapx)
+                            }
                         }
                     }
                 }
@@ -56,5 +62,19 @@ struct DetailTourSection: View {
     
     private var displayedTours: [TourInfo] {
         selectedTab == .home ? Array(tours.prefix(5)) : tours
+    }
+    
+    private func openKakaoMap(latitude: Double, longitude: Double) {
+        let urlString = "kakaomap://look?p=\(latitude),\(longitude)"
+        
+        if let url = URL(string: urlString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                if let appStoreURL = URL(string: "https://apps.apple.com/kr/app/kakaomap/id304608425") {
+                    UIApplication.shared.open(appStoreURL)
+                }
+            }
+        }
     }
 }
