@@ -127,18 +127,6 @@ struct HomeView: View {
                     .padding(.horizontal, 16)
                 }
             }
-            .mask(
-                LinearGradient(
-                    gradient: Gradient(stops: [
-                        .init(color: .black.opacity(0), location: 0),
-                        .init(color: .black, location: 0.1),
-                        .init(color: .black, location: 0.9),
-                        .init(color: .black.opacity(0), location: 1)
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
             .padding(.bottom, 28)
             .refreshable {
                 Task { await viewModel.loadInitial() }

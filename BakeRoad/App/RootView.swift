@@ -24,6 +24,21 @@ struct RootView: View {
                 .padding(.horizontal, 28)
                 .padding(.bottom, 16)
         }
+        .overlay {
+            if let message = coordinator.tokenExpiredMessage {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .overlay {
+                        BakeRoadAlert(
+                            message: message,
+                            primaryAction: AlertAction(title: "확인") {
+                                coordinator.confirmTokenExpired()
+                            },
+                            layout: .horizontal
+                        )
+                    }
+            }
+        }
     }
 }
 

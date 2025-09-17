@@ -49,34 +49,51 @@ final class APIService {
             headers: headers
         )
         
-        let baseResponse: BaseResponse<T, E> = try await withCheckedThrowingContinuation { continuation in
-            dataTask.responseData { response in
-                switch response.result {
-                case .success(let data):
-                    do {
-                        let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
-                        continuation.resume(returning: decoded)
-                    } catch {
-                        continuation.resume(throwing: APIError.decoding)
-                    }
-                case .failure(let afError):
-                    if let data = response.data,
-                       let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
-                        continuation.resume(
-                            throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
-                        )
-                    } else {
-                        continuation.resume(throwing: APIError.network(afError))
+        let baseResponse: BaseResponse<T, E>
+        do {
+            baseResponse = try await withCheckedThrowingContinuation { continuation in
+                dataTask.responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        do {
+                            let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
+                            continuation.resume(returning: decoded)
+                        } catch {
+                            continuation.resume(throwing: APIError.decoding)
+                        }
+                    case .failure(let afError):
+                        if let data = response.data,
+                           let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
+                            continuation.resume(
+                                throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
+                            )
+                        } else {
+                            continuation.resume(throwing: APIError.network(afError))
+                        }
                     }
                 }
             }
+        } catch let APIError.serverError(code, _) where code == 1001 {
+            await MainActor.run {
+                SessionManager.shared.handleTokenExpired()
+            }
+            throw TokenError.invalidToken
+        } catch {
+            throw error
         }
         
         if let token = baseResponse.token {
             tokenStore.accessToken = token.accessToken
             tokenStore.refreshToken = token.refreshToken
         }
-        
+
+        if baseResponse.statusCode == 1001 {
+            await MainActor.run {
+                SessionManager.shared.handleTokenExpired()
+            }
+            throw TokenError.invalidToken
+        }
+
         guard baseResponse.statusCode == 200 else {
             throw APIError.serverError(code: baseResponse.statusCode, message: baseResponse.message)
         }
@@ -110,50 +127,67 @@ final class APIService {
             }
         }
         
-        let baseResponse: BaseResponse<T, E> = try await withCheckedThrowingContinuation { continuation in
-            session.upload(multipartFormData: { multipartFormData in
-                if let parameters = parameters {
-                    for (key, value) in parameters {
-                        if let stringValue = String(describing: value).data(using: .utf8) {
-                            multipartFormData.append(stringValue, withName: key)
+        let baseResponse: BaseResponse<T, E>
+        do {
+            baseResponse = try await withCheckedThrowingContinuation { continuation in
+                session.upload(multipartFormData: { multipartFormData in
+                    if let parameters = parameters {
+                        for (key, value) in parameters {
+                            if let stringValue = String(describing: value).data(using: .utf8) {
+                                multipartFormData.append(stringValue, withName: key)
+                            }
+                        }
+                    }
+                    
+                    for (index, data) in imageData.enumerated() {
+                        multipartFormData.append(
+                            data,
+                            withName: "review_imgs",
+                            fileName: "image_\(index).jpg",
+                            mimeType: "image/jpeg"
+                        )
+                    }
+                    
+                }, to: url, method: method, headers: headers).responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        do {
+                            let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
+                            continuation.resume(returning: decoded)
+                        } catch {
+                            continuation.resume(throwing: APIError.decoding)
+                        }
+                    case .failure(let afError):
+                        if let data = response.data,
+                           let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
+                            continuation.resume(
+                                throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
+                            )
+                        } else {
+                            continuation.resume(throwing: APIError.network(afError))
                         }
                     }
                 }
-                
-                for (index, data) in imageData.enumerated() {
-                    multipartFormData.append(
-                        data,
-                        withName: "review_imgs",
-                        fileName: "image_\(index).jpg",
-                        mimeType: "image/jpeg"
-                    )
-                }
-                
-            }, to: url, method: method, headers: headers).responseData { response in
-                switch response.result {
-                case .success(let data):
-                    do {
-                        let decoded = try JSONDecoder().decode(BaseResponse<T, E>.self, from: data)
-                        continuation.resume(returning: decoded)
-                    } catch {
-                        continuation.resume(throwing: APIError.decoding)
-                    }
-                case .failure(let afError):
-                    if let data = response.data,
-                       let decoded = try? JSONDecoder().decode(BaseResponse<T, E>.self, from: data) {
-                        continuation.resume(
-                            throwing: APIError.serverError(code: decoded.statusCode, message: decoded.message)
-                        )
-                    } else {
-                        continuation.resume(throwing: APIError.network(afError))
-                    }
-                }
             }
+        } catch let APIError.serverError(code, _) where code == 1001 {
+            await MainActor.run {
+                SessionManager.shared.handleTokenExpired()
+            }
+            throw TokenError.invalidToken
+        } catch {
+            throw error
         }
         
         if let token = baseResponse.token {
             tokenStore.accessToken = token.accessToken
             tokenStore.refreshToken = token.refreshToken
+        }
+        
+        if baseResponse.statusCode == 1001 {
+            await MainActor.run {
+                SessionManager.shared.handleTokenExpired()
+            }
+            throw TokenError.invalidToken
         }
         
         guard baseResponse.statusCode == 200 else {
