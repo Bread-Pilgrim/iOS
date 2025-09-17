@@ -66,7 +66,7 @@ struct MenuRowView: View {
     let onQuantityChange: (Int) -> Void
     
     var isSelected: Bool { selectedMenu != nil }
-    var isCustomOption: Bool { menu.name == "여기에 없어요 😶" }
+    var isCustomOption: Bool { menu.name == "여기에 없어요🧐" }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

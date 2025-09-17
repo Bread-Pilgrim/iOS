@@ -83,14 +83,16 @@ extension BakeryDetailResponseDTO {
             }.sortedByWeekday(),
             isLike: isLike,
             imageUrls: bakeryImgUrls ?? [],
-            menus: (menus ?? []).map {
-                BakeryDetail.BakeryMenu(
-                    name: $0.name,
-                    price: $0.price,
-                    isSignature: $0.isSignature,
-                    imageUrl: $0.imgUrl
-                )
-            }
+            menus: (menus ?? [])
+                .filter { $0.name != "기타메뉴" }
+                .map {
+                    BakeryDetail.BakeryMenu(
+                        name: $0.name,
+                        price: $0.price,
+                        isSignature: $0.isSignature,
+                        imageUrl: $0.imgUrl
+                    )
+                }
         )
     }
 }
