@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailTourSection: View {
     let tours: [TourInfo]
     @Binding var selectedTab: DetailTab
+    @Binding var scrollPosition: ScrollPosition
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -35,6 +36,7 @@ struct DetailTourSection: View {
                     size: .medium
                 ) {
                     selectedTab = .tour
+                    scrollPosition.scrollTo(id: 1, anchor: .bottom)
                 }
                 .frame(maxWidth: .infinity)
             } else {

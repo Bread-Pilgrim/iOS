@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailMenuSection: View {
     let menus: [BakeryDetail.BakeryMenu]
     @Binding var selectedTab: DetailTab
+    @Binding var scrollPosition: ScrollPosition
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -35,6 +36,7 @@ struct DetailMenuSection: View {
                     size: .medium
                 ) {
                     selectedTab = .menu
+                    scrollPosition.scrollTo(id: 1, anchor: .bottom)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)

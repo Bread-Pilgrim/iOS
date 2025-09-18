@@ -68,8 +68,9 @@ struct BakeryDetailView: View {
                         }
                         .padding(16)
                     }
-                    .background(Color.white)
+                    .background(Color.white.opacity(headerOpacity))
                     .frame(height: 56)
+                    .cardShadow(level: 2)
                     .opacity(headerOpacity)
                     .zIndex(1)
                     
@@ -92,32 +93,29 @@ struct BakeryDetailView: View {
                                 if selectedTab.showsMenuSection {
                                     DetailMenuSection(
                                         menus: bakeryDetail.menus,
-                                        selectedTab: $selectedTab
+                                        selectedTab: $selectedTab,
+                                        scrollPosition: $scrollPosition
                                     )
                                     .id(2)
-                                    
-                                    Spacer()
                                 }
                                 
                                 if selectedTab.showsReviewSection {
                                     DetailReviewSection(
                                         reviewData: reviewData,
                                         selectedTab: $selectedTab,
+                                        scrollPosition: $scrollPosition,
                                         viewModel: viewModel
                                     )
                                     .id(3)
-                                    
-                                    Spacer()
                                 }
                                 
                                 if selectedTab.showsTourSection {
                                     DetailTourSection(
                                         tours: viewModel.recommendTourList,
-                                        selectedTab: $selectedTab
+                                        selectedTab: $selectedTab,
+                                        scrollPosition: $scrollPosition
                                     )
                                     .id(4)
-                                    
-                                    Spacer()
                                 }
                             }
                         }
@@ -125,7 +123,6 @@ struct BakeryDetailView: View {
                     .clipped()
                     .coordinateSpace(name: "scrollView")
                     .onPreferenceChange(ScrollOffsetKey.self) {
-                        print($0)
                         scrollOffset = $0
                     }
                 }
@@ -133,7 +130,7 @@ struct BakeryDetailView: View {
                 SkeletonDetailView()
             }
         }
-        .scrollPosition($scrollPosition, anchor: .top)
+        .scrollPosition($scrollPosition)
         .disabled(viewModel.isLoading)
         .overlay {
             if viewModel.isLoading {
@@ -232,7 +229,7 @@ struct BakeryDetailView: View {
                 ForEach(DetailTab.allCases, id: \.self) { tab in
                     Button {
                         selectedTab = tab
-                        scrollPosition.scrollTo(id: 1)
+                        scrollPosition.scrollTo(id: 1, anchor: .top)
                     } label: {
                         VStack(alignment: .leading, spacing: 0) {
                             Text(tab.rawValue)

@@ -11,6 +11,7 @@ struct DetailReviewSection: View {
     let reviewData: BakeryReviewData
     
     @Binding var selectedTab: DetailTab
+    @Binding var scrollPosition: ScrollPosition
     @ObservedObject var viewModel: BakeryDetailViewModel
     
     @State private var isShowingSortSheet = false
@@ -140,6 +141,7 @@ struct DetailReviewSection: View {
                         size: .medium
                     ) {
                         selectedTab = .review
+                        scrollPosition.scrollTo(id: 1, anchor: .bottom)
                         Task {
                             await viewModel.loadReviews(type: .visitor)
                         }
